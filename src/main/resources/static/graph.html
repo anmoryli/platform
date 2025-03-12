@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>藏药植物药知识平台</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+     
+     <!--JAVASCRIPT-->
+     <!--=================================================-->
+ 
+     <!--Pace - Page Load Progress Par [OPTIONAL]-->
+     <link href="css/pace.min.css" rel="stylesheet">
+    
+     <script src="js/pace.min.js"></script>
+    
+ 
+ 
+     <!--jQuery [ REQUIRED ]-->
+     <script src="js/jquery-2.2.4.min.js"></script>
+ 
+ 
+     <!--BootstrapJS [ RECOMMENDED ]-->
+     <script src="js/bootstrap.min.js"></script>
+ 
+ 
+     <!--NiftyJS [ RECOMMENDED ]-->
+     <script src="js/nifty.min.js"></script>
+     <script src="js/icons.js"></script>
+ 
+     
+     <script src="js/echarts.min.js"></script>
+ 
+ 
+     <!--=================================================-->
+     
+     <!--Demo script [ DEMONSTRATION ]-->
+     <script src="js/nifty-demo.min.js"></script>
+    <!-- 引入 ECharts 文件 -->
+    <script>
+        $(document).ready(function () {
+            var chartDom = document.getElementById('main');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            window.onresize = function () {
+                myChart.resize();
+            };
+
+            // 初始化数据结构
+            var rela = { "data": [], "links": [] };
+
+            // 获取JSON数据
+            $.ajaxSetup({ async: false });
+            $.getJSON('/data/data.json', function (json) {
+                rela = json;
+            });
+
+            // 显示加载动画
+            myChart.showLoading();
+
+            // 设置图表选项
+            option = {
+                title: {
+                    textStyle: {
+                        fontWeight: "lighter",
+                    }
+                },
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                legend: {
+                    x: "center",
+                    show: true,
+                    data: ["药材名称", "功效/配伍药材", "使用方法", "采集地点", "特殊用法"]
+                },
+                series: [
+                    {
+                        type: 'graph',
+                        layout: 'force',
+                        symbolSize: 45,
+                        edgeSymbol: ['circle', 'arrow'],
+                        edgeSymbolSize: [4, 4],
+                        edgeLabel: {
+                            normal: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: 10
+                                },
+                                formatter: "{c}"
+                            }
+                        },
+                        force: {
+                            repulsion: 4000,
+                            edgeLength: [100, 100],
+                            gravity: 0.3, // 减少引力让节点移动更快
+                            layoutAnimation: true, // 确保开启布局动画
+                        },
+                        focusNodeAdjacency: true,
+                        draggable: true,
+                        roam: true,
+                        categories: [
+                            { name: '药材名称' },
+                            { name: '功效/配伍药材' },
+                            { name: '使用方法' },
+                            { name: '采集地点' },
+                            { name: '特殊用法' }
+                        ],
+                        label: {
+                            normal: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: 12
+                                },
+                            }
+                        },
+                        tooltip: {
+                            formatter: function (params) {
+                                if (!params.value) {
+                                    return params.data.name;
+                                } else {
+                                    return params.data.name + ":" + params.data.value;
+                                }
+                            },
+                        },
+                        lineStyle: {
+                            normal: {
+                                opacity: 0.9,
+                                width: 1,
+                                curveness: 0.3
+                            }
+                        },
+                        nodes: rela.data.map(function (node, idx) {
+                            node.id = idx;
+                            return node;
+                        }),
+                        links: rela.links,
+                        // 自定义边的样式
+                        linkStyle: {
+                            normal: {
+                                lineStyle: {
+                                    width: 2,
+                                    type: 'solid',
+                                    color: '#666'
+                                },
+                                label: {
+                                    show: true,
+                                    position: 'end',
+                                    formatter: '{b}'
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+
+            // 隐藏加载动画并设置图表选项
+            myChart.hideLoading();
+            myChart.setOption(option);
+
+            // 添加点击事件监听器以放大节点
+            myChart.on('click', function (params) {
+                if (params.dataType === 'node') {
+                    const center = [params.event.offsetX, params.event.offsetY];
+                    myChart.dispatchAction({
+                        type: 'takeGlobalCursor',
+                        key: 'dragging',
+                        to: center
+                    });
+                    myChart.setOption({
+                        series: [{
+                            zoom: 0.1,
+                            center: center
+                        }]
+                    });
+                }
+            });
+
+            // 添加双击事件监听器以重置视图
+            myChart.on('dblclick', function () {
+                myChart.setOption({
+                    series: [{
+                        zoom: 1,
+                        center: ['100%', '100%']
+                    }]
+                });
+            });
+        });
+    </script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #main {
+            height: 100%;
+            width: 100%;
+            /* border: 1px solid #ccc; */
+        }
+    </style>
+</head>
+<body>
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main"></div>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize.html">图片识别</a></li>
+                    <li><a href="graph.html">知识图谱</a></li>
+                    <li><a href="database.html">数据库</a></li>
+                <li><a href="admin_login.html">管理中心</a></li>
+                    <li><a href="me.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="bot-container">
+        <div class="chat-container" id="chatContainer">
+            <!-- 对话内容将在这里动态生成 -->
+        </div>
+        <div class="input-container">
+            <span class="loadBtn">
+                <button id="imgBtn">上传文件</button>
+                <button id="voiceBtn">点击录音</button>
+                <button id="videoBtn">生成视频</button>
+            </span>
+            <span class="send-edit">
+                <input type="text" placeholder="输入内容" class="input" id="userInput">
+                <button id="sendBtn">发送</button>
+            </span>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // 发送消息
+            $("#sendBtn").click(function () {
+                const userInput = $("#userInput").val().trim();
+                if (!userInput) {
+                    alert("请输入内容");
+                    return;
+                }
+
+                // 显示用户消息
+                appendMessage(userInput, 'user-message');
+
+                // 清空输入框
+                $("#userInput").val('');
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    type: "POST",
+                    url: "/chat",
+                    contentType: "application/json",
+                    data: JSON.stringify({ userInput: userInput }),
+                    success: function (response) {
+                        // 显示 AI 回复
+                        appendMessage(response, 'bot-message');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("请求失败:", error);
+                        appendMessage("请求失败: " + error, 'bot-message');
+                    }
+                });
+            });
+
+            // 添加消息到聊天窗口
+            function appendMessage(content, className) {
+                const chatContainer = $("#chatContainer");
+                const messageElement = $("<div>").addClass("message").addClass(className);
+                const bubble = $("<div>").addClass("message-bubble").text(content);
+                messageElement.append(bubble);
+                chatContainer.append(messageElement);
+                // 等待2秒
+                setTimeout(function () {
+                    // 滚动到底部
+                    chatContainer.scrollTop(chatContainer[0].scrollHeight);
+                }, 2000);
+            }
+        });
+        
+    </script>
+</body>
+</html>

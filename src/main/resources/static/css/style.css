@@ -1,0 +1,241 @@
+/* 通用样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #070616;
+    transition: background 3s ease; /* 添加过渡效果 */
+
+    /* 定义背景颜色变化的动画 */
+    @keyframes backgroundTransition {
+        0% {
+            background-color: #070616;
+        }
+        50% {
+            background: linear-gradient(to right, #070616, #B7629A);
+        }
+        100% {
+            background-color: #070616;
+        }
+    }
+
+    /* 应用动画的类 */
+    .animated-background {
+        animation: backgroundTransition 6s forwards ease-in-out;
+    }
+}
+
+.blurry-navbar {
+    position: fixed;
+    top: 20px; /* 调整到您希望的距离顶部的位置 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; /* 根据需要调整宽度 */
+    height: 100px; /* 根据需要调整高度 */
+    border-radius: 200px; /* 创建椭圆形状 */
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px); /* 设置毛玻璃效果 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%; 
+    margin-right: 20px;
+}
+
+nav ul li {
+    /* 横向对齐 */
+    display: inline;
+    /* 去掉下划线 */
+    text-decoration: none;
+    /* 去掉圆点 */
+    list-style: none;
+    /* 文字颜色 */
+    color: white;
+    margin-right: 20px;
+    font-size: 20px;
+}
+
+li:hover {
+    color: gray;
+}
+
+/* 文字渐变 */
+.text-animation {
+    background: linear-gradient(
+        -45deg,
+        #ee7752,
+        #e73c7e,
+        #23a6d5,
+        #23d5ab
+    );
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 400% 400%;
+    animation: gradient 2.5s ease infinite alternate;
+}
+
+@keyframes gradient {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 100% 50%;
+    }
+}
+
+.footer {
+    margin-top: 600px;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: #14122f;
+}
+
+/* 紫罗兰色圆形弥散光效果 */
+.violet-glow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    background-color: #B01ECA; /* 紫罗兰色 */
+    border-radius: 50%;
+    filter: blur(90px); /* 弥散光效果 */
+    z-index: -1; /* 确保在其他内容下方 */
+    margin-left: -400px;
+}
+
+.container h2 {
+    color: white;
+    font-size: 20px;
+    font-family: "Microsoft YaHei";
+    text-align: center;
+    font-weight: 600;
+}
+
+.container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 按钮居中 */
+    margin: 20px auto;
+    padding: 10px 20px;
+    color: white;
+    font-size: 15px;
+    font-family: "Microsoft YaHei";
+    font-weight: 600;
+    border-radius: 20px;
+    border: 2px solid white;
+    letter-spacing: 5px;
+    /* 文字居中 */
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+.button_me {
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+    /* 按钮居中 */
+    /* margin: 20px auto;*/
+    padding: 10px 20px; 
+    margin-bottom: 10px;
+    color: white;
+    font-size: 15px;
+    font-family: "Microsoft YaHei";
+    font-weight: 600;
+    border-radius: 20px;
+    border: 2px solid white;
+    letter-spacing: 5px;
+    /* 文字居中 */
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+.button_me:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease;
+}
+
+.button_me:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+.container button:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease;
+}
+
+.container button:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+@keyframes slow {
+    from {
+        background-color: transparent;
+    }
+    to {
+        background-color: #B01ECA;
+    }
+}
+
+@keyframes leave {
+    from {
+        background-color: #B01ECA;
+    }
+    to {
+        background-color: transparent;
+    }
+}
+
+.container input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    color: #070616;
+    font-size: 15px;
+    font-family: "Microsoft YaHei";
+    text-align: center;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid white;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+.container input:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #B01ECA;
+}
+
+.edit-container {
+    margin-left: 200px;
+    margin-top: 200px;
+    margin-right: 100px;
+}

@@ -1,0 +1,4232 @@
+{
+    "data": [
+        {
+            "name": "阿尔泰紫菀",
+            "category": 0
+        },
+        {
+            "name": "功效",
+            "category": 1
+        },
+        {
+            "name": "全草",
+            "category": 3
+        },
+        {
+            "name": "清热降火",
+            "category": 0
+        },
+        {
+            "name": "草原地带",
+            "category": 3
+        },
+        {
+            "name": "排脓止咳",
+            "category": 0
+        },
+        {
+            "name": "利尿通淋",
+            "category": 0
+        },
+        {
+            "name": "消肿散结",
+            "category": 0
+        },
+        {
+            "name": "明目清肝",
+            "category": 0
+        },
+        {
+            "name": "润肠通便",
+            "category": 0
+        },
+        {
+            "name": "抗菌抗病毒",
+            "category": 0
+        },
+        {
+            "name": "补气养血",
+            "category": 0
+        },
+        {
+            "name": "调节血压",
+            "category": 0
+        },
+        {
+            "name": "麦冬",
+            "category": 0
+        },
+        {
+            "name": "使用方法",
+            "category": 1
+        },
+        {
+            "name": "阴虚咳血者",
+            "category": 3
+        },
+        {
+            "name": "知母、麦冬",
+            "category": 0
+        },
+        {
+            "name": "五味子",
+            "category": 0
+        },
+        {
+            "name": "水煎之",
+            "category": 0
+        },
+        {
+            "name": "膀胱炎者",
+            "category": 3
+        },
+        {
+            "name": "花",
+            "category": 3
+        },
+        {
+            "name": "阿拉善马先蒿",
+            "category": 0
+        },
+        {
+            "name": "根茎",
+            "category": 3
+        },
+        {
+            "name": "暂无明确功效",
+            "category": 0
+        },
+        {
+            "name": "中国特有",
+            "category": 3
+        },
+        {
+            "name": "暴马丁香",
+            "category": 0
+        },
+        {
+            "name": "树皮",
+            "category": 3
+        },
+        {
+            "name": "清肺祛痰",
+            "category": 0
+        },
+        {
+            "name": "林缘及混交林内",
+            "category": 3
+        },
+        {
+            "name": "河岸",
+            "category": 3
+        },
+        {
+            "name": "止咳",
+            "category": 0
+        },
+        {
+            "name": "平喘",
+            "category": 0
+        },
+        {
+            "name": "利水",
+            "category": 0
+        },
+        {
+            "name": "镇静催眠",
+            "category": 0
+        },
+        {
+            "name": "抗炎抑菌",
+            "category": 0
+        },
+        {
+            "name": "白糖",
+            "category": 0
+        },
+        {
+            "name": "支气管炎者",
+            "category": 3
+        },
+        {
+            "name": "甘草",
+            "category": 0
+        },
+        {
+            "name": "哮喘者",
+            "category": 3
+        },
+        {
+            "name": "暴马子",
+            "category": 0
+        },
+        {
+            "name": "慢性气管炎者",
+            "category": 3
+        },
+        {
+            "name": "小檗",
+            "category": 0
+        },
+        {
+            "name": "松萝",
+            "category": 0
+        },
+        {
+            "name": "心脏性浮肿者",
+            "category": 3
+        },
+        {
+            "name": "川贝母",
+            "category": 0
+        },
+        {
+            "name": "干燥鳞茎",
+            "category": 3
+        },
+        {
+            "name": "清热润肺",
+            "category": 0
+        },
+        {
+            "name": "四川西藏云南等地",
+            "category": 3
+        },
+        {
+            "name": "化痰止咳",
+            "category": 0
+        },
+        {
+            "name": "散结消痈",
+            "category": 0
+        },
+        {
+            "name": "知母",
+            "category": 0
+        },
+        {
+            "name": "增强清热润燥",
+            "category": 3
+        },
+        {
+            "name": "沙参",
+            "category": 0
+        },
+        {
+            "name": "肺阴虚咳嗽者",
+            "category": 3
+        },
+        {
+            "name": "玄参、牡蛎",
+            "category": 0
+        },
+        {
+            "name": "瘰疬者",
+            "category": 3
+        },
+        {
+            "name": "刺红珠",
+            "category": 0
+        },
+        {
+            "name": "干燥根及根茎",
+            "category": 3
+        },
+        {
+            "name": "清热燥湿",
+            "category": 0
+        },
+        {
+            "name": "灌丛中",
+            "category": 3
+        },
+        {
+            "name": "林缘或沟边",
+            "category": 3
+        },
+        {
+            "name": "泻火解毒",
+            "category": 0
+        },
+        {
+            "name": "黄连",
+            "category": 0
+        },
+        {
+            "name": "增强清热燥湿之力",
+            "category": 3
+        },
+        {
+            "name": "茵陈",
+            "category": 0
+        },
+        {
+            "name": "利湿退黄",
+            "category": 3
+        },
+        {
+            "name": "研末撒或调敷",
+            "category": 0
+        },
+        {
+            "name": "痈肿疮毒者",
+            "category": 3
+        },
+        {
+            "name": "煎汤内服",
+            "category": 0
+        },
+        {
+            "name": "湿热泻痢者",
+            "category": 3
+        },
+        {
+            "name": "冬虫夏草",
+            "category": 0
+        },
+        {
+            "name": "菌和虫的复合体",
+            "category": 3
+        },
+        {
+            "name": "补肾益肺",
+            "category": 0
+        },
+        {
+            "name": "高寒草甸",
+            "category": 3
+        },
+        {
+            "name": "止血化痰",
+            "category": 0
+        },
+        {
+            "name": "淫羊藿",
+            "category": 0
+        },
+        {
+            "name": "肾阳不足者",
+            "category": 3
+        },
+        {
+            "name": "肺肾阴虚者",
+            "category": 3
+        },
+        {
+            "name": "煎汤",
+            "category": 0
+        },
+        {
+            "name": "阳痿遗精者",
+            "category": 3
+        },
+        {
+            "name": "入丸",
+            "category": 0
+        },
+        {
+            "name": "腰膝酸痛者",
+            "category": 3
+        },
+        {
+            "name": "入散",
+            "category": 0
+        },
+        {
+            "name": "久咳虚喘者",
+            "category": 3
+        },
+        {
+            "name": "与食材搭配",
+            "category": 0
+        },
+        {
+            "name": "劳嗽咯血者",
+            "category": 3
+        },
+        {
+            "name": "独一味",
+            "category": 0
+        },
+        {
+            "name": "干燥全草",
+            "category": 3
+        },
+        {
+            "name": "活血止痛",
+            "category": 0
+        },
+        {
+            "name": "高山草地",
+            "category": 3
+        },
+        {
+            "name": "化瘀止血",
+            "category": 0
+        },
+        {
+            "name": "苏木",
+            "category": 0
+        },
+        {
+            "name": "跌打损伤者",
+            "category": 3
+        },
+        {
+            "name": "川芎",
+            "category": 0
+        },
+        {
+            "name": "活血行气止痛",
+            "category": 3
+        },
+        {
+            "name": "丸剂",
+            "category": 0
+        },
+        {
+            "name": "内服",
+            "category": 3
+        },
+        {
+            "name": "胶囊",
+            "category": 0
+        },
+        {
+            "name": "鲜品捣烂敷患处",
+            "category": 0
+        },
+        {
+            "name": "筋骨扭伤者",
+            "category": 3
+        },
+        {
+            "name": "术后刀口疼痛者",
+            "category": 3
+        },
+        {
+            "name": "牙龈肿痛者",
+            "category": 3
+        },
+        {
+            "name": "甘川铁线莲",
+            "category": 0
+        },
+        {
+            "name": "祛风除湿",
+            "category": 0
+        },
+        {
+            "name": "山地林下或灌丛中",
+            "category": 3
+        },
+        {
+            "name": "通络止痛",
+            "category": 0
+        },
+        {
+            "name": "羌活",
+            "category": 0
+        },
+        {
+            "name": "风寒湿痹者",
+            "category": 3
+        },
+        {
+            "name": "关节疼痛者",
+            "category": 3
+        },
+        {
+            "name": "桑寄生",
+            "category": 0
+        },
+        {
+            "name": "肝肾不足者",
+            "category": 3
+        },
+        {
+            "name": "腰膝疼痛者",
+            "category": 3
+        },
+        {
+            "name": "甘青铁线莲",
+            "category": 0
+        },
+        {
+            "name": "山地草地或灌丛中",
+            "category": 3
+        },
+        {
+            "name": "解毒",
+            "category": 0
+        },
+        {
+            "name": "秦艽",
+            "category": 0
+        },
+        {
+            "name": "风湿关节疼痛者",
+            "category": 3
+        },
+        {
+            "name": "乳香",
+            "category": 0
+        },
+        {
+            "name": "活血通络",
+            "category": 3
+        },
+        {
+            "name": "消肿止痛",
+            "category": 3
+        },
+        {
+            "name": "风湿痹痛者",
+            "category": 3
+        },
+        {
+            "name": "鲜品捣敷",
+            "category": 0
+        },
+        {
+            "name": "疮痈肿毒者",
+            "category": 3
+        },
+        {
+            "name": "煎水洗",
+            "category": 0
+        },
+        {
+            "name": "高山露珠草",
+            "category": 0
+        },
+        {
+            "name": "养心安神",
+            "category": 0
+        },
+        {
+            "name": "林缘、灌丛及沟边湿地",
+            "category": 3
+        },
+        {
+            "name": "消食",
+            "category": 0
+        },
+        {
+            "name": "灌丛及沟边湿地",
+            "category": 3
+        },
+        {
+            "name": "酸枣仁",
+            "category": 0
+        },
+        {
+            "name": "失眠心悸者",
+            "category": 3
+        },
+        {
+            "name": "山楂",
+            "category": 0
+        },
+        {
+            "name": "消食化积",
+            "category": 3
+        },
+        {
+            "name": "缓解小儿疳积",
+            "category": 3
+        },
+        {
+            "name": "疮疡肿毒者",
+            "category": 3
+        },
+        {
+            "name": "狗舌草",
+            "category": 0
+        },
+        {
+            "name": "清热解毒",
+            "category": 0
+        },
+        {
+            "name": "山坡、林下及湿地",
+            "category": 3
+        },
+        {
+            "name": "利尿",
+            "category": 0
+        },
+        {
+            "name": "半枝莲",
+            "category": 0
+        },
+        {
+            "name": "白茅根",
+            "category": 0
+        },
+        {
+            "name": "尿路感染者",
+            "category": 3
+        },
+        {
+            "name": "小便不利者",
+            "category": 3
+        },
+        {
+            "name": "脓疡者",
+            "category": 3
+        },
+        {
+            "name": "口腔炎者",
+            "category": 3
+        },
+        {
+            "name": "鹤虱",
+            "category": 0
+        },
+        {
+            "name": "干燥成熟果实",
+            "category": 3
+        },
+        {
+            "name": "杀虫消积",
+            "category": 0
+        },
+        {
+            "name": "山坡草地或河边湿地",
+            "category": 3
+        },
+        {
+            "name": "主治蛔虫病",
+            "category": 0
+        },
+        {
+            "name": "治蛲虫病",
+            "category": 0
+        },
+        {
+            "name": "治绦虫病",
+            "category": 0
+        },
+        {
+            "name": "治虫积腹痛",
+            "category": 0
+        },
+        {
+            "name": "治小儿疳积",
+            "category": 0
+        },
+        {
+            "name": "使君子",
+            "category": 0
+        },
+        {
+            "name": "增强杀虫消积功效",
+            "category": 3
+        },
+        {
+            "name": "治蛔虫蛲虫所致腹痛",
+            "category": 3
+        },
+        {
+            "name": "槟榔",
+            "category": 0
+        },
+        {
+            "name": "对多种肠道寄生虫有效",
+            "category": 3
+        },
+        {
+            "name": "治行气导滞",
+            "category": 3
+        },
+        {
+            "name": "红景天",
+            "category": 0
+        },
+        {
+            "name": "干燥根和根茎",
+            "category": 3
+        },
+        {
+            "name": "益气活血",
+            "category": 0
+        },
+        {
+            "name": "海拔较高的山地林下",
+            "category": 3
+        },
+        {
+            "name": "通脉平喘",
+            "category": 0
+        },
+        {
+            "name": "增强活血通脉之力",
+            "category": 3
+        },
+        {
+            "name": "心血瘀阻之心胸疼痛者",
+            "category": 3
+        },
+        {
+            "name": "黄芪",
+            "category": 0
+        },
+        {
+            "name": "益气扶正",
+            "category": 3
+        },
+        {
+            "name": "气虚体倦者",
+            "category": 3
+        },
+        {
+            "name": "气虚血瘀者",
+            "category": 3
+        },
+        {
+            "name": "研末吞服",
+            "category": 0
+        },
+        {
+            "name": "胸痹心痛者",
+            "category": 3
+        },
+        {
+            "name": "泡水代茶饮",
+            "category": 0
+        },
+        {
+            "name": "中风偏瘫者",
+            "category": 3
+        },
+        {
+            "name": "黄精",
+            "category": 0
+        },
+        {
+            "name": "干燥根茎",
+            "category": 3
+        },
+        {
+            "name": "补气养阴",
+            "category": 0
+        },
+        {
+            "name": "林下、灌丛或山坡阴处",
+            "category": 3
+        },
+        {
+            "name": "健脾",
+            "category": 0
+        },
+        {
+            "name": "林下灌丛或山坡阴处",
+            "category": 3
+        },
+        {
+            "name": "润肺",
+            "category": 0
+        },
+        {
+            "name": "益肾",
+            "category": 0
+        },
+        {
+            "name": "党参",
+            "category": 0
+        },
+        {
+            "name": "缓解脾胃虚弱",
+            "category": 3
+        },
+        {
+            "name": "改善肺虚燥咳",
+            "category": 3
+        },
+        {
+            "name": "体倦乏力者",
+            "category": 3
+        },
+        {
+            "name": "胃阴不足者",
+            "category": 3
+        },
+        {
+            "name": "熬膏",
+            "category": 0
+        },
+        {
+            "name": "口干食少者",
+            "category": 3
+        },
+        {
+            "name": "浸酒",
+            "category": 0
+        },
+        {
+            "name": "精血不足者",
+            "category": 3
+        },
+        {
+            "name": "与排骨等炖煮",
+            "category": 0
+        },
+        {
+            "name": "腰膝酸软者",
+            "category": 3
+        },
+        {
+            "name": "金莲花",
+            "category": 0
+        },
+        {
+            "name": "干燥花",
+            "category": 3
+        },
+        {
+            "name": "山地草坡或疏林下",
+            "category": 3
+        },
+        {
+            "name": "消肿明目",
+            "category": 0
+        },
+        {
+            "name": "射干",
+            "category": 0
+        },
+        {
+            "name": "增强清热解毒",
+            "category": 3
+        },
+        {
+            "name": "利咽消肿之力",
+            "category": 3
+        },
+        {
+            "name": "缓解咽喉肿痛",
+            "category": 3
+        },
+        {
+            "name": "菊花",
+            "category": 0
+        },
+        {
+            "name": "清肝明目",
+            "category": 3
+        },
+        {
+            "name": "改善目赤肿痛",
+            "category": 3
+        },
+        {
+            "name": "金盏菊",
+            "category": 0
+        },
+        {
+            "name": "全草及花",
+            "category": 3
+        },
+        {
+            "name": "消炎抗菌",
+            "category": 0
+        },
+        {
+            "name": "中国各地均有栽培",
+            "category": 3
+        },
+        {
+            "name": "凉血止血",
+            "category": 0
+        },
+        {
+            "name": "野菊花",
+            "category": 0
+        },
+        {
+            "name": "增强清热解毒之力",
+            "category": 3
+        },
+        {
+            "name": "对热毒疮疡有良效",
+            "category": 3
+        },
+        {
+            "name": "艾叶",
+            "category": 0
+        },
+        {
+            "name": "温经止血",
+            "category": 3
+        },
+        {
+            "name": "虚寒性月经不调者",
+            "category": 3
+        },
+        {
+            "name": "狼毒",
+            "category": 0
+        },
+        {
+            "name": "干燥根",
+            "category": 3
+        },
+        {
+            "name": "逐水祛痰",
+            "category": 0
+        },
+        {
+            "name": "草原干燥丘陵",
+            "category": 3
+        },
+        {
+            "name": "破积杀虫",
+            "category": 0
+        },
+        {
+            "name": "大戟",
+            "category": 0
+        },
+        {
+            "name": "可用于水肿实证",
+            "category": 3
+        },
+        {
+            "name": "对付虫积腹痛",
+            "category": 3
+        },
+        {
+            "name": "一般炮制后用",
+            "category": 0
+        },
+        {
+            "name": "水肿腹胀者",
+            "category": 3
+        },
+        {
+            "name": "研末调敷",
+            "category": 0
+        },
+        {
+            "name": "疥癣者",
+            "category": 3
+        },
+        {
+            "name": "醋磨汁涂",
+            "category": 0
+        },
+        {
+            "name": "痔瘘者",
+            "category": 3
+        },
+        {
+            "name": "老鹳草",
+            "category": 0
+        },
+        {
+            "name": "祛风湿",
+            "category": 0
+        },
+        {
+            "name": "山坡草地路旁",
+            "category": 3
+        },
+        {
+            "name": "通经络",
+            "category": 0
+        },
+        {
+            "name": "止泻痢",
+            "category": 0
+        },
+        {
+            "name": "威灵仙",
+            "category": 0
+        },
+        {
+            "name": "缓解风湿痹痛",
+            "category": 3
+        },
+        {
+            "name": "湿热泄泻者",
+            "category": 3
+        },
+        {
+            "name": "麻木拘挛者",
+            "category": 3
+        },
+        {
+            "name": "藜",
+            "category": 0
+        },
+        {
+            "name": "清热",
+            "category": 0
+        },
+        {
+            "name": "农田荒地路旁",
+            "category": 3
+        },
+        {
+            "name": "利湿",
+            "category": 0
+        },
+        {
+            "name": "杀虫",
+            "category": 0
+        },
+        {
+            "name": "马齿苋",
+            "category": 0
+        },
+        {
+            "name": "湿热痢疾者",
+            "category": 3
+        },
+        {
+            "name": "苦参",
+            "category": 0
+        },
+        {
+            "name": "杀虫止痒",
+            "category": 3
+        },
+        {
+            "name": "外洗治湿疮痒疹",
+            "category": 3
+        },
+        {
+            "name": "马蔺",
+            "category": 0
+        },
+        {
+            "name": "干燥成熟种子",
+            "category": 3
+        },
+        {
+            "name": "清热利湿",
+            "category": 0
+        },
+        {
+            "name": "荒地路旁及山坡草丛",
+            "category": 3
+        },
+        {
+            "name": "解毒消肿",
+            "category": 0
+        },
+        {
+            "name": "止血",
+            "category": 0
+        },
+        {
+            "name": "黄疸者",
+            "category": 3
+        },
+        {
+            "name": "地榆",
+            "category": 0
+        },
+        {
+            "name": "便血者",
+            "category": 3
+        },
+        {
+            "name": "血崩者",
+            "category": 3
+        },
+        {
+            "name": "毛蕊老鹳草",
+            "category": 0
+        },
+        {
+            "name": "灌丛或山坡草地",
+            "category": 3
+        },
+        {
+            "name": "独活",
+            "category": 0
+        },
+        {
+            "name": "白术",
+            "category": 0
+        },
+        {
+            "name": "脾虚泄泻者",
+            "category": 3
+        },
+        {
+            "name": "筋骨酸痛者",
+            "category": 3
+        },
+        {
+            "name": "美花草",
+            "category": 0
+        },
+        {
+            "name": "高山草坡或疏林下",
+            "category": 3
+        },
+        {
+            "name": "增强清肝利胆作用",
+            "category": 3
+        },
+        {
+            "name": "肝炎者",
+            "category": 3
+        },
+        {
+            "name": "胆囊炎者",
+            "category": 3
+        },
+        {
+            "name": "强化清热解毒之力",
+            "category": 3
+        },
+        {
+            "name": "应对热毒较盛的痢疾",
+            "category": 3
+        },
+        {
+            "name": "肺炎者",
+            "category": 3
+        },
+        {
+            "name": "女娄菜",
+            "category": 0
+        },
+        {
+            "name": "活血调经",
+            "category": 0
+        },
+        {
+            "name": "旷野路旁草丛中",
+            "category": 3
+        },
+        {
+            "name": "健脾行水",
+            "category": 0
+        },
+        {
+            "name": "益母草",
+            "category": 0
+        },
+        {
+            "name": "月经不调者",
+            "category": 3
+        },
+        {
+            "name": "改善脾虚浮肿",
+            "category": 3
+        },
+        {
+            "name": "干燥根茎和根",
+            "category": 3
+        },
+        {
+            "name": "解表散寒",
+            "category": 0
+        },
+        {
+            "name": "林缘及灌丛内",
+            "category": 3
+        },
+        {
+            "name": "祛风胜湿",
+            "category": 0
+        },
+        {
+            "name": "止痛",
+            "category": 0
+        },
+        {
+            "name": "防风",
+            "category": 0
+        },
+        {
+            "name": "增强祛风散寒",
+            "category": 3
+        },
+        {
+            "name": "风寒感冒夹湿者",
+            "category": 3
+        },
+        {
+            "name": "协同祛风湿",
+            "category": 3
+        },
+        {
+            "name": "通利关节",
+            "category": 3
+        },
+        {
+            "name": "山地草丛、林缘及林下",
+            "category": 3
+        },
+        {
+            "name": "清湿热",
+            "category": 0
+        },
+        {
+            "name": "止痹痛",
+            "category": 0
+        },
+        {
+            "name": "退虚热",
+            "category": 0
+        },
+        {
+            "name": "增强祛风除湿",
+            "category": 3
+        },
+        {
+            "name": "湿热黄疸者",
+            "category": 3
+        },
+        {
+            "name": "肉果草",
+            "category": 0
+        },
+        {
+            "name": "清肺化痰",
+            "category": 0
+        },
+        {
+            "name": "高山草地灌丛中",
+            "category": 3
+        },
+        {
+            "name": "止咳平喘",
+            "category": 0
+        },
+        {
+            "name": "愈疮",
+            "category": 0
+        },
+        {
+            "name": "贝母",
+            "category": 0
+        },
+        {
+            "name": "咳嗽者",
+            "category": 3
+        },
+        {
+            "name": "肺脓疡",
+            "category": 3
+        },
+        {
+            "name": "茜草",
+            "category": 0
+        },
+        {
+            "name": "咯血者",
+            "category": 3
+        },
+        {
+            "name": "白芍",
+            "category": 0
+        },
+        {
+            "name": "养血调经",
+            "category": 0
+        },
+        {
+            "name": "浙江安徽四川等地",
+            "category": 3
+        },
+        {
+            "name": "敛阴止汗",
+            "category": 0
+        },
+        {
+            "name": "柔肝止痛",
+            "category": 0
+        },
+        {
+            "name": "平抑肝阳",
+            "category": 0
+        },
+        {
+            "name": "熟地",
+            "category": 0
+        },
+        {
+            "name": "血虚萎黄者",
+            "category": 3
+        },
+        {
+            "name": "脘腹者",
+            "category": 3
+        },
+        {
+            "name": "四肢挛痛者",
+            "category": 3
+        },
+        {
+            "name": "赤芍",
+            "category": 0
+        },
+        {
+            "name": "清热凉血",
+            "category": 0
+        },
+        {
+            "name": "东北华北及陕西等地",
+            "category": 3
+        },
+        {
+            "name": "散瘀止痛",
+            "category": 0
+        },
+        {
+            "name": "桃仁",
+            "category": 0
+        },
+        {
+            "name": "经闭痛经者",
+            "category": 3
+        },
+        {
+            "name": "银花",
+            "category": 0
+        },
+        {
+            "name": "痈肿疮疡者",
+            "category": 3
+        },
+        {
+            "name": "直接晒干",
+            "category": 0
+        },
+        {
+            "name": "野生品",
+            "category": 3
+        },
+        {
+            "name": "洋金花",
+            "category": 0
+        },
+        {
+            "name": "平喘止咳",
+            "category": 0
+        },
+        {
+            "name": "村边路旁荒地",
+            "category": 3
+        },
+        {
+            "name": "麻醉镇痛",
+            "category": 0
+        },
+        {
+            "name": "解痉止搐",
+            "category": 0
+        },
+        {
+            "name": "麻黄",
+            "category": 0
+        },
+        {
+            "name": "川乌",
+            "category": 0
+        },
+        {
+            "name": "多作散剂",
+            "category": 0
+        },
+        {
+            "name": "小儿慢惊者",
+            "category": 3
+        },
+        {
+            "name": "长梗喉毛花",
+            "category": 0
+        },
+        {
+            "name": "利胆",
+            "category": 0
+        },
+        {
+            "name": "沼泽草甸高山草甸",
+            "category": 3
+        },
+        {
+            "name": "退黄",
+            "category": 0
+        },
+        {
+            "name": "健胃",
+            "category": 0
+        },
+        {
+            "name": "治伤",
+            "category": 0
+        },
+        {
+            "name": "龙胆草",
+            "category": 0
+        },
+        {
+            "name": "肝热者",
+            "category": 3
+        },
+        {
+            "name": "胆热者",
+            "category": 3
+        },
+        {
+            "name": "金伤者",
+            "category": 3
+        },
+        {
+            "name": "长叶火绒草",
+            "category": 0
+        },
+        {
+            "name": "疏风清热",
+            "category": 0
+        },
+        {
+            "name": "通乳",
+            "category": 0
+        },
+        {
+            "name": "桑叶",
+            "category": 0
+        },
+        {
+            "name": "感冒发热者",
+            "category": 3
+        },
+        {
+            "name": "桔梗",
+            "category": 0
+        },
+        {
+            "name": "缓解咳嗽症状",
+            "category": 3
+        },
+        {
+            "name": "木通",
+            "category": 0
+        },
+        {
+            "name": "辅助治疗乳痈",
+            "category": 3
+        },
+        {
+            "name": "祖师麻",
+            "category": 0
+        },
+        {
+            "name": "茎皮和根皮",
+            "category": 3
+        },
+        {
+            "name": "山地灌丛中",
+            "category": 3
+        },
+        {
+            "name": "止痛散瘀",
+            "category": 0
+        },
+        {
+            "name": "四肢麻木者",
+            "category": 3
+        }
+    ],
+    "links": [
+        {
+            "source": 0,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 0,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 3,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 3,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 5,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 5,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 6,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 6,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 7,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 7,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 8,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 8,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 9,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 9,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 10,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 10,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 11,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 11,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 12,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 12,
+            "target": 4,
+            "value": "采集地点"
+        },
+        {
+            "source": 13,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 13,
+            "target": 15,
+            "value": "采集地点"
+        },
+        {
+            "source": 16,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 16,
+            "target": 15,
+            "value": "采集地点"
+        },
+        {
+            "source": 17,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 17,
+            "target": 15,
+            "value": "采集地点"
+        },
+        {
+            "source": 18,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 18,
+            "target": 19,
+            "value": "采集地点"
+        },
+        {
+            "source": 0,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 0,
+            "target": 20,
+            "value": "采集地点"
+        },
+        {
+            "source": 21,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 21,
+            "target": 22,
+            "value": "采集地点"
+        },
+        {
+            "source": 23,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 23,
+            "target": 24,
+            "value": "采集地点"
+        },
+        {
+            "source": 25,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 25,
+            "target": 26,
+            "value": "采集地点"
+        },
+        {
+            "source": 27,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 27,
+            "target": 28,
+            "value": "采集地点"
+        },
+        {
+            "source": 27,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 27,
+            "target": 29,
+            "value": "采集地点"
+        },
+        {
+            "source": 30,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 30,
+            "target": 28,
+            "value": "采集地点"
+        },
+        {
+            "source": 30,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 30,
+            "target": 29,
+            "value": "采集地点"
+        },
+        {
+            "source": 31,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 31,
+            "target": 28,
+            "value": "采集地点"
+        },
+        {
+            "source": 32,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 32,
+            "target": 29,
+            "value": "采集地点"
+        },
+        {
+            "source": 33,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 33,
+            "target": 28,
+            "value": "采集地点"
+        },
+        {
+            "source": 33,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 33,
+            "target": 29,
+            "value": "采集地点"
+        },
+        {
+            "source": 34,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 34,
+            "target": 29,
+            "value": "采集地点"
+        },
+        {
+            "source": 34,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 34,
+            "target": 28,
+            "value": "采集地点"
+        },
+        {
+            "source": 35,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 35,
+            "target": 36,
+            "value": "采集地点"
+        },
+        {
+            "source": 37,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 37,
+            "target": 38,
+            "value": "采集地点"
+        },
+        {
+            "source": 39,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 39,
+            "target": 40,
+            "value": "采集地点"
+        },
+        {
+            "source": 41,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 41,
+            "target": 40,
+            "value": "采集地点"
+        },
+        {
+            "source": 42,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 42,
+            "target": 40,
+            "value": "采集地点"
+        },
+        {
+            "source": 39,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 39,
+            "target": 43,
+            "value": "采集地点"
+        },
+        {
+            "source": 44,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 44,
+            "target": 45,
+            "value": "采集地点"
+        },
+        {
+            "source": 46,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 46,
+            "target": 47,
+            "value": "采集地点"
+        },
+        {
+            "source": 48,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 48,
+            "target": 47,
+            "value": "采集地点"
+        },
+        {
+            "source": 49,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 49,
+            "target": 47,
+            "value": "采集地点"
+        },
+        {
+            "source": 50,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 50,
+            "target": 51,
+            "value": "采集地点"
+        },
+        {
+            "source": 52,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 52,
+            "target": 53,
+            "value": "采集地点"
+        },
+        {
+            "source": 54,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 54,
+            "target": 55,
+            "value": "采集地点"
+        },
+        {
+            "source": 56,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 56,
+            "target": 57,
+            "value": "采集地点"
+        },
+        {
+            "source": 58,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 58,
+            "target": 59,
+            "value": "采集地点"
+        },
+        {
+            "source": 58,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 58,
+            "target": 60,
+            "value": "采集地点"
+        },
+        {
+            "source": 61,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 61,
+            "target": 60,
+            "value": "采集地点"
+        },
+        {
+            "source": 61,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 61,
+            "target": 59,
+            "value": "采集地点"
+        },
+        {
+            "source": 62,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 62,
+            "target": 63,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 65,
+            "value": "采集地点"
+        },
+        {
+            "source": 66,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 66,
+            "target": 67,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 69,
+            "value": "采集地点"
+        },
+        {
+            "source": 70,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 70,
+            "target": 71,
+            "value": "采集地点"
+        },
+        {
+            "source": 72,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 72,
+            "target": 73,
+            "value": "采集地点"
+        },
+        {
+            "source": 74,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 74,
+            "target": 73,
+            "value": "采集地点"
+        },
+        {
+            "source": 75,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 75,
+            "target": 76,
+            "value": "采集地点"
+        },
+        {
+            "source": 52,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 52,
+            "target": 77,
+            "value": "采集地点"
+        },
+        {
+            "source": 78,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 78,
+            "target": 79,
+            "value": "采集地点"
+        },
+        {
+            "source": 80,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 80,
+            "target": 81,
+            "value": "采集地点"
+        },
+        {
+            "source": 82,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 82,
+            "target": 83,
+            "value": "采集地点"
+        },
+        {
+            "source": 84,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 84,
+            "target": 85,
+            "value": "采集地点"
+        },
+        {
+            "source": 86,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 86,
+            "target": 87,
+            "value": "采集地点"
+        },
+        {
+            "source": 88,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 88,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 90,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 90,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 91,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 91,
+            "target": 92,
+            "value": "采集地点"
+        },
+        {
+            "source": 93,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 93,
+            "target": 94,
+            "value": "采集地点"
+        },
+        {
+            "source": 95,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 95,
+            "target": 96,
+            "value": "采集地点"
+        },
+        {
+            "source": 97,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 97,
+            "target": 96,
+            "value": "采集地点"
+        },
+        {
+            "source": 98,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 98,
+            "target": 99,
+            "value": "采集地点"
+        },
+        {
+            "source": 98,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 98,
+            "target": 100,
+            "value": "采集地点"
+        },
+        {
+            "source": 98,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 98,
+            "target": 101,
+            "value": "采集地点"
+        },
+        {
+            "source": 102,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 102,
+            "target": 57,
+            "value": "采集地点"
+        },
+        {
+            "source": 103,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 103,
+            "target": 104,
+            "value": "采集地点"
+        },
+        {
+            "source": 105,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 105,
+            "target": 104,
+            "value": "采集地点"
+        },
+        {
+            "source": 106,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 106,
+            "target": 107,
+            "value": "采集地点"
+        },
+        {
+            "source": 106,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 106,
+            "target": 108,
+            "value": "采集地点"
+        },
+        {
+            "source": 109,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 109,
+            "target": 110,
+            "value": "采集地点"
+        },
+        {
+            "source": 109,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 109,
+            "target": 111,
+            "value": "采集地点"
+        },
+        {
+            "source": 78,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 78,
+            "target": 96,
+            "value": "采集地点"
+        },
+        {
+            "source": 112,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 112,
+            "target": 57,
+            "value": "采集地点"
+        },
+        {
+            "source": 103,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 103,
+            "target": 113,
+            "value": "采集地点"
+        },
+        {
+            "source": 105,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 105,
+            "target": 113,
+            "value": "采集地点"
+        },
+        {
+            "source": 114,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 114,
+            "target": 113,
+            "value": "采集地点"
+        },
+        {
+            "source": 115,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 115,
+            "target": 116,
+            "value": "采集地点"
+        },
+        {
+            "source": 117,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 117,
+            "target": 118,
+            "value": "采集地点"
+        },
+        {
+            "source": 117,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 117,
+            "target": 119,
+            "value": "采集地点"
+        },
+        {
+            "source": 117,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 117,
+            "target": 92,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 120,
+            "value": "采集地点"
+        },
+        {
+            "source": 121,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 121,
+            "target": 122,
+            "value": "采集地点"
+        },
+        {
+            "source": 123,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 123,
+            "target": 92,
+            "value": "采集地点"
+        },
+        {
+            "source": 124,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 124,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 125,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 125,
+            "target": 126,
+            "value": "采集地点"
+        },
+        {
+            "source": 127,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 127,
+            "target": 128,
+            "value": "采集地点"
+        },
+        {
+            "source": 30,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 30,
+            "target": 128,
+            "value": "采集地点"
+        },
+        {
+            "source": 114,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 114,
+            "target": 128,
+            "value": "采集地点"
+        },
+        {
+            "source": 129,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 129,
+            "target": 130,
+            "value": "采集地点"
+        },
+        {
+            "source": 131,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 131,
+            "target": 132,
+            "value": "采集地点"
+        },
+        {
+            "source": 131,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 131,
+            "target": 133,
+            "value": "采集地点"
+        },
+        {
+            "source": 121,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 121,
+            "target": 134,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 125,
+            "value": "采集地点"
+        },
+        {
+            "source": 135,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 135,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 136,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 136,
+            "target": 137,
+            "value": "采集地点"
+        },
+        {
+            "source": 138,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 138,
+            "target": 137,
+            "value": "采集地点"
+        },
+        {
+            "source": 139,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 139,
+            "target": 122,
+            "value": "采集地点"
+        },
+        {
+            "source": 140,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 140,
+            "target": 141,
+            "value": "采集地点"
+        },
+        {
+            "source": 140,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 140,
+            "target": 142,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 143,
+            "value": "采集地点"
+        },
+        {
+            "source": 121,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 121,
+            "target": 144,
+            "value": "采集地点"
+        },
+        {
+            "source": 145,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 145,
+            "target": 146,
+            "value": "采集地点"
+        },
+        {
+            "source": 147,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 147,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 149,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 149,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 150,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 150,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 151,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 151,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 152,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 152,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 153,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 153,
+            "target": 148,
+            "value": "采集地点"
+        },
+        {
+            "source": 154,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 154,
+            "target": 155,
+            "value": "采集地点"
+        },
+        {
+            "source": 154,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 154,
+            "target": 156,
+            "value": "采集地点"
+        },
+        {
+            "source": 157,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 157,
+            "target": 158,
+            "value": "采集地点"
+        },
+        {
+            "source": 157,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 157,
+            "target": 159,
+            "value": "采集地点"
+        },
+        {
+            "source": 160,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 160,
+            "target": 161,
+            "value": "采集地点"
+        },
+        {
+            "source": 162,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 162,
+            "target": 163,
+            "value": "采集地点"
+        },
+        {
+            "source": 164,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 164,
+            "target": 163,
+            "value": "采集地点"
+        },
+        {
+            "source": 93,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 93,
+            "target": 165,
+            "value": "采集地点"
+        },
+        {
+            "source": 93,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 93,
+            "target": 166,
+            "value": "采集地点"
+        },
+        {
+            "source": 167,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 167,
+            "target": 168,
+            "value": "采集地点"
+        },
+        {
+            "source": 167,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 167,
+            "target": 169,
+            "value": "采集地点"
+        },
+        {
+            "source": 78,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 78,
+            "target": 170,
+            "value": "采集地点"
+        },
+        {
+            "source": 171,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 171,
+            "target": 172,
+            "value": "采集地点"
+        },
+        {
+            "source": 173,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 173,
+            "target": 174,
+            "value": "采集地点"
+        },
+        {
+            "source": 175,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 175,
+            "target": 176,
+            "value": "采集地点"
+        },
+        {
+            "source": 177,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 177,
+            "target": 178,
+            "value": "采集地点"
+        },
+        {
+            "source": 179,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 179,
+            "target": 180,
+            "value": "采集地点"
+        },
+        {
+            "source": 181,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 181,
+            "target": 180,
+            "value": "采集地点"
+        },
+        {
+            "source": 182,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 182,
+            "target": 180,
+            "value": "采集地点"
+        },
+        {
+            "source": 183,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 183,
+            "target": 184,
+            "value": "采集地点"
+        },
+        {
+            "source": 52,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 52,
+            "target": 185,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 186,
+            "value": "采集地点"
+        },
+        {
+            "source": 80,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 80,
+            "target": 187,
+            "value": "采集地点"
+        },
+        {
+            "source": 188,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 188,
+            "target": 189,
+            "value": "采集地点"
+        },
+        {
+            "source": 190,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 190,
+            "target": 191,
+            "value": "采集地点"
+        },
+        {
+            "source": 192,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 192,
+            "target": 193,
+            "value": "采集地点"
+        },
+        {
+            "source": 194,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 194,
+            "target": 195,
+            "value": "采集地点"
+        },
+        {
+            "source": 136,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 136,
+            "target": 196,
+            "value": "采集地点"
+        },
+        {
+            "source": 197,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 197,
+            "target": 196,
+            "value": "采集地点"
+        },
+        {
+            "source": 198,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 198,
+            "target": 199,
+            "value": "采集地点"
+        },
+        {
+            "source": 198,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 198,
+            "target": 200,
+            "value": "采集地点"
+        },
+        {
+            "source": 198,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 198,
+            "target": 201,
+            "value": "采集地点"
+        },
+        {
+            "source": 202,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 202,
+            "target": 203,
+            "value": "采集地点"
+        },
+        {
+            "source": 202,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 202,
+            "target": 204,
+            "value": "采集地点"
+        },
+        {
+            "source": 205,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 205,
+            "target": 206,
+            "value": "采集地点"
+        },
+        {
+            "source": 207,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 207,
+            "target": 208,
+            "value": "采集地点"
+        },
+        {
+            "source": 209,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 209,
+            "target": 208,
+            "value": "采集地点"
+        },
+        {
+            "source": 3,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 3,
+            "target": 208,
+            "value": "采集地点"
+        },
+        {
+            "source": 210,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 210,
+            "target": 211,
+            "value": "采集地点"
+        },
+        {
+            "source": 210,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 210,
+            "target": 212,
+            "value": "采集地点"
+        },
+        {
+            "source": 213,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 213,
+            "target": 214,
+            "value": "采集地点"
+        },
+        {
+            "source": 213,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 213,
+            "target": 215,
+            "value": "采集地点"
+        },
+        {
+            "source": 216,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 216,
+            "target": 217,
+            "value": "采集地点"
+        },
+        {
+            "source": 218,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 218,
+            "target": 219,
+            "value": "采集地点"
+        },
+        {
+            "source": 220,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 220,
+            "target": 219,
+            "value": "采集地点"
+        },
+        {
+            "source": 221,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 221,
+            "target": 222,
+            "value": "采集地点"
+        },
+        {
+            "source": 157,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 157,
+            "target": 223,
+            "value": "采集地点"
+        },
+        {
+            "source": 224,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 224,
+            "target": 225,
+            "value": "采集地点"
+        },
+        {
+            "source": 226,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 226,
+            "target": 227,
+            "value": "采集地点"
+        },
+        {
+            "source": 228,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 228,
+            "target": 229,
+            "value": "采集地点"
+        },
+        {
+            "source": 230,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 230,
+            "target": 87,
+            "value": "采集地点"
+        },
+        {
+            "source": 231,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 231,
+            "target": 232,
+            "value": "采集地点"
+        },
+        {
+            "source": 233,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 233,
+            "target": 232,
+            "value": "采集地点"
+        },
+        {
+            "source": 234,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 234,
+            "target": 232,
+            "value": "采集地点"
+        },
+        {
+            "source": 235,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 235,
+            "target": 236,
+            "value": "采集地点"
+        },
+        {
+            "source": 62,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 62,
+            "target": 237,
+            "value": "采集地点"
+        },
+        {
+            "source": 190,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 190,
+            "target": 238,
+            "value": "采集地点"
+        },
+        {
+            "source": 239,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 239,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 240,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 240,
+            "target": 241,
+            "value": "采集地点"
+        },
+        {
+            "source": 242,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 242,
+            "target": 241,
+            "value": "采集地点"
+        },
+        {
+            "source": 243,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 243,
+            "target": 241,
+            "value": "采集地点"
+        },
+        {
+            "source": 244,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 244,
+            "target": 245,
+            "value": "采集地点"
+        },
+        {
+            "source": 246,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 246,
+            "target": 58,
+            "value": "采集地点"
+        },
+        {
+            "source": 246,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 246,
+            "target": 247,
+            "value": "采集地点"
+        },
+        {
+            "source": 246,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 246,
+            "target": 248,
+            "value": "采集地点"
+        },
+        {
+            "source": 249,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 249,
+            "target": 250,
+            "value": "采集地点"
+        },
+        {
+            "source": 251,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 251,
+            "target": 252,
+            "value": "采集地点"
+        },
+        {
+            "source": 253,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 253,
+            "target": 252,
+            "value": "采集地点"
+        },
+        {
+            "source": 254,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 254,
+            "target": 252,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 255,
+            "value": "采集地点"
+        },
+        {
+            "source": 256,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 256,
+            "target": 209,
+            "value": "采集地点"
+        },
+        {
+            "source": 256,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 256,
+            "target": 257,
+            "value": "采集地点"
+        },
+        {
+            "source": 256,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 256,
+            "target": 258,
+            "value": "采集地点"
+        },
+        {
+            "source": 259,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 259,
+            "target": 87,
+            "value": "采集地点"
+        },
+        {
+            "source": 231,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 231,
+            "target": 260,
+            "value": "采集地点"
+        },
+        {
+            "source": 233,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 233,
+            "target": 260,
+            "value": "采集地点"
+        },
+        {
+            "source": 234,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 234,
+            "target": 260,
+            "value": "采集地点"
+        },
+        {
+            "source": 261,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 261,
+            "target": 107,
+            "value": "采集地点"
+        },
+        {
+            "source": 262,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 262,
+            "target": 263,
+            "value": "采集地点"
+        },
+        {
+            "source": 190,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 190,
+            "target": 264,
+            "value": "采集地点"
+        },
+        {
+            "source": 265,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 265,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 136,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 136,
+            "target": 266,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 267,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 268,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 269,
+            "value": "采集地点"
+        },
+        {
+            "source": 62,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 62,
+            "target": 270,
+            "value": "采集地点"
+        },
+        {
+            "source": 62,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 62,
+            "target": 271,
+            "value": "采集地点"
+        },
+        {
+            "source": 62,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 62,
+            "target": 272,
+            "value": "采集地点"
+        },
+        {
+            "source": 273,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 273,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 274,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 274,
+            "target": 275,
+            "value": "采集地点"
+        },
+        {
+            "source": 276,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 276,
+            "target": 275,
+            "value": "采集地点"
+        },
+        {
+            "source": 253,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 253,
+            "target": 275,
+            "value": "采集地点"
+        },
+        {
+            "source": 277,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 277,
+            "target": 278,
+            "value": "采集地点"
+        },
+        {
+            "source": 262,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 262,
+            "target": 276,
+            "value": "采集地点"
+        },
+        {
+            "source": 262,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 262,
+            "target": 279,
+            "value": "采集地点"
+        },
+        {
+            "source": 106,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 106,
+            "target": 280,
+            "value": "采集地点"
+        },
+        {
+            "source": 281,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 281,
+            "target": 282,
+            "value": "采集地点"
+        },
+        {
+            "source": 283,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 283,
+            "target": 282,
+            "value": "采集地点"
+        },
+        {
+            "source": 284,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 284,
+            "target": 282,
+            "value": "采集地点"
+        },
+        {
+            "source": 285,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 285,
+            "target": 286,
+            "value": "采集地点"
+        },
+        {
+            "source": 285,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 285,
+            "target": 287,
+            "value": "采集地点"
+        },
+        {
+            "source": 261,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 261,
+            "target": 288,
+            "value": "采集地点"
+        },
+        {
+            "source": 261,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 261,
+            "target": 289,
+            "value": "采集地点"
+        },
+        {
+            "source": 261,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 261,
+            "target": 120,
+            "value": "采集地点"
+        },
+        {
+            "source": 115,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 115,
+            "target": 217,
+            "value": "采集地点"
+        },
+        {
+            "source": 231,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 231,
+            "target": 290,
+            "value": "采集地点"
+        },
+        {
+            "source": 291,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 291,
+            "target": 290,
+            "value": "采集地点"
+        },
+        {
+            "source": 292,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 292,
+            "target": 290,
+            "value": "采集地点"
+        },
+        {
+            "source": 293,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 293,
+            "target": 290,
+            "value": "采集地点"
+        },
+        {
+            "source": 285,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 285,
+            "target": 294,
+            "value": "采集地点"
+        },
+        {
+            "source": 285,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 285,
+            "target": 120,
+            "value": "采集地点"
+        },
+        {
+            "source": 64,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 64,
+            "target": 295,
+            "value": "采集地点"
+        },
+        {
+            "source": 296,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 296,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 297,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 297,
+            "target": 298,
+            "value": "采集地点"
+        },
+        {
+            "source": 299,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 299,
+            "target": 298,
+            "value": "采集地点"
+        },
+        {
+            "source": 300,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 300,
+            "target": 298,
+            "value": "采集地点"
+        },
+        {
+            "source": 254,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 254,
+            "target": 298,
+            "value": "采集地点"
+        },
+        {
+            "source": 301,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 301,
+            "target": 302,
+            "value": "采集地点"
+        },
+        {
+            "source": 301,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 301,
+            "target": 303,
+            "value": "采集地点"
+        },
+        {
+            "source": 304,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 304,
+            "target": 305,
+            "value": "采集地点"
+        },
+        {
+            "source": 306,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 306,
+            "target": 217,
+            "value": "采集地点"
+        },
+        {
+            "source": 307,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 307,
+            "target": 308,
+            "value": "采集地点"
+        },
+        {
+            "source": 309,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 309,
+            "target": 308,
+            "value": "采集地点"
+        },
+        {
+            "source": 310,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 310,
+            "target": 308,
+            "value": "采集地点"
+        },
+        {
+            "source": 311,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 311,
+            "target": 308,
+            "value": "采集地点"
+        },
+        {
+            "source": 312,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 312,
+            "target": 313,
+            "value": "采集地点"
+        },
+        {
+            "source": 37,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 37,
+            "target": 314,
+            "value": "采集地点"
+        },
+        {
+            "source": 37,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 37,
+            "target": 315,
+            "value": "采集地点"
+        },
+        {
+            "source": 316,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 316,
+            "target": 217,
+            "value": "采集地点"
+        },
+        {
+            "source": 317,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 317,
+            "target": 318,
+            "value": "采集地点"
+        },
+        {
+            "source": 319,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 319,
+            "target": 318,
+            "value": "采集地点"
+        },
+        {
+            "source": 320,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 320,
+            "target": 321,
+            "value": "采集地点"
+        },
+        {
+            "source": 322,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 322,
+            "target": 136,
+            "value": "采集地点"
+        },
+        {
+            "source": 322,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 322,
+            "target": 323,
+            "value": "采集地点"
+        },
+        {
+            "source": 324,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 324,
+            "target": 325,
+            "value": "采集地点"
+        },
+        {
+            "source": 326,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 326,
+            "target": 195,
+            "value": "采集地点"
+        },
+        {
+            "source": 327,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 327,
+            "target": 328,
+            "value": "采集地点"
+        },
+        {
+            "source": 329,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 329,
+            "target": 328,
+            "value": "采集地点"
+        },
+        {
+            "source": 330,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 330,
+            "target": 328,
+            "value": "采集地点"
+        },
+        {
+            "source": 331,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 331,
+            "target": 38,
+            "value": "采集地点"
+        },
+        {
+            "source": 332,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 332,
+            "target": 120,
+            "value": "采集地点"
+        },
+        {
+            "source": 333,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 333,
+            "target": 334,
+            "value": "采集地点"
+        },
+        {
+            "source": 335,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 335,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 336,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 336,
+            "target": 337,
+            "value": "采集地点"
+        },
+        {
+            "source": 338,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 338,
+            "target": 337,
+            "value": "采集地点"
+        },
+        {
+            "source": 240,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 240,
+            "target": 337,
+            "value": "采集地点"
+        },
+        {
+            "source": 339,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 339,
+            "target": 337,
+            "value": "采集地点"
+        },
+        {
+            "source": 340,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 340,
+            "target": 337,
+            "value": "采集地点"
+        },
+        {
+            "source": 341,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 341,
+            "target": 342,
+            "value": "采集地点"
+        },
+        {
+            "source": 341,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 341,
+            "target": 343,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 344,
+            "value": "采集地点"
+        },
+        {
+            "source": 345,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 345,
+            "target": 2,
+            "value": "采集地点"
+        },
+        {
+            "source": 346,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 346,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 30,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 30,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 138,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 138,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 347,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 347,
+            "target": 89,
+            "value": "采集地点"
+        },
+        {
+            "source": 348,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 348,
+            "target": 349,
+            "value": "采集地点"
+        },
+        {
+            "source": 350,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 350,
+            "target": 351,
+            "value": "采集地点"
+        },
+        {
+            "source": 352,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 352,
+            "target": 142,
+            "value": "采集地点"
+        },
+        {
+            "source": 121,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 121,
+            "target": 353,
+            "value": "采集地点"
+        },
+        {
+            "source": 354,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 354,
+            "target": 355,
+            "value": "采集地点"
+        },
+        {
+            "source": 103,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 103,
+            "target": 356,
+            "value": "采集地点"
+        },
+        {
+            "source": 357,
+            "target": 1,
+            "value": "配伍药材"
+        },
+        {
+            "source": 357,
+            "target": 356,
+            "value": "采集地点"
+        },
+        {
+            "source": 261,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 261,
+            "target": 120,
+            "value": "采集地点"
+        },
+        {
+            "source": 68,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 68,
+            "target": 358,
+            "value": "采集地点"
+        },
+        {
+            "source": 226,
+            "target": 14,
+            "value": "配伍药材"
+        },
+        {
+            "source": 226,
+            "target": 92,
+            "value": "采集地点"
+        }
+    ]
+}

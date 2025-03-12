@@ -1,0 +1,105 @@
+.button-container .button {
+    color:white;
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 150px;
+}
+
+.container {
+    margin-top: 150px;
+    margin-left: 260px;
+}
+
+/* 添加新植物表单样式 */
+#add-plant-form {
+    margin-right: 500px;
+}
+#add-plant-form {
+    .mb-4 {
+        color:white;
+        font-weight: 600;
+    }
+}
+
+#add-plant-form div.mb-4 {
+    @apply mb-4;
+}
+
+#add-plant-form label {
+    @apply block text-gray-200 font-bold mb-2;
+}
+
+#add-plant-form input, #add-plant-form textarea {
+    color:white;
+}
+
+/* 卡片样式 */
+#plant-cards {
+    background-color: transparent;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+#plant-cards div {
+    background-color: transparent;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(146, 88, 173, 0.7);
+    margin: 20px;
+}
+
+#plant-cards div h2 {
+    color:white;
+}
+
+#plant-cards div p {
+    color:white;
+}
+
+#plant-cards .plant-card .row {
+    color:white;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.row {
+    color:white;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(146, 88, 173, 0.7);
+    padding: 20px;
+}
+
+span {
+    color:white;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#plant-cards .plant-card .edit {
+    color:#EB5E66;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 15px;
+}
+
+.input {
+    background: transparent;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 50px;
+    border: white solid 2px;
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+    <style>
+        .my-container {
+            margin-top: 150px;
+            margin-left: 150px;
+        }
+        .conta {
+            font-size: 80px;
+            font-family: Microsoft YaHei, sans-serif;
+            font-weight: 600;
+        }
+        .username {
+            font-family: Microsoft YaHei, sans-serif;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="violet-glow"></div>
+<header class="blurry-navbar">
+    <div class="navbar-content">
+        <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+        <nav>
+            <ul>
+                <li><a href="recognize.html">图片识别</a></li>
+                <li><a href="graph.html">知识图谱</a></li>
+                <li><a href="database.html">数据库</a></li>
+                <li><a href="admin_login.html">管理中心</a></li>
+                <li><a href="me.html">个人中心</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div>
+    <div class="my-container">
+        <div class="username">你好: </div>
+        <br>
+        <div class="conta">用户中心</div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <button class="button_me" onclick="back()">返回首页</button>
+        <button class="button_me" onclick="logOut()">退出登录</button>
+        <button class="button_me" onclick="resetPassword()">修改密码</button>
+    </div>
+
+</div>
+<script src="/js/jquery.min.js"></script>
+<script>
+    $.ajax({
+        type: "post",
+        url: "/me",
+        success: function (username) {
+            console.log("[me]获取到的用户信息为:" + username);
+            let finalHtml = document.querySelector(".username");
+            finalHtml.innerHTML = "你好: " + username;
+        }
+    });
+    function back() {
+        location.href = "recognize.html";
+    }
+    function logOut() {
+        location.href = "login.html";
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon3.gif">
+    <link rel="shortcut icon" href="images/favicon3.gif">
+    <style>
+        /* 定义基本样式 */
+        #plant-cards .plant-card {
+            background: transparent;
+            padding: 15px;
+            /* 添加一些内边距 */
+            border-radius: 8px;
+            /* 圆角边框 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* 添加过渡效果 */
+            transform: translateY(0);
+            /* 初始状态 */
+            box-shadow: 0 4px 8px rgba(236, 106, 92, 0.7);
+            /* 初始阴影，使用RGB颜色 */
+        }
+
+        /* 当鼠标悬停在卡片上时的样式 */
+        #plant-cards .plant-card:hover {
+            transform: translateY(-10px);
+            /* 向上抬起10px */
+            box-shadow: 0 8px 16px rgba(236, 106, 92, 0.9);
+            /* 扩散半径更大，透明度更高，使阴影更重 */
+        }
+
+        /* 文字样式 */
+        #plant-cards .plant-card .row {
+            color: white;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        span {
+            color: white;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        #plant-cards .plant-card .edit {
+            color: #23B2CA;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 15px;
+        }
+
+        hr {
+            color: white;
+        }
+
+        .add {
+            margin-left: 50px;
+            background: transparent;
+            padding: 15px;
+            /* 添加一些内边距 */
+            border-radius: 8px;
+            /* 圆角边框 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* 添加过渡效果 */
+            transform: translateY(0);
+            /* 初始状态 */
+            box-shadow: 0 4px 8px rgba(236, 106, 92, 0.7);
+            /* 初始阴影，使用RGB颜色 */
+        }
+
+        .add:hover {
+            transform: translateY(-10px);
+            /* 向上抬起10px */
+            box-shadow: 0 8px 16px rgba(236, 106, 92, 0.9);
+            /* 扩散半径更大，透明度更高，使阴影更重 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize.html">图片识别</a></li>
+                    <li><a href="graph.html">知识图谱</a></li>
+                    <li><a href="database.html">数据库</a></li>
+                    <li><a href="admin_login.html">管理中心</a></li>
+                    <li><a href="me.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+
+    </div>
+    <div class="plant-card" onclick="add()">
+        <span onclick="add()" class="add">添加新植物</span>
+
+        <div id="plant-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+            <!--            <div class="plant-card">-->
+            <!--                <span class="row">名称: </span><br>-->
+            <!--                <span class="row">分类: </span><br>-->
+            <!--                <span class="row">药效指数: </span><br>-->
+            <!--                <span class="row">分布: </span><br>-->
+            <!--                <span class="row">描述: </span><br>-->
+            <!--                <span class="row">功效: </span><br>-->
+            <!--                <a class="edit" href="edit.html">编辑 </a><br>-->
+            <!--                <button class="edit">删除 </button><br>-->
+            <!--            </div>-->
+
+        </div>
+        <script>
+            $.ajax({
+                type: "get",
+                url: "/database",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+                    "Access-Control-Allow-Credentials": "true"
+                },
+                xhrFields: {
+                    withCredentials: true // 如果需要发送凭证（如 cookies），必须设置此项
+                },
+                success: function (medicines) {
+                    console.log(medicines);
+                    var finalHtml = "";
+                    for (var i = 0; i < medicines.length; i++) {
+                        var medicine = medicines[i];
+                        finalHtml += '<div class="plant-card" data-id="' + i + '">';
+                        finalHtml += '<span class="row" id="name">名称: ' + escapeHtml(medicine.name) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<span class="row">分类: ' + escapeHtml(medicine.category) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<span class="row">药效指数: ' + escapeHtml(medicine.efficacyScore) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<span class="row">分布: ' + escapeHtml(medicine.distribution) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<span class="row">描述: ' + escapeHtml(medicine.description) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<span class="row">功效: ' + escapeHtml(medicine.usage) + '</span><br>';
+                        finalHtml += '<hr>';
+                        finalHtml += '<a id="edit" href="edit.html" color="#EB5E66">编辑 </a><br>';
+                        finalHtml += '<button id="edit" onclick="del(this)">删除 </button><br>';
+                        finalHtml += '</div>';
+                    }
+                    $("#plant-cards").append(finalHtml);
+                    var addHtml = "";
+                    addHtml += '<div class="plant-card" onclick="add()">';
+                    addHtml += '<span onclick="add()">添加新植物</span>';
+                    $("#plant-cards").append(addHtml);
+                }
+            });
+
+            function add() {
+                location.href = "add.html";
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            function del(button) {
+                var card = button.closest('.plant-card');
+                var index = card.getAttribute('data-id');
+                var nameElement = card.querySelector('#name');
+                var nameText = nameElement.textContent || nameElement.innerText;
+                var nameValue = nameText.replace('名称: ', '');
+
+                if (confirm("确定要删除吗？")) {
+                    $.ajax({
+                        type: "post",
+                        url: "/del",
+                        data: {
+                            name: nameValue,
+                            index: index
+                        },
+                        success: function (result) {
+                            console.log(result);
+                            if (result === true) {
+                                alert("删除成功");
+                                card.remove();
+                            } else {
+                                alert("删除失败");
+                            }
+                        }
+                    });
+                }
+            }
+        </script>
+
+</body>
+
+</html>

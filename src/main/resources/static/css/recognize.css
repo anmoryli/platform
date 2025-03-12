@@ -1,0 +1,173 @@
+* {
+    color:white;
+}
+
+/* recognize.css */
+h1 {
+    color: white;
+    font-size: 50px;
+    font-family: "Microsoft YaHei";
+    text-align: center;
+}
+
+.control h1 {
+    color: white;
+    font-size: 50px;
+    font-family: "Microsoft YaHei";
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.recognize {
+   position: relative;
+   margin-top: 50px;
+   width: 100%;
+   height: 400px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   overflow: hidden;
+   margin-right: 30px;
+}
+
+/* img-preview {
+    position: absolute;
+    margin-right: 30px;
+    width: 400px;
+    height: 400px;
+    border: 1px solid #ccc;
+} */
+
+.recognize .control h1 {
+    font-size: 50px;
+    font-family: "Microsoft YaHei";
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 90px;
+}
+
+.button1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 按钮居中 */
+    margin: 20px auto;
+    padding: 10px 20px;
+    color: white;
+    font-size: 15px;
+    font-family: "Microsoft YaHei";
+    font-weight: 600;
+    border-radius: 20px;
+    border: 2px solid white;
+    letter-spacing: 5px;
+    /* 文字居中 */
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+    margin-left: 20px;
+}
+
+@media (max-width: 768px) {
+    .control { flex-direction: column; }
+    .button1, .button2 { width: 100% !important; }
+}
+
+.button2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 按钮居中 */
+    margin: 20px auto;
+    padding: 10px 20px;
+    color: white;
+    font-size: 15px;
+    font-family: "Microsoft YaHei";
+    font-weight: 600;
+    border-radius: 20px;
+    border: 2px solid white;
+    letter-spacing: 5px;
+    /* 文字居中 */
+    text-align: center;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+    margin-left: 20px;
+}
+
+.button1:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease;
+}
+
+.button1:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+.button2:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease;
+}
+
+.button2:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+.result {
+    margin-left: 20px;
+    background-color: transparent; /* 设置背景颜色为透明 */
+    color: white; /* 设置字体颜色为白色 */
+}
+
+.output{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: transparent; /* 设置背景颜色为透明 */
+    color: white; /* 设置字体颜色为白色 */
+    border: 1px solid white; /* 设置边框颜色为白色 */
+    border-radius: 40px;
+    width: 200px;
+    height: 40px;
+    text-align: center;
+}
+
+p {
+    font-size: 20px;
+    font-family: "Microsoft YaHei";
+    font-weight: 600;
+}
+
+.title h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    font-size: 100px;
+    font-weight: 600;
+    font-family: "Microsoft YaHei";
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    border-right: 2px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* recognize.css */
+
+/* 定义一个向左移动的动画 */
+@keyframes slideLeft {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-30%); /* 根据需要调整偏移量 */
+    }
+}
+
+/* 应用动画的类 */
+.slide-left {
+    animation: slideLeft 1s forwards; /* 1秒内完成动画，并保持最终状态 */
+}

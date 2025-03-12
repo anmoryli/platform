@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>图片识别</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+</head>
+
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize.html">图片识别</a></li>
+                    <li><a href="graph.html">知识图谱</a></li>
+                    <li><a href="database.html">数据库</a></li>
+                    <li><a href="admin_login.html">管理中心</a></li>
+                    <li><a href="me.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="title animate">
+        <h1>上传你的图片</h1>
+    </div>
+    <div class="recognize">
+        <div class="img-preview">
+            <img id="preview" src="/images/recognize.gif" alt="图片预览">
+        </div>
+        <div class="control">
+            <h1 id="header">开始识别</h1>
+            <div class="result">
+                <p id="result">识别结果：</p>
+                <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+            </div>
+            <span class="button1">
+                <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
+            </span>
+            <span class="button2">
+                <button id="startButton" onclick="recognize()">开始识别</button>
+                <button id="testButton">test</button>
+
+            </span>
+        </div>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        function refresh() {
+            document.getElementById("resultText").value = "";
+            document.getElementById("header").textContent = "开始识别";
+        }
+
+        function recognize() {
+            let filesInput = document.getElementById('uploadButton');
+            let imgPreview = document.getElementById('preview');
+
+            const file = filesInput.files[0];
+            if (!file) {
+                alert("请选择一个文件");
+                return;
+            }
+            imgPreview.src = URL.createObjectURL(file);
+            console.log(imgPreview.src);
+
+            let formData = new FormData();
+            formData.append("file", file); // 直接上传文件对象
+
+            // 获取h1标签并修改其内容
+            const headerElement = document.getElementById('header');
+            headerElement.textContent = '正在识别，请稍后...';
+
+            $.ajax({
+                type: "POST",
+                url: "/recognize",
+                data: formData,
+                contentType: false,  // 必须设置为 false
+                processData: false,  // 必须设置为 false
+                success: function (result) {
+                    console.log(result);
+                    if (result === "") {
+                        alert("识别失败");
+                    } else {
+                        // 获取h1标签并修改其内容
+                        headerElement.textContent = '识别成功';
+                        document.getElementById("resultText").value = result;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    alert("识别过程中发生错误，请重试！");
+                }
+            });
+        }
+
+        // 图片预览
+        let filesInput = document.getElementById('uploadButton');
+        let imgPreview = document.getElementById('preview');
+
+        filesInput.addEventListener('change', function () {
+            const file = filesInput.files[0];
+            if (file) {
+                imgPreview.src = URL.createObjectURL(file);
+            }
+        });
+
+        // 点击 test 按钮时触发动画
+        document.getElementById('testButton').addEventListener('click', function () {
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.add('slide-left');
+        });
+
+        // 确保按钮点击事件也能够触发识别函数
+        document.getElementById('recognizeButton').addEventListener('click', recognize);
+    </script>
+</body>
+
+</html>

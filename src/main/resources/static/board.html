@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据展示</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+</head>
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize.html">图片识别</a></li>
+                    <li><a href="graph.html">知识图谱</a></li>
+                    <li><a href="database.html">数据库</a></li>
+                    <li><a href="board.html">数据显示</a></li>
+                    <li><a href="me.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 图表容器 -->
+    <div class="chart-container">
+        <div class="chart-row">
+            <div id="chart1" class="chart-item"></div>
+            <div id="chart2" class="chart-item"></div>
+        </div>
+        <div class="chart-row">
+            <div id="chart3" class="chart-item"></div>
+            <div id="chart4" class="chart-item"></div>
+        </div>
+        <div class="chart-row">
+            <div id="chart5" class="chart-item"></div>
+            <div id="chart6" class="chart-item"></div>
+        </div>
+    </div>
+
+    <!-- 外部引入的JS文件 -->
+    <script src="js/board.js"></script>
+</body>
+</html>

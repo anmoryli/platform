@@ -1,0 +1,22 @@
+/* 图表容器样式 */
+.chart-container {
+    margin-top: 100px; /* 与顶部的距离 */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 行间距 */
+}
+
+/* 每行样式 */
+.chart-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* 列间距 */
+}
+
+/* 每个图表样式 */
+.chart-item {
+    width: 48%; /* 每行两个图表，留出间距 */
+    height: 400px; /* 图表高度 */
+    background-color: transparent; /* 透明背景 */
+}

@@ -1,0 +1,200 @@
+.bot-container {
+    /* 设置这个容器在页面右边 */
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 500px;
+    height: 85%;
+    margin-top: 100px;
+    border-radius: 20px;
+    /* 设置边框阴影 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /* 设置背景颜色 */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 设置透明度 */
+    opacity: 0.9;
+    /* 设置过渡效果 */
+    transition: opacity 0.5s ease;
+}
+
+.bot-container .input-container {
+   /* 设置在bot-container容器的页面底部  */
+    position: fixed;
+    bottom: 0;
+    width: 32%;
+    height: 15%;
+    margin-top: 100px;
+    
+}
+
+.loadBtn {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   /* 按钮居中 */
+   margin: 0px auto;
+   padding: 10px 20px;
+}
+
+.send-edit {
+    display: flex;
+   align-items: center;
+   justify-content: left;
+   margin: 0px auto;
+   padding: 10px 20px;
+}
+
+.input {
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    color: white;
+    /* 文字内容居左但有空隙 */
+    text-align: left;
+    /* 文字边界 */
+    padding: 10px;
+    width: 85%;
+}
+
+#sendBtn {
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    /* 文字边界 */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 10px;
+    width: 20%;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+#sendBtn:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease; 
+}
+
+#sendBtn:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+#imgBtn {
+    margin-right: 20px;
+    border-radius: 50px;
+    border: 2px solid white;
+    padding:5px;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+#imgBtn:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease; 
+}
+
+#imgBtn:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+#voiceBtn {
+    margin-right: 20px;
+    border-radius: 50px;
+    border: 2px solid white;
+    padding:5px;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+#voiceBtn:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease; 
+}
+
+#voiceBtn:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+#videoBtn {
+    margin-right: 20px;
+    border-radius: 50px;
+    border: 2px solid white;
+    padding:5px;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+#videoBtn:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease; 
+}
+
+#videoBtn:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
+}
+
+@keyframes slow {
+    from {
+        background-color: transparent;
+    }
+    to {
+        background-color: #B01ECA;
+    }
+}
+
+@keyframes leave {
+    from {
+        background-color: #B01ECA;
+    }
+    to {
+        background-color: transparent;
+    }
+}
+
+.chat-container {
+    padding: 20px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.message {
+    margin: 10px 0;
+    display: flex;
+    align-items: flex-start;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.bot-message {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.user-message .message-bubble {
+    background-color: #258af6;
+    color: white;
+}
+
+.bot-message .message-bubble {
+    background-color: #e9ecef;
+    color: black;
+}
