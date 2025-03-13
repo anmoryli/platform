@@ -34,8 +34,8 @@ import java.util.*;
 public class BotController {
 
     private static final Logger log = LoggerFactory.getLogger(BotController.class);
-    private static final String API_URL = "https://api.deepseek.com"; // 替换为实际的AI服务端点
-    private static final String AUTH_TOKEN = "Bearer sk-c1de8d51734546a8ba435dd905c3b02b"; // 替换为你的访问令牌
+    private static final String API_URL = "https://spark-api-open.xf-yun.com/v1/chat/completions"; // 替换为实际的AI服务端点
+    private static final String AUTH_TOKEN = "Bearer CTQUYSHCIGdRVonLfhjF:pFWDzXNDyCVEzsxFqcHG"; // 替换为你的访问令牌
 
     @RequestMapping("/chat")
     public String chat(@RequestBody Map<String, String> request) {
@@ -53,7 +53,7 @@ public class BotController {
 
             // 构建请求体
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "deepseek-chat"); // 根据需求选择模型版本
+            requestBody.put("model", "4.0Ultra"); // 根据需求选择模型版本
             List<Map<String, String>> messages = new ArrayList<>();
 
             // 系统角色消息
