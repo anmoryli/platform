@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+    <!-- 为ECharts准备一个具备大小（宽高）的DOM -->
+    <div id="main" style="width: 100%; height: 600px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 异步加载数据
+        $.get('/echarts').done(function (data) {
+            console.log(data);
+
+            var categories = [
+                { name: '药材', color: '#5470c6' },
+                { name: '功能', color: '#91cc75' },
+                { name: '症状', color: '#fac858' },
+                { name: '部位', color: '#ee6666' },
+                { name: '成分', color: '#73c0de' },
+                { name: '未知', color: '#bda29a' }  // 添加未知类别
+            ];
+
+            var nodes = data.nodes.map(function (node) {
+                return {
+                    name: node.name,
+                    category: categories.findIndex(function (category) {
+                        return category.name === node.category;
+                    }),
+                    symbolSize: 50,  // 设置节点大小
+                    itemStyle: {
+                        color: categories[categories.findIndex(function (category) {
+                            return category.name === node.category;
+                        })].color
+                    }
+                };
+            });
+
+            var links = data.links.map(function (link) {
+                return {
+                    source: link.source,
+                    target: link.target
+                };
+            });
+
+            var option = {
+                title: {
+                    text: '知识图谱'
+                },
+                tooltip: {},
+                legend: [{
+                    data: categories.map(function (a) {
+                        return a.name;
+                    })
+                }],
+                series: [{
+                    name: '知识图谱',
+                    type: 'graph',
+                    layout: 'force',
+                    data: nodes,
+                    links: links,
+                    categories: categories,
+                    roam: true,
+                    label: {
+                        show: true,
+                        position: 'inside',  // 确保标签在节点内部
+                        formatter: '{b}',  // 使用节点名称作为标签
+                        fontSize: 12,  // 调整字体大小以适应节点
+                        color: '#fff'  // 设置标签颜色为白色以提高可读性
+                    },
+                    force: {
+                        initLayout: 'circular',  // 初始布局方式
+                        repulsion: 1000,  // 斥力大小
+                        gravity: 0.1,  // 重力大小
+                        edgeLength: [50, 100],  // 边的长度范围
+                        friction: 0.6  // 摩擦系数
+                    },
+                    emphasis: {
+                        focus: 'adjacency',
+                        lineStyle: {
+                            width: 2
+                        }
+                    },
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                    }
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+            // 监听鼠标事件，确保节点可以被拖动
+            myChart.getZr().on('mousemove', function (params) {
+                myChart.dispatchAction({
+                    type: 'highlight',
+                    seriesIndex: 0,
+                    dataIndex: params.target.dataIndex
+                });
+            });
+
+            myChart.getZr().on('mouseout', function (params) {
+                myChart.dispatchAction({
+                    type: 'downplay',
+                    seriesIndex: 0,
+                    dataIndex: params.target.dataIndex
+                });
+            });
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching data:", textStatus, errorThrown);
+        });
+    </script>
+</body>
+</html>

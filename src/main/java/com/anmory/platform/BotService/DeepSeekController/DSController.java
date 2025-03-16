@@ -1,30 +1,22 @@
 package com.anmory.platform.BotService.DeepSeekController;
-
 import com.anmory.platform.BotService.Controller.BotController;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.StringEntity;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,52 +28,181 @@ import java.util.Map;
 @RestController
 public class DSController {
     private static final Logger log = LoggerFactory.getLogger(BotController.class);
-    private static final String API_URL = "https://api.deepseek.com"; // 替换为实际的AI服务端点
-    private static final String AUTH_TOKEN = "Bearer sk-c1de8d51734546a8ba435dd905c3b02b"; // 替换为你的访问令牌
+    private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
+    private static final String API_KEY = "sk-c1de8d51734546a8ba435dd905c3b02b";
 
     @RequestMapping("/ds_chat")
-    public static String chat(Map<String, String> userInput) {
-        ObjectMapper mapper = new ObjectMapper();
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(API_URL);
-        httpPost.setHeader("Content-Type", "application/json");
-        httpPost.setHeader("Authorization", AUTH_TOKEN);
+    public static String chat(@RequestBody Map<String, String> requestMap) throws IOException {
+        String userInput = requestMap.get("userInput");
+        System.out.println(userInput);
+        // 创建请求体
+        var requestBody = new JsonObject();
+        requestBody.addProperty("model", "deepseek-chat");
+        requestBody.addProperty("stream", false);
 
-        try {
-            String jsonInputString = mapper.writeValueAsString(userInput);
-            StringEntity entity = new StringEntity(jsonInputString);
-            httpPost.setEntity(entity);
+        // 添加消息
+        JsonObject systemMessage = new JsonObject();
+        systemMessage.addProperty("role", "system");
+        systemMessage.addProperty("content", "你是一个藏药材知识方面的专家，致力于回答人们的问题，仅限于你的专业领域");
 
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                HttpEntity responseEntity = response.getEntity();
-                if (responseEntity != null) {
-                    String result = EntityUtils.toString(responseEntity);
-                    JsonNode rootNode = mapper.readTree(result);
-                    JsonNode contentNode = rootNode.path("content");
-                    if (!contentNode.isMissingNode()) {
-                        return contentNode.asText();
-                    } else {
-                        System.out.println("DeepSeekController - Error: No content field in the response.");
-                        return "AI助手无响应";
-                    }
-                } else {
-                    System.out.println("DeepSeekController - Error: No response entity.");
-                    return "AI助手无响应";
-                }
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+        JsonObject userMessage = new JsonObject();
+        userMessage.addProperty("role", "user");
+        userMessage.addProperty("content", userInput);
+
+        JsonArray messages = new JsonArray();
+        messages.add(systemMessage);
+        messages.add(userMessage);
+        requestBody.add("messages", messages);
+
+        // 记录请求体
+        System.out.println("Request Body" + requestBody);
+        // 发送HTTP POST请求
+        URL url = new URL(BASE_URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", "Bearer " + API_KEY);
+        conn.setRequestProperty("Content-Type", "application/json"); // 修正 Content-Type
+        conn.setDoOutput(true);
+
+        // 记录请求头
+        System.out.println("Request Headers:" + conn.getRequestProperties());
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] input = requestBody.toString().getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("Response Code: " + responseCode);
+        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
-        } catch (JsonProcessingException e) {
-            System.out.println("DeepSeekController - Error processing JSON: " + e.getMessage());
-            return "AI助手无响应";
-        } catch (IOException e) {
-            System.out.println("DeepSeekController - Error during HTTP request: " + e.getMessage());
-            return "AI助手无响应";
-        } finally {
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                System.out.println("DeepSeekController - Error closing HTTP client: " + e.getMessage());
+            in.close();
+
+            // 记录响应内容
+            System.out.println("Response Body: " + response.toString());
+
+            // 解析并打印响应内容
+            Gson gson = new Gson();
+            JsonObject jsonResponse = gson.fromJson(response.toString(), JsonObject.class);
+            String replyContent = jsonResponse.getAsJsonArray("choices")
+                    .get(0).getAsJsonObject()
+                    .get("message").getAsJsonObject()
+                    .get("content").getAsString();
+            return replyContent;
+
+        } else {
+            // 记录错误响应内容
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"));
+            String errorLine;
+            StringBuilder errorResponse = new StringBuilder();
+            while ((errorLine = errorReader.readLine()) != null) {
+                errorResponse.append(errorLine);
+            }
+            errorReader.close();
+        }
+        return "访问出错";
+    }
+
+    @RequestMapping("/stream_chat")
+//    public static void streamChat(@RequestBody Map<String, String> requestMap, HttpServletResponse response) throws IOException {
+    public static void streamChat(String userInput, HttpServletResponse response) throws IOException {
+//        String userInput = requestMap.get("userInput");
+        System.out.println(userInput);
+
+        // 创建请求体
+        var requestBody = new JsonObject();
+        requestBody.addProperty("model", "deepseek-chat");
+        requestBody.addProperty("stream", true);
+
+        // 添加消息
+        JsonObject systemMessage = new JsonObject();
+        systemMessage.addProperty("role", "system");
+        systemMessage.addProperty("content", "你是一个藏药材知识方面的专家，致力于回答人们的问题，仅限于你的专业领域");
+
+        JsonObject userMessage = new JsonObject();
+        userMessage.addProperty("role", "user");
+        userMessage.addProperty("content", userInput);
+
+        JsonArray messages = new JsonArray();
+        messages.add(systemMessage);
+        messages.add(userMessage);
+        requestBody.add("messages", messages);
+
+        // 记录请求体
+        System.out.println("Request Body: " + requestBody);
+
+        // 发送HTTP POST请求
+        URL url = new URL(BASE_URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", "Bearer " + API_KEY);
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+
+        // 记录请求头
+        System.out.println("Request Headers: " + conn.getRequestProperties());
+
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] input = requestBody.toString().getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
+        }
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("Response Code: " + responseCode);
+
+        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            String inputLine;
+            StringBuilder responseData = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                if (!inputLine.isEmpty() && !inputLine.startsWith("data: [DONE]")) {
+                    // 解析每一块数据
+                    JsonObject chunk = parseChunk(inputLine);
+                    if (chunk != null) {
+                        handleChunk(chunk, response);
+                    }
+                }
+            }
+            in.close();
+        } else {
+            // 记录错误响应内容
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+            String errorLine;
+            StringBuilder errorResponse = new StringBuilder();
+            while ((errorLine = errorReader.readLine()) != null) {
+                errorResponse.append(errorLine);
+            }
+            errorReader.close();
+            System.out.println("Error Response: " + errorResponse.toString());
+        }
+    }
+
+    private static JsonObject parseChunk(String line) {
+        if (line.startsWith("data: ")) {
+            line = line.substring(6); // 去掉"data: "
+        }
+        try {
+            return new Gson().fromJson(line, JsonObject.class);
+        } catch (JsonSyntaxException e) {
+            log.error("Failed to parse chunk: {}", line, e);
+            return null;
+        }
+    }
+
+    private static void handleChunk(JsonObject chunk, HttpServletResponse httpResponse) throws IOException {
+        JsonArray choices = chunk.getAsJsonArray("choices");
+        if (choices != null && choices.size() > 0) {
+            JsonObject delta = choices.get(0).getAsJsonObject().get("delta").getAsJsonObject();
+            if (delta.has("content")) {
+                String content = delta.get("content").getAsString();
+                httpResponse.getWriter().write(content);
+                httpResponse.getWriter().flush(); // 立即刷新输出流，确保客户端能及时接收到数据
             }
         }
     }

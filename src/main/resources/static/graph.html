@@ -243,7 +243,7 @@
             </span>
         </div>
     </div>
-
+<script src="/js/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             // 发送消息
@@ -253,7 +253,7 @@
                     alert("请输入内容");
                     return;
                 }
-
+                console.log(userInput);
                 // 显示用户消息
                 appendMessage(userInput, 'user-message');
 
@@ -263,11 +263,12 @@
                 // 发送 AJAX 请求
                 $.ajax({
                     type: "POST",
-                    url: "/chat",
+                    url: "/ds_chat",
                     contentType: "application/json",
                     data: JSON.stringify({ userInput: userInput }),
                     success: function (response) {
                         // 显示 AI 回复
+                        console.log(response);
                         appendMessage(response, 'bot-message');
                     },
                     error: function (xhr, status, error) {
