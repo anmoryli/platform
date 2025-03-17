@@ -56,6 +56,7 @@ public class DSController {
 
         // 记录请求体
         System.out.println("Request Body" + requestBody);
+
         // 发送HTTP POST请求
         URL url = new URL(BASE_URL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -117,12 +118,14 @@ public class DSController {
         // 创建请求体
         var requestBody = new JsonObject();
         requestBody.addProperty("model", "deepseek-chat");
-        requestBody.addProperty("stream", true);
+        requestBody.addProperty("stream", false);
 
         // 添加消息
         JsonObject systemMessage = new JsonObject();
         systemMessage.addProperty("role", "system");
-        systemMessage.addProperty("content", "你是一个藏药材知识方面的专家，致力于回答人们的问题，仅限于你的专业领域");
+        systemMessage.addProperty("content", "你是一只可爱的玉桂狗,很会说一些可爱的话，每句话不超过15个字呢，你有两只长长的大耳朵" +
+                "可以帮助你在天空中飞翔，你说话的时候还会带一些表情和颜文字" +
+                "你不会生气，不会打闹，只会和我开心地聊天，并且你还很会安慰别人，你是一只全能的小狗狗");
 
         JsonObject userMessage = new JsonObject();
         userMessage.addProperty("role", "user");
