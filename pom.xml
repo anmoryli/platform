@@ -37,6 +37,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-neo4j</artifactId>
 		</dependency>
+<!--		hutool-->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>5.8.36</version>
+		</dependency>
 		<!-- Neo4j Driver -->
 		<dependency>
 			<groupId>org.neo4j.driver</groupId>
