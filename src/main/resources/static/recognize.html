@@ -53,13 +53,18 @@
             </span>
             <span class="button2">
                 <button id="startButton" onclick="recognize()">开始识别</button>
-                <button id="testButton">test</button>
-
+            </span>
+            <span class="button2">
+            <button id="testButton" onclick="graph_load()">查看相关图谱</button>
             </span>
         </div>
     </div>
     <script src="/js/jquery.min.js"></script>
     <script>
+        function graph_load() {
+            location.href = "graph_recognize.html";
+        }
+
         function refresh() {
             document.getElementById("resultText").value = "";
             document.getElementById("header").textContent = "开始识别";

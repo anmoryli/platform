@@ -30,6 +30,11 @@ public class GetAllController {
         return getAllService.getEChartsData();
     }
 
+    @GetMapping("/echartsByName")
+    public Map<String, Object> getRelatedEChartsDataByName(String name) {
+        return getAllService.getRelatedEChartsDataByName(name);
+    }
+
     // 在spring关闭应用时，关闭neo4j连接
     @PreDestroy
     public void cleanup() {

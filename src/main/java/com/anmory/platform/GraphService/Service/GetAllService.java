@@ -1,13 +1,8 @@
 package com.anmory.platform.GraphService.Service;
 
-import org.neo4j.driver.Session;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Result;
+import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 import org.springframework.stereotype.Service;
-
-import org.neo4j.driver.Driver;
 
 import java.util.*;
 
@@ -133,7 +128,6 @@ public class GetAllService {
         if (labels == null || labels.isEmpty()) {
             return "未知";
         }
-
         if (labels.contains("Herb")) {
             return "药材";
         } else if (labels.contains("Effect")) {
@@ -147,6 +141,78 @@ public class GetAllService {
         }
 
         return "未知";
+    }
+
+//    根据名称查询节点信息
+public Map<String, Object> getRelatedEChartsDataByName(String name) {
+    List<Map<String, Object>> nodes = new ArrayList<>();
+    List<Map<String, Object>> links = new ArrayList<>();
+
+    try (Session session = driver.session()) {
+        // 查询与特定节点相关的所有节点及其关系
+        Result result = session.run(
+                "MATCH (startNode {name: $name})-[r]->(endNode) " +
+                        "RETURN startNode, r, endNode " +
+                        "UNION " +
+                        "MATCH (startNode)-[r]->(endNode {name: $name}) " +
+                        "RETURN startNode, r, endNode",
+                Values.parameters("name", name)
+        );
+
+        Set<String> uniqueNames = new HashSet<>(); // 用于去重
+
+        while (result.hasNext()) {
+            Record record = result.next();
+            Map<String, Object> node1 = record.get("startNode").asMap();
+            Map<String, Object> node2 = record.get("endNode").asMap();
+            Map<String, Object> relationship = record.get("r").asMap();
+
+            // 添加两个节点到nodes列表中，并确保名字不重复
+            addUniqueNode(nodes, uniqueNames, node1);
+            addUniqueNode(nodes, uniqueNames, node2);
+
+            // 添加关系（边）
+            Map<String, Object> link = new HashMap<>();
+            link.put("source", node1.get("name"));
+            link.put("target", node2.get("name"));
+            link.put("relationship", relationship); // 如果需要展示关系类型或属性
+            links.add(link);
+        }
+
+        // 处理没有关系但与指定节点同名的情况（如果有必要）
+        if (!uniqueNames.contains(name)) {
+            Result isolatedNodesResult = session.run("MATCH (n {name: $name}) RETURN n", Values.parameters("name", name));
+            while (isolatedNodesResult.hasNext()) {
+                Record record = isolatedNodesResult.next();
+                Map<String, Object> isolatedNode = record.get("n").asMap();
+                addUniqueNode(nodes, uniqueNames, isolatedNode);
+            }
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    Map<String, Object> echartsData = new HashMap<>();
+    echartsData.put("nodes", nodes);
+    echartsData.put("links", links);
+
+    return echartsData;
+}
+
+    private void addUniqueNode(List<Map<String, Object>> nodes, Set<String> uniqueNames, Map<String, Object> properties) {
+        String nodeName = (String) properties.get("name");
+        if (nodeName == null || !uniqueNames.add(nodeName)) { // 使用Set来确保唯一性
+            return; // 跳过没有名字的节点或已存在的节点
+        }
+
+        Map<String, Object> node = new HashMap<>();
+        node.put("name", nodeName);
+        node.put("category", getCategory(properties));
+        if (properties.containsKey("origin")) {
+            node.put("origin", properties.get("origin"));
+        }
+        nodes.add(node);
     }
 
     /**

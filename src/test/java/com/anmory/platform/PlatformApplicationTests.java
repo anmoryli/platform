@@ -6,6 +6,7 @@ import cn.hutool.core.lang.Console;
 import cn.hutool.core.thread.ConcurrencyTester;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.RuntimeUtil;
 import cn.hutool.system.SystemUtil;
 import com.anmory.platform.GraphService.Dao.Herb;
 import com.anmory.platform.GraphService.Repository.HerbRepo;
@@ -60,4 +61,15 @@ class PlatformApplicationTests {
 		Console.log(tester.getInterval());
 	}
 
+	@Test
+	void command() {
+		String str = RuntimeUtil.execForStr("ipconfig");
+		System.out.println(str);
+	}
+
+	@Test
+	void lombok() {
+		Stu stu = new Stu();
+		stu.setName("hhh");
+	}
 }
