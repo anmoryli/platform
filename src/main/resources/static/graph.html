@@ -1,212 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>藏药植物药知识平台</title>
+    <title>知识图谱</title>
     <link rel="stylesheet" href="/css/recognize.css">
     <link rel="stylesheet" href="/css/database.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/graph.css">
     <link rel="stylesheet" href="/css/board.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <!-- 设置网页图标 -->
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
-     
-     <!--JAVASCRIPT-->
-     <!--=================================================-->
- 
-     <!--Pace - Page Load Progress Par [OPTIONAL]-->
-     <link href="css/pace.min.css" rel="stylesheet">
-    
-     <script src="js/pace.min.js"></script>
-    
- 
- 
-     <!--jQuery [ REQUIRED ]-->
-     <script src="js/jquery-2.2.4.min.js"></script>
- 
- 
-     <!--BootstrapJS [ RECOMMENDED ]-->
-     <script src="js/bootstrap.min.js"></script>
- 
- 
-     <!--NiftyJS [ RECOMMENDED ]-->
-     <script src="js/nifty.min.js"></script>
-     <script src="js/icons.js"></script>
- 
-     
-     <script src="js/echarts.min.js"></script>
- 
- 
-     <!--=================================================-->
-     
-     <!--Demo script [ DEMONSTRATION ]-->
-     <script src="js/nifty-demo.min.js"></script>
+
+    <!--JAVASCRIPT-->
+    <!--=================================================-->
+
+    <!--Pace - Page Load Progress Par [OPTIONAL]-->
+    <link href="css/pace.min.css" rel="stylesheet">
+
+    <script src="js/pace.min.js"></script>
+
+
+
+    <!--jQuery [ REQUIRED ]-->
+    <script src="js/jquery-2.2.4.min.js"></script>
+
+
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="js/nifty.min.js"></script>
+    <script src="js/icons.js"></script>
+
+
+    <script src="js/echarts.min.js"></script>
+
+
+    <!--=================================================-->
+
+    <!--Demo script [ DEMONSTRATION ]-->
+    <script src="js/nifty-demo.min.js"></script>
     <!-- 引入 ECharts 文件 -->
     <script>
-        // 在文档加载完成后执行
         $(document).ready(function () {
             // 获取图表容器元素
             var chartDom = document.getElementById('main');
-            // 初始化图表
             var myChart = echarts.init(chartDom);
             var option;
-
-            // 确保图表在窗口大小改变时也能正确调整大小
-            window.onresize = function () {
-                myChart.resize();
-            };
-
-            // 初始化数据结构
-            var rela = { "data": [], "links": [] };
-            console.log("初始化后的rela:" + rela);
-
-            // 获取JSON数据
-            $.ajaxSetup({ async: false });
-            $.getJSON('/data/data.json', function (json) {
-                rela = json;
-                console.log("获取到的JSON数据：" + rela);
-            });
 
             // 显示加载动画
             myChart.showLoading();
 
-            // 设置图表选项
-            option = {
-                title: {
-                    textStyle: {
-                        fontWeight: "lighter",
+            /**
+             * 通用函数：加载数据并渲染图表
+             * @param url 请求的接口地址
+             * @param params 请求参数（可选）
+             */
+            function loadDataAndRenderChart(url, params) {
+                $.getJSON(url, params, function (json) {
+                    console.log("正在发送请求到:", url, "参数:", params);
+                    // 检查返回的数据是否存在
+                    if (!json || !Array.isArray(json.data) || !Array.isArray(json.links)) {
+                        alert("未找到相关数据！");
+                        myChart.hideLoading();
+                        return;
                     }
-                },
-                animationDurationUpdate: 1500,
-                animationEasingUpdate: 'quinticInOut',
-                legend: {
-                    x: "center",
-                    show: true,
-                    data: ["药材名称", "功效/配伍药材", "使用方法", "采集地点", "特殊用法"]
-                },
-                series: [
-                    {
-                        type: 'graph',
-                        layout: 'force',
-                        symbolSize: 45,
-                        edgeSymbol: ['circle', 'arrow'],
-                        edgeSymbolSize: [4, 4],
-                        edgeLabel: {
-                            normal: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: 10
-                                },
-                                formatter: "{c}"
-                            }
-                        },
-                        force: {
-                            repulsion: 4000,
-                            edgeLength: [100, 100],
-                            gravity: 0.3, // 减少引力让节点移动更快
-                            layoutAnimation: true, // 确保开启布局动画
-                        },
-                        focusNodeAdjacency: true,
-                        draggable: true,
-                        roam: true,
-                        categories: [
-                            { name: '药材名称' },
-                            { name: '功效/配伍药材' },
-                            { name: '使用方法' },
-                            { name: '采集地点' },
-                            { name: '特殊用法' }
-                        ],
-                        label: {
-                            normal: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: 12
-                                },
-                            }
-                        },
-                        tooltip: {
-                            formatter: function (params) {
-                                if (!params.value) {
-                                    return params.data.name;
-                                } else {
-                                    return params.data.name + ":" + params.data.value;
+
+                    // 打印搜索到的数据
+                    console.log("原始响应数据:", json); // 打印原始数据
+                    console.log("搜索的数据: " + JSON.stringify(json)); // 打印字符串化的数据
+
+                    // 使用新数据重新渲染图表
+                    renderChart(json.data, json.links);
+
+                    // 隐藏加载动画
+                    myChart.hideLoading();
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data: ", textStatus, errorThrown);
+                    myChart.hideLoading();
+                    alert("无法从服务器获取数据，请稍后再试。");
+                });
+            }
+
+            function renderChart(data, links) {
+                var option = {
+                    title: {
+                        text: '药材关系图',
+                        textStyle: {
+                            fontWeight: "lighter",
+                        }
+                    },
+                    animationDurationUpdate: 1500,
+                    animationEasingUpdate: 'quinticInOut',
+                    legend: {
+                        x: "center",
+                        show: true,
+                        data: ["药材名称", "配伍药材", "药效", "采集地点", "藏药"]
+                    },
+                    series: [
+                        {
+                            type: 'graph',
+                            layout: 'force',
+                            symbolSize: 60,
+                            edgeSymbol: ['circle', 'arrow'],
+                            edgeSymbolSize: [4, 4],
+                            edgeLabel: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 10
+                                    },
+                                    formatter: "{c}"
                                 }
                             },
-                        },
-                        lineStyle: {
-                            normal: {
-                                opacity: 0.9,
-                                width: 1,
-                                curveness: 0.3
-                            }
-                        },
-                        nodes: rela.data.map(function (node, idx) {
-                            node.id = idx;
-                            return node;
-                        }),
-                        links: rela.links,
-                        linkStyle: {
-                            normal: {
-                                lineStyle: {
-                                    width: 2,
-                                    type: 'solid',
-                                    color: '#666'
-                                },
-                                label: {
+                            force: {
+                                repulsion: 4000,
+                                edgeLength: [100, 100],
+                                gravity: 0.3,
+                                layoutAnimation: true,
+                            },
+                            focusNodeAdjacency: true,
+                            draggable: true,
+                            roam: true,
+                            categories: [
+                                { name: '药材名称' },
+                                { name: '配伍药材' },
+                                { name: '药效' },
+                                { name: '采集地点' },
+                                { name: '藏药' }
+                            ],
+                            label: {
+                                normal: {
                                     show: true,
-                                    position: 'end',
-                                    formatter: '{b}'
+                                    textStyle: {
+                                        fontSize: 12
+                                    },
+                                }
+                            },
+                            tooltip: {
+                                formatter: function (params) {
+                                    if (!params.value) {
+                                        return params.data.name;
+                                    } else {
+                                        return params.data.name + ": " + params.data.value;
+                                    }
+                                },
+                            },
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.9,
+                                    width: 1,
+                                    curveness: 0
+                                }
+                            },
+                            nodes: data.map(function (node, idx) {
+                                node.id = idx; // 确保每个节点有唯一的 id
+                                return node;
+                            }),
+                            links: links,
+                            linkStyle: {
+                                normal: {
+                                    lineStyle: {
+                                        width: 2,
+                                        type: 'solid',
+                                        color: '#666'
+                                    },
+                                    label: {
+                                        show: true,
+                                        position: 'end',
+                                        formatter: '{b}'
+                                    }
                                 }
                             }
                         }
-                    }
-                ]
-            };
+                    ]
+                };
 
-            // 隐藏加载动画并设置图表选项
-            myChart.hideLoading();
-            myChart.setOption(option);
+                // 设置图表选项
+                myChart.setOption(option);
+            }
 
-            // 添加点击事件监听器以放大节点
-            myChart.on('click', function (params) {
-                if (params.dataType === 'node') {
-                    const center = [params.event.offsetX, params.event.offsetY];
-                    myChart.dispatchAction({
-                        type: 'takeGlobalCursor',
-                        key: 'dragging',
-                        to: center
-                    });
-                    myChart.setOption({
-                        series: [{
-                            zoom: 0.1,
-                            center: center
-                        }]
-                    });
+            // 页面加载时，默认加载所有数据
+            loadDataAndRenderChart('http://localhost:8080/echarts');
+
+            // 搜索按钮点击事件
+            $('#search-button').on('click', function () {
+                var keyword = $('#search-input').val().trim(); // 获取输入框中的关键词
+                if (!keyword) {
+                    alert("请输入关键词！");
+                    return;
                 }
+
+                // 显示加载动画
+                myChart.showLoading();
+
+                // 加载与关键词相关的数据
+                loadDataAndRenderChart('http://localhost:8080/queryByName', { name: keyword });
             });
 
-            // 添加双击事件监听器以重置视图
-            myChart.on('dblclick', function () {
-                myChart.setOption({
-                    series: [{
-                        zoom: 1,
-                        center: ['100%', '100%']
-                    }]
-                });
+            $('#show-all').on('click', function () {
+                // 显示加载动画
+                myChart.showLoading();
+                // 加载与关键词相关的数据
+                loadDataAndRenderChart('http://localhost:8080/echarts');
             });
         });
     </script>
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
         }
+
         #main {
             height: 100%;
             width: 100%;
@@ -214,9 +228,17 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div id="main"></div>
+    <!-- 显示在顶层 -->
+    <div id="search-container">
+        <label for="search-input"></label><input type="text" id="search-input" placeholder="请输入关键词">
+        <button id="search-button">搜索</button>
+        <button id="show-all">展示全部</button>
+    </div>
+    <div id="main">
+    </div>
     <div class="violet-glow"></div>
     <header class="blurry-navbar">
         <div class="navbar-content">
@@ -226,7 +248,7 @@
                     <li><a href="recognize.html">图片识别</a></li>
                     <li><a href="graph.html">知识图谱</a></li>
                     <li><a href="database.html">数据库</a></li>
-                <li><a href="admin_login.html">管理中心</a></li>
+                    <li><a href="admin_login.html">管理中心</a></li>
                     <li><a href="me.html">个人中心</a></li>
                 </ul>
             </nav>
@@ -238,9 +260,7 @@
         </div>
         <div class="input-container">
             <span class="loadBtn">
-                <button id="imgBtn">上传文件</button>
                 <button id="voiceBtn">点击录音</button>
-                <button id="videoBtn">生成视频</button>
             </span>
             <span class="send-edit">
                 <input type="text" placeholder="输入内容" class="input" id="userInput">
@@ -248,7 +268,7 @@
             </span>
         </div>
     </div>
-<script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             // 发送消息
@@ -297,7 +317,7 @@
                 }, 2000);
             }
         });
-        
     </script>
 </body>
+
 </html>

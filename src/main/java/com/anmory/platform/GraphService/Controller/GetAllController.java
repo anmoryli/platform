@@ -2,8 +2,10 @@ package com.anmory.platform.GraphService.Controller;
 
 import com.anmory.platform.GraphService.Service.GetAllService;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.Map;
  * @date 2025-03-15 下午9:11
  */
 
+@Slf4j
 @RestController
 public class GetAllController {
     @Autowired
@@ -27,12 +30,14 @@ public class GetAllController {
 
     @GetMapping("/echarts")
     public Map<String, Object> getEChartsData() {
+        log.info("获取nodes数据成功");
         return getAllService.getEChartsData();
     }
 
-    @GetMapping("/echartsByName")
-    public Map<String, Object> getRelatedEChartsDataByName(String name) {
-        return getAllService.getRelatedEChartsDataByName(name);
+    @GetMapping("/queryByName")
+    public Map<String, Object> queryByName(@RequestParam String name) {
+        log.info("[queryByName]获取结点成功");
+        return getAllService.query(name);
     }
 
     // 在spring关闭应用时，关闭neo4j连接

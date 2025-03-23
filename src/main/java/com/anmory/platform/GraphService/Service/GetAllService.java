@@ -6,221 +6,226 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-/**
- * @author Anmory/李梦杰
- * @description TODO
- * @date 2025-03-15 下午9:11
- */
-
 @Service
 public class GetAllService {
-    // 定义一个私有的、最终的Driver对象，用于与Neo4j数据库建立连接
     private final Driver driver;
 
-    /**
-     * 构造方法，初始化Database驱动
-     * 通过"bolt://localhost:7687"地址以及用户名"neo4j"和密码"lmjnb666"来创建与Neo4j数据库的连接
-     */
     public GetAllService() {
         this.driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "lmjnb666"));
     }
 
-    /**
-     * 获取数据库中所有节点的信息
-     *
-     * @return 返回一个包含所有节点属性的列表，每个节点的属性以Map形式存储
-     */
+    // 获取节点类别（返回数字）
+    private int getCategory(String category) {
+        Map<String, Integer> categoryMap = new HashMap<>();
+        // 分配数字给每个类别
+        categoryMap.put("藏药", 0);         // 藏药
+        categoryMap.put("药效", 1);         // 药效
+        categoryMap.put("配伍", 2);         // 配伍
+        categoryMap.put("采集地点", 3);     // 采集地点
+
+        // 如果遇到未知的类别，则返回一个默认值，比如4
+        return categoryMap.getOrDefault(category, 4); // 默认返回 4 表示未知类别
+    }
+
     public List<Map<String, Object>> getAllNodes() {
         List<Map<String, Object>> nodes = new ArrayList<>();
-
-        // 创建一个Session对象，用于执行数据库操作，并确保在使用完毕后关闭Session
         try (Session session = driver.session()) {
-            // 执行Cypher查询语句，匹配并返回数据库中的所有节点及其属性
-            Result result = session.run("MATCH (n) RETURN properties(n)");
-
-            // 遍历查询结果，提取每个节点的属性
+            Result result = session.run("MATCH (n:药材) RETURN n");
             while (result.hasNext()) {
                 Record record = result.next();
-                // 打印当前节点的属性
-                System.out.println(record.get("properties(n)"));
-                // 将节点属性转换为Map对象，并添加到节点列表中
-                Map<String, Object> nodeProperties = record.get("properties(n)").asMap();
+                Map<String, Object> nodeProperties = nodeToMap(record.get("n").asNode());
                 nodes.add(nodeProperties);
             }
         } catch (Exception e) {
-            // 打印异常信息，以便于调试和日志记录
             e.printStackTrace();
         }
-
-        // 返回包含所有节点属性的列表
         return nodes;
     }
 
     public Map<String, Object> getEChartsData() {
-        List<Map<String, Object>> nodes = new ArrayList<>();
-        List<Map<String, Object>> links = new ArrayList<>();
+        // 初始化 JSON 数据结构
+        Map<String, Object> jsonData = new HashMap<>();
+        List<Map<String, Object>> data = new ArrayList<>();  // 存储节点
+        List<Map<String, Object>> links = new ArrayList<>(); // 存储关系
+        jsonData.put("data", data);
+        jsonData.put("links", links);
+
+        // 查询所有节点和关系的 Cypher 语句
+        String query = "MATCH (p)-[r]->(n) RETURN p.Name AS pName, r.relation AS relation, n.Name AS nName, p.cate AS pCate, n.cate AS nCate";
+
+        // 辅助数据结构
+        Set<String> uniqueNodes = new HashSet<>(); // 用于去重节点
+        Map<String, Integer> nameDict = new HashMap<>(); // 节点名称到索引的映射
+        int count = 0;
 
         try (Session session = driver.session()) {
-            // 获取所有节点及其关系
-            Result result = session.run(
-                    "MATCH (n)-[r]->(m) RETURN n, r, m"
-            );
+            // 第一步：查询所有节点和关系
+            Result result = session.run(query);
 
+            // 遍历结果，收集唯一节点
             while (result.hasNext()) {
                 Record record = result.next();
-                Map<String, Object> startNode = record.get("n").asMap();
-                Map<String, Object> endNode = record.get("m").asMap();
-                Map<String, Object> relationship = record.get("r").asMap();
+                String pName = record.get("pName").asString();
+                String nName = record.get("nName").asString();
+                String pCate = record.get("pCate").asString();
+                String nCate = record.get("nCate").asString();
 
-                addNode(nodes, startNode);
-                addNode(nodes, endNode);
-
-                Map<String, Object> link = new HashMap<>();
-                link.put("source", startNode.get("name"));
-                link.put("target", endNode.get("name"));
-                link.put("relationship", relationship); // 如果需要展示关系类型或属性
-                links.add(link);
+                // 添加节点到唯一集合
+                uniqueNodes.add(pName + "_" + pCate);
+                uniqueNodes.add(nName + "_" + nCate);
             }
 
-            // 处理没有关系的孤立节点
-            Result isolatedNodesResult = session.run("MATCH (n) WHERE NOT (n)--() RETURN n");
+            // 第二步：为每个唯一节点分配索引并添加到 data 列表中
+            for (String node : uniqueNodes) {
+                String[] parts = node.split("_");
+                String nodeName = parts[0];
+                String category = parts[1];
+
+                if (!nameDict.containsKey(nodeName)) {
+                    nameDict.put(nodeName, count++);
+                    Map<String, Object> dataItem = new HashMap<>();
+                    dataItem.put("name", nodeName);
+                    dataItem.put("category", getCategory(category)); // 使用数字类别
+                    data.add(dataItem);
+                }
+            }
+
+            // 第三步：重新运行查询以处理关系
+            result = session.run(query);
+            while (result.hasNext()) {
+                Record record = result.next();
+                String pName = record.get("pName").asString();
+                String nName = record.get("nName").asString();
+                String relation = record.get("relation").asString();
+
+                // 构造关系对象
+                Map<String, Object> linkItem = new HashMap<>();
+                linkItem.put("source", nameDict.get(pName));
+                linkItem.put("target", nameDict.get(nName));
+                linkItem.put("value", relation);
+                links.add(linkItem);
+            }
+
+            // 第四步：查询孤立节点（没有关系的节点）
+            String isolatedQuery = "MATCH (n) WHERE NOT (n)--() RETURN n";
+            Result isolatedNodesResult = session.run(isolatedQuery);
+
             while (isolatedNodesResult.hasNext()) {
                 Record record = isolatedNodesResult.next();
-                Map<String, Object> isolatedNode = record.get("n").asMap();
-                addNode(nodes, isolatedNode);
+                org.neo4j.driver.types.Node neo4jNode = record.get("n").asNode();
+                addUniqueNode(data, neo4jNode, nameDict, count);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Map<String, Object> echartsData = new HashMap<>();
-        echartsData.put("nodes", nodes);
-        echartsData.put("links", links);
-
-        return echartsData;
+        return jsonData;
     }
 
-    private void addNode(List<Map<String, Object>> nodes, Map<String, Object> properties) {
-        String name = (String) properties.get("name");
-        if (name == null) {
-            return; // 跳过没有名字的节点
+    // 将 Neo4j 节点转换为 Map 并添加到数据中
+    private void addUniqueNode(List<Map<String, Object>> data, org.neo4j.driver.types.Node node, Map<String, Integer> nameDict, int count) {
+        String nodeName = node.get("Name").isNull() ? "" : node.get("Name").asString();
+        String cate = node.get("cate").isNull() ? "Unknown" : node.get("cate").asString();
+
+        if (!nameDict.containsKey(nodeName)) {
+            nameDict.put(nodeName, count++);
+            Map<String, Object> dataItem = new HashMap<>();
+            dataItem.put("name", nodeName);
+            dataItem.put("category", getCategory(cate)); // 使用数字类别
+            data.add(dataItem);
+        }
+    }
+
+    private void addUniqueNode(List<Map<String, Object>> nodes, Map<String, Object> properties) {
+        String nodeName = (String) properties.get("name");
+        if (nodeName == null || nodeName.isEmpty()) {
+            return;
         }
 
         Optional<Map<String, Object>> existingNode = nodes.stream()
-                .filter(node -> node.get("name").equals(name))
+                .filter(node -> node.get("name").equals(nodeName))
                 .findFirst();
 
         if (!existingNode.isPresent()) {
-            Map<String, Object> node = new HashMap<>();
-            node.put("name", name);
-            node.put("category", getCategory(properties));
-            if (properties.containsKey("origin")) {
-                node.put("origin", properties.get("origin"));
-            }
+            Map<String, Object> node = new HashMap<>(properties);
+            node.put("category", getCategory((String) properties.get("cate"))); // 使用数字类别
             nodes.add(node);
         }
     }
 
-    private String getCategory(Map<String, Object> properties) {
-        List<String> labels = (List<String>) properties.get("labels");
-
-        // 如果 labels 是 null 或者为空，则返回 "未知"
-        if (labels == null || labels.isEmpty()) {
-            return "未知";
-        }
-        if (labels.contains("Herb")) {
-            return "药材";
-        } else if (labels.contains("Effect")) {
-            return "功能";
-        } else if (labels.contains("Disease")) {
-            return "症状";
-        } else if (labels.contains("Part")) {
-            return "部位";
-        } else if (labels.contains("Chemical")) {
-            return "成分";
-        }
-
-        return "未知";
+    private Map<String, Object> nodeToMap(org.neo4j.driver.types.Node node) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", node.get("Name").isNull() ? "" : node.get("Name").asString());
+        map.put("cate", node.get("cate").isNull() ? "Unknown" : node.get("cate").asString()); // 确保有默认值
+        map.put("labels", new ArrayList<>((Collection) node.labels()));
+        return map;
     }
 
-//    根据名称查询节点信息
-public Map<String, Object> getRelatedEChartsDataByName(String name) {
-    List<Map<String, Object>> nodes = new ArrayList<>();
-    List<Map<String, Object>> links = new ArrayList<>();
+    public Map<String, Object> query(String name) {
+        Map<String, Object> jsonData = new HashMap<>();
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<Map<String, Object>> links = new ArrayList<>();
+        jsonData.put("data", data);
+        jsonData.put("links", links);
 
-    try (Session session = driver.session()) {
-        // 查询与特定节点相关的所有节点及其关系
-        Result result = session.run(
-                "MATCH (startNode {name: $name})-[r]->(endNode) " +
-                        "RETURN startNode, r, endNode " +
-                        "UNION " +
-                        "MATCH (startNode)-[r]->(endNode {name: $name}) " +
-                        "RETURN startNode, r, endNode",
-                Values.parameters("name", name)
-        );
+        String query = "MATCH (p:药材)-[r]->(n:药材 {Name: $name}) RETURN p.Name AS pName, r.relation AS relation, n.Name AS nName, p.cate AS pCate, n.cate AS nCate " +
+                "UNION ALL " +
+                "MATCH (p:药材 {Name: $name})-[r]->(n:药材) RETURN p.Name AS pName, r.relation AS relation, n.Name AS nName, p.cate AS pCate, n.cate AS nCate";
 
-        Set<String> uniqueNames = new HashSet<>(); // 用于去重
+        Set<String> uniqueNodes = new HashSet<>();
+        Map<String, Integer> nameDict = new HashMap<>();
+        int count = 0;
 
-        while (result.hasNext()) {
-            Record record = result.next();
-            Map<String, Object> node1 = record.get("startNode").asMap();
-            Map<String, Object> node2 = record.get("endNode").asMap();
-            Map<String, Object> relationship = record.get("r").asMap();
+        try (Session session = driver.session()) {
+            Result result = session.run(query, Values.parameters("name", name));
 
-            // 添加两个节点到nodes列表中，并确保名字不重复
-            addUniqueNode(nodes, uniqueNames, node1);
-            addUniqueNode(nodes, uniqueNames, node2);
+            while (result.hasNext()) {
+                Record record = result.next();
+                String pName = record.get("pName").asString();
+                String nName = record.get("nName").asString();
+                String relation = record.get("relation").asString();
+                String pCate = record.get("pCate").asString();
+                String nCate = record.get("nCate").asString();
 
-            // 添加关系（边）
-            Map<String, Object> link = new HashMap<>();
-            link.put("source", node1.get("name"));
-            link.put("target", node2.get("name"));
-            link.put("relationship", relationship); // 如果需要展示关系类型或属性
-            links.add(link);
-        }
-
-        // 处理没有关系但与指定节点同名的情况（如果有必要）
-        if (!uniqueNames.contains(name)) {
-            Result isolatedNodesResult = session.run("MATCH (n {name: $name}) RETURN n", Values.parameters("name", name));
-            while (isolatedNodesResult.hasNext()) {
-                Record record = isolatedNodesResult.next();
-                Map<String, Object> isolatedNode = record.get("n").asMap();
-                addUniqueNode(nodes, uniqueNames, isolatedNode);
+                uniqueNodes.add(pName + "_" + pCate);
+                uniqueNodes.add(nName + "_" + nCate);
             }
+
+            for (String node : uniqueNodes) {
+                String[] parts = node.split("_");
+                String nodeName = parts[0];
+                String category = parts[1];
+
+                if (!nameDict.containsKey(nodeName)) {
+                    nameDict.put(nodeName, count++);
+                    Map<String, Object> dataItem = new HashMap<>();
+                    dataItem.put("name", nodeName);
+                    dataItem.put("category", getCategory(category)); // 使用数字类别
+                    data.add(dataItem);
+                }
+            }
+
+            result = session.run(query, Values.parameters("name", name));
+            while (result.hasNext()) {
+                Record record = result.next();
+                String pName = record.get("pName").asString();
+                String nName = record.get("nName").asString();
+                String relation = record.get("relation").asString();
+
+                Map<String, Object> linkItem = new HashMap<>();
+                linkItem.put("source", nameDict.get(pName));
+                linkItem.put("target", nameDict.get(nName));
+                linkItem.put("value", relation);
+                links.add(linkItem);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        return jsonData;
     }
 
-    Map<String, Object> echartsData = new HashMap<>();
-    echartsData.put("nodes", nodes);
-    echartsData.put("links", links);
-
-    return echartsData;
-}
-
-    private void addUniqueNode(List<Map<String, Object>> nodes, Set<String> uniqueNames, Map<String, Object> properties) {
-        String nodeName = (String) properties.get("name");
-        if (nodeName == null || !uniqueNames.add(nodeName)) { // 使用Set来确保唯一性
-            return; // 跳过没有名字的节点或已存在的节点
-        }
-
-        Map<String, Object> node = new HashMap<>();
-        node.put("name", nodeName);
-        node.put("category", getCategory(properties));
-        if (properties.containsKey("origin")) {
-            node.put("origin", properties.get("origin"));
-        }
-        nodes.add(node);
-    }
-
-    /**
-     * 关闭与Neo4j数据库的连接
-     * 在不再需要与数据库通信时，调用此方法释放资源
-     */
     public void close() {
         driver.close();
     }
 }
-

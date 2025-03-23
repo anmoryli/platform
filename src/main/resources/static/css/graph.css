@@ -18,30 +18,30 @@
 }
 
 .bot-container .input-container {
-   /* 设置在bot-container容器的页面底部  */
+    /* 设置在bot-container容器的页面底部  */
     position: fixed;
     bottom: 0;
     width: 32%;
     height: 15%;
     margin-top: 100px;
-    
+
 }
 
 .loadBtn {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   /* 按钮居中 */
-   margin: 0px auto;
-   padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 按钮居中 */
+    margin: 0px auto;
+    padding: 10px 20px;
 }
 
 .send-edit {
     display: flex;
-   align-items: center;
-   justify-content: left;
-   margin: 0px auto;
-   padding: 10px 20px;
+    align-items: center;
+    justify-content: left;
+    margin: 0px auto;
+    padding: 10px 20px;
 }
 
 .input {
@@ -76,7 +76,7 @@
 #sendBtn:hover {
     background-color: #B01ECA;
     border-color: #B01ECA;
-    animation: slow 0.5s ease; 
+    animation: slow 0.5s ease;
 }
 
 #sendBtn:active {
@@ -96,7 +96,7 @@
 #imgBtn:hover {
     background-color: #B01ECA;
     border-color: #B01ECA;
-    animation: slow 0.5s ease; 
+    animation: slow 0.5s ease;
 }
 
 #imgBtn:active {
@@ -116,7 +116,7 @@
 #voiceBtn:hover {
     background-color: #B01ECA;
     border-color: #B01ECA;
-    animation: slow 0.5s ease; 
+    animation: slow 0.5s ease;
 }
 
 #voiceBtn:active {
@@ -136,7 +136,7 @@
 #videoBtn:hover {
     background-color: #B01ECA;
     border-color: #B01ECA;
-    animation: slow 0.5s ease; 
+    animation: slow 0.5s ease;
 }
 
 #videoBtn:active {
@@ -164,7 +164,7 @@
 
 .chat-container {
     padding: 20px;
-    height: 400px;
+    height: 650px;
     overflow-y: scroll;
 }
 
@@ -197,4 +197,47 @@
 .bot-message .message-bubble {
     background-color: #e9ecef;
     color: black;
+}
+
+#search-container {
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    width: 50%;
+    padding: 8%;
+    position: fixed;
+    z-index: 1000;
+}
+
+#search-container input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background-color: #e9ecef;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: large;
+}
+
+#search-container button {
+    margin-left: 20px;
+    border-radius: 50px;
+    border: 2px solid white;
+    padding:5px;
+    background-color: transparent;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+#search-container button:hover {
+    background-color: #B01ECA;
+    border-color: #B01ECA;
+    animation: slow 0.5s ease;
+}
+
+#search-container button:active {
+    background-color: #9A0E9A;
+    border-color: #9A0E9A;
 }
