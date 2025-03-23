@@ -55,14 +55,21 @@
                 <button id="startButton" onclick="recognize()">开始识别</button>
             </span>
             <span class="button2">
-            <button id="testButton" onclick="graph_load()">查看相关图谱</button>
+                <button id="testButton" onclick="graph_load()">查看相关图谱</button>
             </span>
         </div>
     </div>
     <script src="/js/jquery.min.js"></script>
     <script>
         function graph_load() {
-            location.href = "graph_recognize.html";
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+            // 将识别结果作为查询参数传递
+            console.log("获取的参数为:" + result);
+            location.href = "graph_recognize.html?name=" + encodeURIComponent(result);
         }
 
         function refresh() {

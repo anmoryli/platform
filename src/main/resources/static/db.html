@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon3.gif">
+    <link rel="shortcut icon" href="images/favicon3.gif">
+    <style>
+        /* 卡片样式 */
+        .card {
+            background: transparent;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(236, 106, 92, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(236, 106, 92, 0.9);
+        }
+
+        /* Tab 样式 */
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tab-bar button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab-bar button.active {
+            background-color: #23B2CA;
+        }
+
+        .tab-bar button:hover {
+            background-color: #23B2CA;
+        }
+
+        /* 表格标题 */
+        .table-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize.html">图片识别</a></li>
+                    <li><a href="graph.html">知识图谱</a></li>
+                    <li><a href="database.html">数据库</a></li>
+                    <li><a href="admin_login.html">管理中心</a></li>
+                    <li><a href="me.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4">
+        <!-- Tab 栏 -->
+        <div class="tab-bar mb-6">
+            <button class="active mr-2 px-4 py-2 rounded bg-blue-500 text-white"
+                onclick="switchTab('herb')">药材信息表</button>
+            <button class="mr-2 px-4 py-2 rounded bg-blue-500 text-white" onclick="switchTab('plant')">植物信息表</button>
+            <button class="px-4 py-2 rounded bg-blue-500 text-white" onclick="switchTab('picture')">药材图片表</button>
+        </div>
+
+        <!-- 数据内容区域 -->
+        <div id="content" class="w-full">
+            <!-- 药材信息表 -->
+            <div id="herb" class="table w-full">
+                <div class="table-title">药材信息表</div>
+                <div id="herb-cards" class="grid grid-cols-1 gap-4 mt-8"></div>
+            </div>
+
+            <!-- 植物信息表 -->
+            <div id="plant" class="table hidden w-full">
+                <div class="table-title">植物信息表</div>
+                <div id="plant-cards" class="grid grid-cols-1 gap-4 mt-8"></div>
+            </div>
+
+            <!-- 药材图片表 -->
+            <div id="picture" class="table hidden w-full">
+                <div class="table-title">药材图片表</div>
+                <div id="picture-cards" class="grid grid-cols-1 gap-4 mt-8"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 虚拟数据
+        const mockHerbData = [
+            { name: "黄芪", category: "补气药", usage: "补气固表，利尿托毒", description: "豆科植物蒙古黄芪的干燥根。" },
+            { name: "当归", category: "补血药", usage: "补血活血，调经止痛", description: "伞形科植物当归的干燥根。" },
+            { name: "甘草", category: "调和药", usage: "补脾益气，祛痰止咳", description: "豆科植物甘草的干燥根及根茎。" }
+        ];
+
+        const mockPlantData = [
+            { name: "蒙古黄芪", category: "豆科", distribution: "中国北部", description: "多年生草本植物，高50-70厘米。" },
+            { name: "当归属植物", category: "伞形科", distribution: "中国西部", description: "多年生草本植物，高60-120厘米。" },
+            { name: "甘草", category: "豆科", distribution: "中国北部", description: "多年生草本植物，高30-100厘米。" }
+        ];
+
+        const mockPictureData = [
+            { name: "黄芪根部", url: "https://via.placeholder.com/300x200?text=黄芪", description: "黄芪的干燥根部特写。" },
+            { name: "当归根部", url: "https://via.placeholder.com/300x200?text=当归", description: "当归的干燥根部特写。" },
+            { name: "甘草根部", url: "https://via.placeholder.com/300x200?text=甘草", description: "甘草的干燥根部特写。" }
+        ];
+
+        // 切换 Tab
+        function switchTab(tabName) {
+            // 移除所有 Tab 的 active 状态
+            document.querySelectorAll('.tab-bar button').forEach(button => button.classList.remove('active'));
+            // 隐藏所有表格
+            document.querySelectorAll('.table').forEach(table => table.classList.add('hidden'));
+            // 显示选中的表格并设置 Tab 为 active
+            document.querySelector(`#${tabName}`).classList.remove('hidden');
+            document.querySelector(`.tab-bar button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+
+            // 加载对应的数据
+            if (tabName === 'herb') {
+                loadHerbData();
+            } else if (tabName === 'plant') {
+                loadPlantData();
+            } else if (tabName === 'picture') {
+                loadPictureData();
+            }
+        }
+
+        <!-- 加载药材信息数据 -->
+        function loadHerbData() {
+            let html = "";
+            mockHerbData.forEach(herb => {
+                html += `
+            <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(herb.name)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">分类: ${escapeHtml(herb.category)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">功效: ${escapeHtml(herb.usage)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">描述: ${escapeHtml(herb.description)}</span>
+                <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deleteHerb('${herb.name}')">删除</button>
+            </div>
+        `;
+            });
+            $("#herb-cards").html(html);
+        }
+
+        // 加载植物信息数据
+        function loadPlantData() {
+            let html = "";
+            mockPlantData.forEach(plant => {
+                html += `
+                <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                    <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(plant.name)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">分类: ${escapeHtml(plant.category)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">分布: ${escapeHtml(plant.distribution)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">描述: ${escapeHtml(plant.description)}</span>
+                    <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePlant('${plant.name}')">删除</button>
+                </div>
+            `;
+            });
+            $("#plant-cards").html(html);
+        }
+
+        // 加载药材图片数据
+        function loadPictureData() {
+            let html = "";
+            mockPictureData.forEach(picture => {
+                html += `
+            <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                <img src="${picture.url}" alt="${escapeHtml(picture.name)}" class="mb-4 w-full h-auto rounded">
+                <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(picture.name)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">描述: ${escapeHtml(picture.description)}</span>
+                <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePicture('${picture.name}')">删除</button>
+            </div>
+        `;
+            });
+            $("#picture-cards").html(html);
+        }
+
+        // 删除药材信息
+        function deleteHerb(name) {
+            if (confirm("确定要删除吗？")) {
+                alert(`已删除药材：${name}`);
+                loadHerbData(); // 重新加载数据
+            }
+        }
+
+        // 删除植物信息
+        function deletePlant(name) {
+            if (confirm("确定要删除吗？")) {
+                alert(`已删除植物：${name}`);
+                loadPlantData(); // 重新加载数据
+            }
+        }
+
+        // 删除药材图片
+        function deletePicture(name) {
+            if (confirm("确定要删除吗？")) {
+                alert(`已删除图片：${name}`);
+                loadPictureData(); // 重新加载数据
+            }
+        }
+
+        // 防止 XSS 攻击的函数
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 默认加载药材信息表
+        window.onload = function () {
+            loadHerbData();
+        };
+    </script>
+</body>
+
+</html>

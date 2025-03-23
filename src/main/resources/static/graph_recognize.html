@@ -54,7 +54,6 @@
             // 获取图表容器元素
             var chartDom = document.getElementById('main');
             var myChart = echarts.init(chartDom);
-            var option;
 
             // 显示加载动画
             myChart.showLoading();
@@ -109,7 +108,7 @@
                         {
                             type: 'graph',
                             layout: 'force',
-                            symbolSize: 60,
+                            symbolSize: 100,
                             edgeSymbol: ['circle', 'arrow'],
                             edgeSymbolSize: [4, 4],
                             edgeLabel: {
@@ -123,7 +122,7 @@
                             },
                             force: {
                                 repulsion: 4000,
-                                edgeLength: [100, 100],
+                                edgeLength: [300, 400],
                                 gravity: 0.3,
                                 layoutAnimation: true,
                             },
@@ -188,8 +187,28 @@
                 myChart.setOption(option);
             }
 
-            // 页面加载时，默认加载所有数据
-            loadDataAndRenderChart('http://localhost:8080/echarts');
+            // 解析 URL 参数
+            function getUrlParams() {
+                var params = {};
+                window.location.search.substring(1).split("&").forEach(function (pair) {
+                    var keyValue = pair.split("=");
+                    params[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1] || "");
+                });
+                console.log("解析的参数:", params); // 使用 JSON 格式化输出
+                return params;
+            }
+
+            // 页面加载时，默认加载所有数据或根据 URL 参数加载特定数据
+            var urlParams = getUrlParams();
+            console.log("urlParams:" + urlParams.name);
+            if (urlParams.name) {
+                console.log("keyword:" + urlParams.name);
+                // 如果存在 keyword 参数，则自动触发搜索
+                // $('#search-input').val(urlParams.name); // 设置输入框值
+                loadDataAndRenderChart('http://localhost:8080/queryByName', { name: urlParams.name });
+            } else {
+                alert("未找到该数据");
+            }
 
             // 搜索按钮点击事件
             $('#search-button').on('click', function () {
@@ -206,10 +225,13 @@
                 loadDataAndRenderChart('http://localhost:8080/queryByName', { name: keyword });
             });
 
+            // 显示全部按钮点击事件
             $('#show-all').on('click', function () {
+                // 清空输入框
+                $('#search-input').val("");
                 // 显示加载动画
                 myChart.showLoading();
-                // 加载与关键词相关的数据
+                // 加载全部数据
                 loadDataAndRenderChart('http://localhost:8080/echarts');
             });
         });

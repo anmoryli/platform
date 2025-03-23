@@ -1,15 +1,14 @@
 package com.anmory.platform.VertifyService.Controller;
-
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import com.anmory.platform.VertifyService.Model.Captcha;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.IOException;
 import java.util.Date;
 
@@ -19,6 +18,7 @@ import java.util.Date;
  * @date 2025-03-17 下午10:52
  */
 
+@Slf4j
 @RequestMapping("/captcha")
 @RestController
 public class CaptchaController {
@@ -39,7 +39,7 @@ public class CaptchaController {
 
     @RequestMapping("/check")
     public boolean check(String mycaptcha, HttpSession session) {
-        System.out.println("[captchaCheck]用户输入的验证码:" + mycaptcha);
+        log.info("[captchaCheck]用户输入的验证码:" + mycaptcha);
         String code = (String)session.getAttribute(captcha.getSession().getKey());
         if(!StringUtils.hasLength(code)) {
             return false;
