@@ -28,6 +28,7 @@
             transform: translateY(0);
             box-shadow: 0 4px 8px rgba(236, 106, 92, 0.7);
             margin-bottom: 20px;
+            width: 100%;
         }
 
         .card:hover {
@@ -81,7 +82,7 @@
                 <ul>
                     <li><a href="recognize.html">图片识别</a></li>
                     <li><a href="graph.html">知识图谱</a></li>
-                    <li><a href="database.html">数据库</a></li>
+                    <li><a href="db.html">数据库</a></li>
                     <li><a href="admin_login.html">管理中心</a></li>
                     <li><a href="me.html">个人中心</a></li>
                 </ul>
@@ -92,10 +93,12 @@
     <div class="container mx-auto px-4">
         <!-- Tab 栏 -->
         <div class="tab-bar mb-6">
-            <button class="active mr-2 px-4 py-2 rounded bg-blue-500 text-white"
+            <button id="herb-tab" class="active mr-2 px-4 py-2 rounded bg-blue-500 text-white"
                 onclick="switchTab('herb')">药材信息表</button>
-            <button class="mr-2 px-4 py-2 rounded bg-blue-500 text-white" onclick="switchTab('plant')">植物信息表</button>
-            <button class="px-4 py-2 rounded bg-blue-500 text-white" onclick="switchTab('picture')">药材图片表</button>
+            <button id="plant-tab" class="mr-2 px-4 py-2 rounded bg-blue-500 text-white"
+                onclick="switchTab('plant')">植物信息表</button>
+            <button id="picture-tab" class="px-4 py-2 rounded bg-blue-500 text-white"
+                onclick="switchTab('picture')">药材图片表</button>
         </div>
 
         <!-- 数据内容区域 -->
@@ -109,7 +112,8 @@
             <!-- 植物信息表 -->
             <div id="plant" class="table hidden w-full">
                 <div class="table-title">植物信息表</div>
-                <div id="plant-cards" class="grid grid-cols-1 gap-4 mt-8"></div>
+                <div id="plant-cards" class="grid grid-cols-1 gap-4 mt-8"
+                    style="display: grid; grid-template-columns: 1fr;"></div>
             </div>
 
             <!-- 药材图片表 -->
@@ -121,36 +125,42 @@
     </div>
 
     <script>
-        // 虚拟数据
+        // 模拟数据
         const mockHerbData = [
-            { name: "黄芪", category: "补气药", usage: "补气固表，利尿托毒", description: "豆科植物蒙古黄芪的干燥根。" },
-            { name: "当归", category: "补血药", usage: "补血活血，调经止痛", description: "伞形科植物当归的干燥根。" },
-            { name: "甘草", category: "调和药", usage: "补脾益气，祛痰止咳", description: "豆科植物甘草的干燥根及根茎。" }
+            { name: "药材1", category: "分类A", usage: "功效A", description: "描述A" },
+            { name: "药材2", category: "分类B", usage: "功效B", description: "描述B" }
         ];
 
         const mockPlantData = [
-            { name: "蒙古黄芪", category: "豆科", distribution: "中国北部", description: "多年生草本植物，高50-70厘米。" },
-            { name: "当归属植物", category: "伞形科", distribution: "中国西部", description: "多年生草本植物，高60-120厘米。" },
-            { name: "甘草", category: "豆科", distribution: "中国北部", description: "多年生草本植物，高30-100厘米。" }
+            { name: "植物1", category: "分类C", distribution: "分布C", description: "描述C" },
+            { name: "植物2", category: "分类D", distribution: "分布D", description: "描述D" }
         ];
 
         const mockPictureData = [
-            { name: "黄芪根部", url: "https://via.placeholder.com/300x200?text=黄芪", description: "黄芪的干燥根部特写。" },
-            { name: "当归根部", url: "https://via.placeholder.com/300x200?text=当归", description: "当归的干燥根部特写。" },
-            { name: "甘草根部", url: "https://via.placeholder.com/300x200?text=甘草", description: "甘草的干燥根部特写。" }
+            { name: "图片1", url: "https://via.placeholder.com/150", description: "描述E" },
+            { name: "图片2", url: "https://via.placeholder.com/150", description: "描述F" }
         ];
 
-        // 切换 Tab
+        // 切换 Tab 并更新按钮样式
         function switchTab(tabName) {
-            // 移除所有 Tab 的 active 状态
-            document.querySelectorAll('.tab-bar button').forEach(button => button.classList.remove('active'));
             // 隐藏所有表格
             document.querySelectorAll('.table').forEach(table => table.classList.add('hidden'));
-            // 显示选中的表格并设置 Tab 为 active
-            document.querySelector(`#${tabName}`).classList.remove('hidden');
-            document.querySelector(`.tab-bar button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+
+            // 显示对应的表格
+            document.getElementById(tabName).classList.remove('hidden');
+
+            // 移除所有按钮的 active 类
+            document.querySelectorAll('.tab-bar button').forEach(button => button.classList.remove('active'));
+
+            // 给当前按钮添加 active 类
+            document.getElementById(`${tabName}-tab`).classList.add('active');
 
             // 加载对应的数据
+            loadTabData(tabName);
+        }
+
+        // 加载对应 Tab 的数据
+        function loadTabData(tabName) {
             if (tabName === 'herb') {
                 loadHerbData();
             } else if (tabName === 'plant') {
@@ -160,100 +170,169 @@
             }
         }
 
-        <!-- 加载药材信息数据 -->
+        // 加载药材信息数据
         function loadHerbData() {
             let html = "";
-            mockHerbData.forEach(herb => {
-                html += `
+            $.ajax({
+                type: 'get',
+                url: '/herb',
+                success: function (herb) {
+                    var json = JSON.stringify(herb);
+                    console.log("药材数据：", json);
+                    // 遍历 herb 数组
+                    for (var i of herb) {
+                        console.log("herb:", i);
+                        html += `
             <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
-                <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(herb.name)}</span>
+                <span class="block mb-2 text-lg font-semibold">药材名称: ${escapeHtml(i.herbName)}</span>
                 <hr class="my-2">
-                <span class="block mb-2">分类: ${escapeHtml(herb.category)}</span>
+                <span class="block mb-2">藏文名: ${escapeHtml(i.herbTibetanName)}</span>
                 <hr class="my-2">
-                <span class="block mb-2">功效: ${escapeHtml(herb.usage)}</span>
+                <span class="block mb-2">别名: ${escapeHtml(i.herbAlias)}</span>
                 <hr class="my-2">
-                <span class="block mb-2">描述: ${escapeHtml(herb.description)}</span>
-                <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deleteHerb('${herb.name}')">删除</button>
+                <span class="block mb-2">描述: ${escapeHtml(i.herbDescription)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">使用部位: ${escapeHtml(i.partUsed)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">特征: ${escapeHtml(i.herbFeatures)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">性味归经: ${escapeHtml(i.flavorTropism)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">功效与主治: ${escapeHtml(i.functionIndication)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">临床应用: ${escapeHtml(i.clinicalApplication)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">药理作用: ${escapeHtml(i.pharmacologicalEffect)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">研究: ${escapeHtml(i.research)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">备注: ${escapeHtml(i.notes)}</span>
+                <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deleteHerb('${escapeHtml(i.herbName)}')">删除</button>
             </div>
         `;
-            });
-            $("#herb-cards").html(html);
+                    }
+                    $("#herb-cards").html(html);
+                }
+            })
         }
 
         // 加载植物信息数据
         function loadPlantData() {
             let html = "";
-            mockPlantData.forEach(plant => {
-                html += `
+            $.ajax({
+                type: 'get',
+                url: '/plant', // 修改了接口地址为'/plant'
+                success: function (plants) {
+                    var json = JSON.stringify(plants);
+                    console.log("植物数据：", json);
+
+                    for (var plant of plants) { // 使用了plant替代原来的herb变量名
+                        console.log("plant:", plant);
+                        html += `
                 <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
-                    <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(plant.name)}</span>
+                    <span class="block mb-2 text-lg font-semibold">植物名称: ${escapeHtml(plant.plantName)}</span>
                     <hr class="my-2">
-                    <span class="block mb-2">分类: ${escapeHtml(plant.category)}</span>
+                    <span class="block mb-2">拉丁名: ${escapeHtml(plant.plantLatin)}</span>
                     <hr class="my-2">
-                    <span class="block mb-2">分布: ${escapeHtml(plant.distribution)}</span>
+                    <span class="block mb-2">别名: ${escapeHtml(plant.plantAlias)}</span>
                     <hr class="my-2">
-                    <span class="block mb-2">描述: ${escapeHtml(plant.description)}</span>
-                    <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePlant('${plant.name}')">删除</button>
+                    <span class="block mb-2">藏文名: ${escapeHtml(plant.plantTibetanName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">科名: ${escapeHtml(plant.plantFamilyName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">属名: ${escapeHtml(plant.plantGenusName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">特征: ${escapeHtml(plant.plantFeatures)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">原产地: ${escapeHtml(plant.plantOrigin)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">保护级别: ${escapeHtml(plant.plantProtectLevel)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">备注: ${escapeHtml(plant.notes)}</span>
+                    <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePlant('${escapeHtml(plant.plantName)}')">删除</button>
                 </div>
             `;
+                    }
+                    $("#plant-cards").html(html); // 确保选择器与HTML中的元素ID相匹配
+                },
+                error: function (xhr, status, error) {
+                    console.error("请求失败：", error);
+                }
             });
-            $("#plant-cards").html(html);
         }
 
         // 加载药材图片数据
         function loadPictureData() {
             let html = "";
-            mockPictureData.forEach(picture => {
-                html += `
-            <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
-                <img src="${picture.url}" alt="${escapeHtml(picture.name)}" class="mb-4 w-full h-auto rounded">
-                <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(picture.name)}</span>
-                <hr class="my-2">
-                <span class="block mb-2">描述: ${escapeHtml(picture.description)}</span>
-                <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePicture('${picture.name}')">删除</button>
-            </div>
-        `;
+            $.ajax({
+                type: 'get',
+                url: '/pic', // 使用 /pic 接口
+                success: function (pictures) {
+                    var json = JSON.stringify(pictures);
+                    console.log("图片数据：", json);
+
+                    pictures.forEach(picture => {
+                        html += `
+                <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                    <span class="block mb-2 text-lg font-semibold">文件名称: ${escapeHtml(picture.fileName)}</span>
+                    <hr class="my-2">
+                    <img src="${picture.fileName}" alt="${escapeHtml(picture.picName)}" class="mb-4 w-full h-auto rounded">
+                    <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(picture.picName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">类别: ${escapeHtml(picture.picCate)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">部位: ${escapeHtml(picture.picPart)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">描述: ${escapeHtml(picture.description)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄地点: ${escapeHtml(picture.picPlace)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄时间: ${new Date(picture.picTime).toLocaleDateString()}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄人: ${escapeHtml(picture.picPerson)}</span>
+                    <button class="edit mt-4 px-4 py-2 bg-red-500 text-white rounded" onclick="deletePicture('${escapeHtml(picture.picName)}')">删除</button>
+                </div>
+            `;
+                    });
+
+                    $("#picture-cards").html(html); // 更新页面内容
+                },
+                error: function (xhr, status, error) {
+                    console.error("请求失败：", error);
+                }
             });
-            $("#picture-cards").html(html);
         }
 
-        // 删除药材信息
+        // 删除函数（模拟）
         function deleteHerb(name) {
-            if (confirm("确定要删除吗？")) {
-                alert(`已删除药材：${name}`);
-                loadHerbData(); // 重新加载数据
-            }
+            alert(`删除药材：${name}`);
         }
 
-        // 删除植物信息
         function deletePlant(name) {
-            if (confirm("确定要删除吗？")) {
-                alert(`已删除植物：${name}`);
-                loadPlantData(); // 重新加载数据
-            }
+            alert(`删除植物：${name}`);
         }
 
-        // 删除药材图片
         function deletePicture(name) {
-            if (confirm("确定要删除吗？")) {
-                alert(`已删除图片：${name}`);
-                loadPictureData(); // 重新加载数据
-            }
+            alert(`删除图片：${name}`);
         }
 
-        // 防止 XSS 攻击的函数
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        // 防止 XSS 攻击的转义函数
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function (match) {
+                const escapeMap = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                };
+                return escapeMap[match];
+            });
         }
 
-        // 默认加载药材信息表
-        window.onload = function () {
-            loadHerbData();
+        // 页面加载时默认显示药材信息表
+        window.onload = () => {
+            switchTab('herb');
         };
     </script>
 </body>

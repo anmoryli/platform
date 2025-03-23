@@ -31,4 +31,40 @@ public class MedicineController {
         }
         return "error";
     }
+
+    @RequestMapping(value = "/herb", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String herb(HttpServletResponse response) {
+        MedicineService medicineService = new MedicineService(dataSource);
+        response.setContentType("application/json");
+        try {
+            return medicineService.herb();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @RequestMapping(value = "/plant", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String plant(HttpServletResponse response) {
+        MedicineService medicineService = new MedicineService(dataSource);
+        response.setContentType("application/json");
+        try {
+            return medicineService.plant();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    @RequestMapping(value = "/pic", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String pic(HttpServletResponse response) {
+        MedicineService medicineService = new MedicineService(dataSource);
+        response.setContentType("application/json");
+        try {
+            return medicineService.pic();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
 }
