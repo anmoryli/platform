@@ -1,12 +1,9 @@
 package com.anmory.platform.LoginService.Controller;
-
-import com.mysql.cj.Session;
-import jakarta.servlet.http.HttpServletRequest;
+import com.anmory.platform.UserService.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,8 +16,6 @@ import java.sql.SQLException;
  * @date 2025-02-25 上午2:28
  */
 
-
-
 @RestController
 public class LoginController {
     private final DataSource dataSource;
@@ -30,6 +25,7 @@ public class LoginController {
         this.session = session;
     }
     String globalUsername = "";
+    User user = new User();
     @RequestMapping("login")
     public Boolean login(String username, String password) throws SQLException {
         if(!StringUtils.hasLength(username) || !StringUtils.hasLength(password)) {
@@ -44,6 +40,7 @@ public class LoginController {
             pstmt.setString(2, password);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
+                    System.out.println(rs);
                     int count = rs.getInt(1);
                     if (count > 0) {
                         globalUsername = username;

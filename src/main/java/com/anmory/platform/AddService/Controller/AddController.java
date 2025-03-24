@@ -34,6 +34,5 @@ public class AddController {
             pstmt.setString(6, usage);
             return pstmt.executeUpdate() > 0 ? "添加成功" : "添加失败";
         }
-
     }
 }
