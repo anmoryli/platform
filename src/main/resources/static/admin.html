@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面</title>
+    <link rel="stylesheet" href="/css/recognize.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/graph.css">
+    <link rel="stylesheet" href="/css/board.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+</head>
+<style>
+    /* 管理员页面的特定样式 */
+    .admin-section {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .admin-section h3 {
+        color: white;
+        font-size: 24px;
+        font-family: "Microsoft YaHei";
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .admin-section p {
+        color: white;
+        font-size: 18px;
+        font-family: "Microsoft YaHei";
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    #suggestions-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    #suggestions-list li {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #suggestions-list li strong {
+        color: #B01ECA;
+    }
+
+    .content-container {
+        margin-top: 150px; /* 增加上边距，确保内容不会被导航栏遮挡 */
+    }
+
+    .error-message {
+        color: red;
+        font-size: 18px;
+        font-family: "Microsoft YaHei";
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="loadContent('admin_home')">首页</a></li>
+                    <li><a href="#" onclick="loadContent('admin_suggestions')">消息中心</a></li>
+                    <li><a href="#" onclick="loadContent('admin_settings')">设置</a></li>
+                    <li><a href="#" onclick="loadContent('admin_logout')">退出</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-container" id="content-container">
+            <!-- 内容将在这里动态加载 -->
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // 默认加载首页内容
+            loadContent('admin_home');
+        });
+
+        function loadContent(page) {
+            $.ajax({
+                type: "GET",
+                url: `/${page}.html`,
+                success: function (data) {
+                    $('#content-container').html(data);
+                },
+                error: function () {
+                    $('#content-container').html('<p class="error-message">加载内容失败，请稍后再试。</p>');
+                }
+            });
+        }
+
+        function markAsRead(id) {
+            // 模拟标记为已读的操作
+            alert(`建议 ${id} 已标记为已读`);
+            // 可以在这里添加实际的后端请求逻辑
+        }
+    </script>
+</body>
+
+</html>

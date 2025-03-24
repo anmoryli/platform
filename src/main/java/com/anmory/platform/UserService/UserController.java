@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -92,10 +93,7 @@ public class UserController {
 
     @RequestMapping("/vertifyCode")
     public boolean verifyCode(HttpServletRequest request, String code) {
-        if(code == authCode) {
-            return true;
-        }
-        return false;
+        return Objects.equals(code, authCode);
     }
 
     @RequestMapping("/changePassword")

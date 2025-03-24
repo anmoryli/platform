@@ -1,6 +1,8 @@
 package com.anmory.platform.MeService;
 
 import com.anmory.platform.LoginService.Controller.LoginController;
+import com.anmory.platform.UserService.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,15 +18,14 @@ import javax.sql.DataSource;
 @RestController
 public class MeController {
     private final DataSource dataSource;
-    private final HttpSession session;
-    public MeController(DataSource dataSource, HttpSession session) {
+    public MeController(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.session = session;
     }
 
     @RequestMapping("/me")
-    public String me() {
-        String name = (String)session.getAttribute("username");
-        return name;
+    public User me(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user;
     }
 }
