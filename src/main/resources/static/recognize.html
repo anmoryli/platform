@@ -17,6 +17,152 @@
     <!-- 设置网页图标 -->
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
+    <style>
+        /* 添加新的样式 */
+        .main-container {
+            position: relative;
+            width: 100%;
+            min-height: 600px;
+            display: flex;
+        }
+        
+        .recognize {
+            transition: all 0.5s ease;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .recognize.slide-left {
+            width: 50%;
+        }
+        
+        .recognize.slide-left .img-preview {
+            margin-top: 0;
+            max-height: 300px;
+            overflow: hidden;
+        }
+        
+        .recognize.slide-left .img-preview img {
+            max-height: 280px;
+            object-fit: contain;
+        }
+        
+        /* 确保输出文本为白色 */
+        .output {
+            color: white !important;
+        }
+        
+        .plant-details {
+            position: absolute;
+            right: -50%;
+            width: 50%;
+            height: 100%;
+            background-color: rgba(30, 30, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(176, 30, 202, 0.3);
+            transition: all 0.5s ease;
+            overflow-y: auto;
+            max-height: 80vh;
+            z-index: 0;
+        }
+        
+        .plant-details.show {
+            right: 0;
+            z-index: 2;
+        }
+        
+        .plant-details h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(176, 30, 202, 0.5);
+        }
+        
+        .plant-details-content {
+            color: white;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section h3 {
+            color: #B01ECA;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-section p {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .detail-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #B01ECA;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .close-details {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(231, 76, 60, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-details:hover {
+            background-color: rgba(231, 76, 60, 1);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .recognize.slide-left {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+            
+            .plant-details {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .plant-details.show {
+                right: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -38,27 +184,43 @@
     <div class="title animate">
         <h1>上传你的图片</h1>
     </div>
-    <div class="recognize">
-        <div class="img-preview">
-            <img id="preview" src="/images/recognize.gif" alt="图片预览">
-        </div>
-        <div class="control">
-            <h1 id="header">开始识别</h1>
-            <div class="result">
-                <p id="result">识别结果：</p>
-                <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+    
+    <div class="main-container">
+        <div class="recognize">
+            <div class="img-preview">
+                <img id="preview" src="/images/recognize.gif" alt="图片预览">
             </div>
-            <span class="button1">
-                <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
-            </span>
-            <span class="button2">
-                <button id="startButton" onclick="recognize()">开始识别</button>
-            </span>
-            <span class="button2">
-                <button id="testButton" onclick="graph_load()">查看相关图谱</button>
-            </span>
+            <div class="control">
+                <h1 id="header">开始识别</h1>
+                <div class="result">
+                    <p id="result">识别结果：</p>
+                    <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+                </div>
+                <span class="button1">
+                    <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
+                </span>
+                <span class="button2">
+                    <button id="startButton" onclick="recognize()">开始识别</button>
+                </span>
+                <span class="button2">
+                    <button id="testButton" onclick="graph_load()">查看相关图谱</button>
+                </span>
+                <span class="button2">
+                    <button id="viewDetailsButton" onclick="viewPlantDetails()">查看详细信息</button>
+                </span>
+            </div>
+        </div>
+        
+        <!-- 植物详情面板 -->
+        <div class="plant-details" id="plantDetails">
+            <button class="close-details" onclick="closeDetails()">×</button>
+            <h2 id="plantName">植物详情</h2>
+            <div class="plant-details-content" id="plantDetailsContent">
+                <div class="loading-spinner"></div> 正在加载详情...
+            </div>
         </div>
     </div>
+    
     <script src="/js/jquery.min.js"></script>
     <script>
         function graph_load() {
@@ -135,10 +297,210 @@
             const recognizeElement = document.querySelector('.recognize');
             recognizeElement.classList.add('slide-left');
         });
+        
+        // 查看植物详情
+        function viewPlantDetails() {
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+            
+            // 添加滑动效果
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.add('slide-left');
+            
+            // 显示详情面板
+            const plantDetails = document.getElementById('plantDetails');
+            plantDetails.classList.add('show');
+            
+            // 更新植物名称
+            document.getElementById('plantName').textContent = result + ' 详情';
+            
+            // 显示加载状态
+            document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
+            
+            // 从后端获取植物详情
+            fetchPlantDetails(result);
+        }
+        
+        // 从后端获取植物详情
+        function fetchPlantDetails(plantName) {
+            // 模拟API请求延迟
+            setTimeout(function() {
+                // 这里应该是实际的API请求
+                // $.ajax({
+                //     type: "GET",
+                //     url: "/api/plant-details",
+                //     data: { name: plantName },
+                //     success: function(data) {
+                //         displayPlantDetails(data);
+                //     },
+                //     error: function() {
+                //         displayNoDetailsMessage();
+                //     }
+                // });
+                
+                // 模拟API响应
+                if (plantName === "藏红花") {
+                    const data = {
+                        name: "藏红花",
+                        scientificName: "Crocus sativus",
+                        category: "草本植物",
+                        description: "藏红花是鸢尾科番红花属多年生球茎草本植物，原产于地中海东部地区。花朵呈紫色，花柱分叉，柱头呈红色，是药用部分。",
+                        medicinalProperties: "具有活血化瘀、凉血解毒、解郁安神等功效，常用于治疗心脑血管疾病、抑郁症等。在藏医药中，被视为珍贵药材，用于治疗多种疾病。",
+                        distribution: "主要分布在西藏、青海等地区的高海拔地带。",
+                        harvestTime: "每年秋季9-10月采收。",
+                        usageDosage: "一般用量为0.5-3克，煎汤或泡酒服用。",
+                        imageUrl: "/images/plant-sample.jpg"
+                    };
+                    displayPlantDetails(data);
+                } else if (plantName === "雪莲") {
+                    const data = {
+                        name: "雪莲",
+                        scientificName: "Saussurea involucrata",
+                        category: "草本植物",
+                        description: "雪莲是菊科风毛菊属多年生草本植物，主要分布在青藏高原高海拔地区。植株高30-80厘米，花白色或淡紫色，全草入药。",
+                        medicinalProperties: "具有补肾壮阳、活血化瘀、散寒止痛等功效，常用于治疗风湿痹痛、肾虚阳痿等。在藏医药中被视为名贵药材。",
+                        distribution: "主要分布在西藏、青海、新疆等地区的海拔4000米以上的雪线附近。",
+                        harvestTime: "每年7-9月采收。",
+                        usageDosage: "一般用量为3-9克，煎汤或泡酒服用。",
+                        imageUrl: "/images/plant-sample.jpg"
+                    };
+                    displayPlantDetails(data);
+                } else if (plantName === "冬虫夏草") {
+                    const data = {
+                        name: "冬虫夏草",
+                        scientificName: "Ophiocordyceps sinensis",
+                        category: "真菌类",
+                        description: "冬虫夏草是麦角菌科真菌寄生在蝙蝠蛾科昆虫幼虫上形成的复合体，外形似虫似草，是藏医药中的珍贵药材。",
+                        medicinalProperties: "具有补肺益肾、止血化痰等功效，常用于治疗肺虚咳嗽、肾虚阳痿、久病体虚等症。",
+                        distribution: "主要分布在西藏、青海、四川、云南等地区的海拔3000-5000米的高原草甸。",
+                        harvestTime: "每年5-6月采收。",
+                        usageDosage: "一般用量为3-9克，煎汤或炖服。",
+                        imageUrl: "/images/plant-sample.jpg"
+                    };
+                    displayPlantDetails(data);
+                } else {
+                    displayNoDetailsMessage();
+                }
+            }, 1500);
+        }
+        
+        // 显示植物详情
+        function displayPlantDetails(data) {
+            let detailsHtml = '';
+            
+            // 添加图片（如果有）
+            if (data.imageUrl) {
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.name}" class="detail-image">`;
+            }
+            
+            // 基本信息
+            detailsHtml += `
+                <div class="detail-section">
+                    <h3>基本信息</h3>
+                    <p><strong>学名：</strong> <em>${data.scientificName}</em></p>
+                    <p><strong>分类：</strong> ${data.category}</p>
+                </div>
+            `;
+            
+            // 描述
+            if (data.description) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>植物描述</h3>
+                        <p>${data.description}</p>
+                    </div>
+                `;
+            }
+            
+            // 药用功效
+            if (data.medicinalProperties) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>药用功效</h3>
+                        <p>${data.medicinalProperties}</p>
+                    </div>
+                `;
+            }
+            
+            // 分布区域
+            if (data.distribution) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>分布区域</h3>
+                        <p>${data.distribution}</p>
+                    </div>
+                `;
+            }
+            
+            // 采收时间
+            if (data.harvestTime) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>采收时间</h3>
+                        <p>${data.harvestTime}</p>
+                    </div>
+                `;
+            }
+            
+            // 用法用量
+            if (data.usageDosage) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>用法用量</h3>
+                        <p>${data.usageDosage}</p>
+                    </div>
+                `;
+            }
+            
+            // 添加操作按钮
+            detailsHtml += `
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="button2" onclick="graph_load()">查看相关图谱</button>
+                    <button class="button2" onclick="window.location.href='db.html?search=${data.name}'">在数据库中查看</button>
+                </div>
+            `;
+            
+            document.getElementById('plantDetailsContent').innerHTML = detailsHtml;
+        }
+        
+        // 显示无详情信息
+        function displayNoDetailsMessage() {
+            const noDetailsHtml = `
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🔍</div>
+                    <h3 style="color: #B01ECA; margin-bottom: 15px;">未找到详细信息</h3>
+                    <p>抱歉，我们目前没有关于该植物的详细信息。</p>
+                    <p style="margin-top: 10px;">您可以：</p>
+                    <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                        <li style="margin-bottom: 10px;">• 检查植物名称是否正确</li>
+                        <li style="margin-bottom: 10px;">• 尝试查看相关图谱获取基本信息</li>
+                        <li>• 在数据库中搜索相似植物</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <button class="button2" onclick="graph_load()">查看相关图谱</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('plantDetailsContent').innerHTML = noDetailsHtml;
+        }
+        
+        // 关闭详情面板
+        function closeDetails() {
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.remove('slide-left');
+            
+            const plantDetails = document.getElementById('plantDetails');
+            plantDetails.classList.remove('show');
+        }
 
         // 确保按钮点击事件也能够触发识别函数
-        document.getElementById('recognizeButton').addEventListener('click', recognize);
+        document.getElementById('startButton').addEventListener('click', recognize);
     </script>
 </body>
 
 </html>
+

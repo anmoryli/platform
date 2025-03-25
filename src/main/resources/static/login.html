@@ -68,7 +68,7 @@
         event.preventDefault();  // 阻止表单默认提交行为
         $.ajax({
             type: "get",
-            url: "/login",
+            url: "/user/login",
             data: {
                 username: $("#username").val(),
                 password: $("#password").val(),
@@ -77,7 +77,6 @@
                 console.log(result);
                 if(result === false) {
                     alert("用户名或密码错误!!");
-
                 }
                 else if(result === true && check === false) {
                     alert("验证码错误!!");
