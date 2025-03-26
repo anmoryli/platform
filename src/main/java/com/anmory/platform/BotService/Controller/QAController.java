@@ -1,10 +1,12 @@
 package com.anmory.platform.BotService.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Anmory/李梦杰
@@ -17,7 +19,8 @@ public class QAController {
     @Autowired
     Neo4jService neo4jService;
     @RequestMapping("/qa")
-    public String qa(String question) {
+    public String qa(@RequestBody Map<String, String> requestMap) {
+        String question = requestMap.get("userInput");
         if(question.contains("可以治疗什么疾病")) {
             String plantName = extractPlantName(question);
             System.out.println("[plantName]" + plantName);

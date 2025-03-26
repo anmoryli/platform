@@ -583,9 +583,8 @@
 
             <div class="user-section">
                 <div class="section-title">安全设置</div>
-                <button class="button_me" onclick="resetPassword()">修改密码</button>
-                <button class="button_me" style="margin-left: 10px;">绑定手机号</button>
-                <button class="button_me" style="margin-left: 10px;">两步验证</button>
+                <button id="change-password" class="button_me" onclick="resetPassword()">修改密码</button>
+                <button id="bind-email" onclick="bind()" class="button_me" style="margin-left: 10px;">绑定邮箱</button>
             </div>
         </div>
 
@@ -654,6 +653,10 @@
 
     function back() {
         location.href = "recognize.html";
+    }
+
+    function bind() {
+        location.href = "bind.html";
     }
     
     function logOut() {

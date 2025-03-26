@@ -25,34 +25,34 @@
             min-height: 600px;
             display: flex;
         }
-        
+
         .recognize {
             transition: all 0.5s ease;
             width: 100%;
             position: relative;
             z-index: 1;
         }
-        
+
         .recognize.slide-left {
             width: 50%;
         }
-        
+
         .recognize.slide-left .img-preview {
             margin-top: 0;
             max-height: 300px;
             overflow: hidden;
         }
-        
+
         .recognize.slide-left .img-preview img {
             max-height: 280px;
             object-fit: contain;
         }
-        
+
         /* 确保输出文本为白色 */
         .output {
             color: white !important;
         }
-        
+
         .plant-details {
             position: absolute;
             right: -50%;
@@ -68,12 +68,12 @@
             max-height: 80vh;
             z-index: 0;
         }
-        
+
         .plant-details.show {
             right: 0;
             z-index: 2;
         }
-        
+
         .plant-details h2 {
             color: white;
             font-size: 24px;
@@ -81,26 +81,26 @@
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(176, 30, 202, 0.5);
         }
-        
+
         .plant-details-content {
             color: white;
         }
-        
+
         .detail-section {
             margin-bottom: 20px;
         }
-        
+
         .detail-section h3 {
             color: #B01ECA;
             font-size: 18px;
             margin-bottom: 10px;
         }
-        
+
         .detail-section p {
             line-height: 1.6;
             color: rgba(255, 255, 255, 0.9);
         }
-        
+
         .detail-image {
             width: 100%;
             max-height: 200px;
@@ -108,7 +108,7 @@
             border-radius: 10px;
             margin-bottom: 15px;
         }
-        
+
         .loading-spinner {
             display: inline-block;
             width: 30px;
@@ -119,11 +119,13 @@
             animation: spin 1s ease-in-out infinite;
             margin-right: 10px;
         }
-        
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .close-details {
             position: absolute;
             top: 15px;
@@ -141,23 +143,23 @@
             font-size: 18px;
             transition: all 0.3s ease;
         }
-        
+
         .close-details:hover {
             background-color: rgba(231, 76, 60, 1);
         }
-        
+
         /* 响应式调整 */
         @media (max-width: 768px) {
             .recognize.slide-left {
                 width: 100%;
                 transform: translateX(-100%);
             }
-            
+
             .plant-details {
                 width: 100%;
                 right: -100%;
             }
-            
+
             .plant-details.show {
                 right: 0;
             }
@@ -184,7 +186,7 @@
     <div class="title animate">
         <h1>上传你的图片</h1>
     </div>
-    
+
     <div class="main-container">
         <div class="recognize">
             <div class="img-preview">
@@ -210,7 +212,7 @@
                 </span>
             </div>
         </div>
-        
+
         <!-- 植物详情面板 -->
         <div class="plant-details" id="plantDetails">
             <button class="close-details" onclick="closeDetails()">×</button>
@@ -220,7 +222,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="/js/jquery.min.js"></script>
     <script>
         function graph_load() {
@@ -297,7 +299,7 @@
             const recognizeElement = document.querySelector('.recognize');
             recognizeElement.classList.add('slide-left');
         });
-        
+
         // 查看植物详情
         function viewPlantDetails() {
             let result = document.getElementById("resultText").value.trim();
@@ -305,80 +307,59 @@
                 alert("请先完成图片识别！");
                 return;
             }
-            
+
             // 添加滑动效果
             const recognizeElement = document.querySelector('.recognize');
             recognizeElement.classList.add('slide-left');
-            
+
             // 显示详情面板
             const plantDetails = document.getElementById('plantDetails');
             plantDetails.classList.add('show');
-            
+
             // 更新植物名称
             document.getElementById('plantName').textContent = result + ' 详情';
-            
+
             // 显示加载状态
             document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
-            
+
             // 从后端获取植物详情
             fetchPlantDetails(result);
         }
-        
+
         // 从后端获取植物详情
         function fetchPlantDetails(plantName) {
             // 模拟API请求延迟
-            setTimeout(function() {
+            setTimeout(function () {
                 // 这里应该是实际的API请求
-                // $.ajax({
-                //     type: "GET",
-                //     url: "/api/plant-details",
-                //     data: { name: plantName },
-                //     success: function(data) {
-                //         displayPlantDetails(data);
-                //     },
-                //     error: function() {
-                //         displayNoDetailsMessage();
-                //     }
-                // });
-                
+                $.ajax({
+                    type: "GET",
+                    url: "/plantDetail",
+                    data: { name: plantName },
+                    success: function (data) {
+                        displayPlantDetails(data);
+                    },
+                    error: function () {
+                        displayNoDetailsMessage();
+                    }
+                });
+
                 // 模拟API响应
-                if (plantName === "藏红花") {
+                if (plantName === "白术") {
                     const data = {
-                        name: "藏红花",
-                        scientificName: "Crocus sativus",
-                        category: "草本植物",
-                        description: "藏红花是鸢尾科番红花属多年生球茎草本植物，原产于地中海东部地区。花朵呈紫色，花柱分叉，柱头呈红色，是药用部分。",
-                        medicinalProperties: "具有活血化瘀、凉血解毒、解郁安神等功效，常用于治疗心脑血管疾病、抑郁症等。在藏医药中，被视为珍贵药材，用于治疗多种疾病。",
-                        distribution: "主要分布在西藏、青海等地区的高海拔地带。",
-                        harvestTime: "每年秋季9-10月采收。",
-                        usageDosage: "一般用量为0.5-3克，煎汤或泡酒服用。",
-                        imageUrl: "/images/plant-sample.jpg"
-                    };
-                    displayPlantDetails(data);
-                } else if (plantName === "雪莲") {
-                    const data = {
-                        name: "雪莲",
-                        scientificName: "Saussurea involucrata",
-                        category: "草本植物",
-                        description: "雪莲是菊科风毛菊属多年生草本植物，主要分布在青藏高原高海拔地区。植株高30-80厘米，花白色或淡紫色，全草入药。",
-                        medicinalProperties: "具有补肾壮阳、活血化瘀、散寒止痛等功效，常用于治疗风湿痹痛、肾虚阳痿等。在藏医药中被视为名贵药材。",
-                        distribution: "主要分布在西藏、青海、新疆等地区的海拔4000米以上的雪线附近。",
-                        harvestTime: "每年7-9月采收。",
-                        usageDosage: "一般用量为3-9克，煎汤或泡酒服用。",
-                        imageUrl: "/images/plant-sample.jpg"
-                    };
-                    displayPlantDetails(data);
-                } else if (plantName === "冬虫夏草") {
-                    const data = {
-                        name: "冬虫夏草",
-                        scientificName: "Ophiocordyceps sinensis",
-                        category: "真菌类",
-                        description: "冬虫夏草是麦角菌科真菌寄生在蝙蝠蛾科昆虫幼虫上形成的复合体，外形似虫似草，是藏医药中的珍贵药材。",
-                        medicinalProperties: "具有补肺益肾、止血化痰等功效，常用于治疗肺虚咳嗽、肾虚阳痿、久病体虚等症。",
-                        distribution: "主要分布在西藏、青海、四川、云南等地区的海拔3000-5000米的高原草甸。",
-                        harvestTime: "每年5-6月采收。",
-                        usageDosage: "一般用量为3-9克，煎汤或炖服。",
-                        imageUrl: "/images/plant-sample.jpg"
+                        "herbId": 39,
+                        "herbName": "白术",
+                        "herbTibetanName": "བོད་ཡིག5",
+                        "herbAlias": "于术",
+                        "herbDescription": "菊科植物白术的干燥根茎。",
+                        "partUsed": "根茎",
+                        "herbFeatures": "性温，味甘、苦。归脾、胃经。",
+                        "flavorTropism": "温、甘、苦；归脾、胃经",
+                        "functionIndication": "健脾益气，燥湿利水，止汗，安胎。",
+                        "clinicalApplication": "用于脾虚食少等",
+                        "pharmacologicalEffect": "调节肠胃功能等",
+                        "research": "含有苍术酮等成分。",
+                        "notes": "常与茯苓配伍使用。",
+                        "imageUrl": "/images/plant-sample.jpg"
                     };
                     displayPlantDetails(data);
                 } else {
@@ -386,86 +367,108 @@
                 }
             }, 1500);
         }
-        
+
         // 显示植物详情
         function displayPlantDetails(data) {
             let detailsHtml = '';
-            
+
             // 添加图片（如果有）
             if (data.imageUrl) {
-                detailsHtml += `<img src="${data.imageUrl}" alt="${data.name}" class="detail-image">`;
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.herbName}" class="detail-image">`;
             }
-            
+
             // 基本信息
             detailsHtml += `
-                <div class="detail-section">
-                    <h3>基本信息</h3>
-                    <p><strong>学名：</strong> <em>${data.scientificName}</em></p>
-                    <p><strong>分类：</strong> ${data.category}</p>
-                </div>
-            `;
-            
+        <div class="detail-section">
+            <h3>基本信息</h3>
+            <p><strong>学名：</strong> <em>${data.herbName}</em></p>
+            <p><strong>藏文名：</strong> <em>${data.herbTibetanName}</em></p>
+            <p><strong>别名：</strong> ${data.herbAlias}</p>
+            <p><strong>分类：</strong> ${data.partUsed}</p>
+        </div>
+    `;
+
             // 描述
-            if (data.description) {
+            if (data.herbDescription) {
                 detailsHtml += `
-                    <div class="detail-section">
-                        <h3>植物描述</h3>
-                        <p>${data.description}</p>
-                    </div>
-                `;
+            <div class="detail-section">
+                <h3>植物描述</h3>
+                <p>${data.herbDescription}</p>
+            </div>
+        `;
             }
-            
-            // 药用功效
-            if (data.medicinalProperties) {
+
+            // 性味归经
+            if (data.flavorTropism) {
                 detailsHtml += `
-                    <div class="detail-section">
-                        <h3>药用功效</h3>
-                        <p>${data.medicinalProperties}</p>
-                    </div>
-                `;
+            <div class="detail-section">
+                <h3>性味归经</h3>
+                <p>${data.flavorTropism}</p>
+            </div>
+        `;
             }
-            
-            // 分布区域
-            if (data.distribution) {
+
+            // 功能主治
+            if (data.functionIndication) {
                 detailsHtml += `
-                    <div class="detail-section">
-                        <h3>分布区域</h3>
-                        <p>${data.distribution}</p>
-                    </div>
-                `;
+            <div class="detail-section">
+                <h3>功能主治</h3>
+                <p>${data.functionIndication}</p>
+            </div>
+        `;
             }
-            
-            // 采收时间
-            if (data.harvestTime) {
+
+            // 临床应用
+            if (data.clinicalApplication) {
                 detailsHtml += `
-                    <div class="detail-section">
-                        <h3>采收时间</h3>
-                        <p>${data.harvestTime}</p>
-                    </div>
-                `;
+            <div class="detail-section">
+                <h3>临床应用</h3>
+                <p>${data.clinicalApplication}</p>
+            </div>
+        `;
             }
-            
-            // 用法用量
-            if (data.usageDosage) {
+
+            // 药理作用
+            if (data.pharmacologicalEffect) {
                 detailsHtml += `
-                    <div class="detail-section">
-                        <h3>用法用量</h3>
-                        <p>${data.usageDosage}</p>
-                    </div>
-                `;
+            <div class="detail-section">
+                <h3>药理作用</h3>
+                <p>${data.pharmacologicalEffect}</p>
+            </div>
+        `;
             }
-            
+
+            // 研究
+            if (data.research) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>研究</h3>
+                <p>${data.research}</p>
+            </div>
+        `;
+            }
+
+            // 注意事项
+            if (data.notes) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>注意事项</h3>
+                <p>${data.notes}</p>
+            </div>
+        `;
+            }
+
             // 添加操作按钮
             detailsHtml += `
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button class="button2" onclick="graph_load()">查看相关图谱</button>
-                    <button class="button2" onclick="window.location.href='db.html?search=${data.name}'">在数据库中查看</button>
-                </div>
-            `;
-            
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button class="button2" onclick="graph_load()">查看相关图谱</button>
+            <button class="button2" onclick="window.location.href='db.html?search=${data.herbName}'">在数据库中查看</button>
+        </div>
+    `;
+
             document.getElementById('plantDetailsContent').innerHTML = detailsHtml;
         }
-        
+
         // 显示无详情信息
         function displayNoDetailsMessage() {
             const noDetailsHtml = `
@@ -484,15 +487,15 @@
                     </div>
                 </div>
             `;
-            
+
             document.getElementById('plantDetailsContent').innerHTML = noDetailsHtml;
         }
-        
+
         // 关闭详情面板
         function closeDetails() {
             const recognizeElement = document.querySelector('.recognize');
             recognizeElement.classList.remove('slide-left');
-            
+
             const plantDetails = document.getElementById('plantDetails');
             plantDetails.classList.remove('show');
         }
@@ -503,4 +506,3 @@
 </body>
 
 </html>
-

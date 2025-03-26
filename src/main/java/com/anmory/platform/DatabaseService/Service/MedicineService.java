@@ -144,4 +144,31 @@ public class MedicineService {
         String json = mapper.writeValueAsString(lists);
         return json;
     }
+
+    public Herb detail(String name) throws SQLException {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM `herb` WHERE `herb_name`=?")) {
+            pstmt.setString(1, name);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Herb(
+                            rs.getInt("herb_id"), // 修改为 herb_id
+                            rs.getString("herb_name"), // 修改为 herb_name
+                            rs.getString("herb_tibetan_name"), // 修改为 herb_tibetan_name
+                            rs.getString("herb_alias"), // 修改为 herb_alias
+                            rs.getString("herb_description"), // 修改为 herb_description
+                            rs.getString("part_used"), // 修改为 part_used
+                            rs.getString("herb_features"),
+                            rs.getString("flavor_tropism"),
+                            rs.getString("function_indication"),
+                            rs.getString("clinical_application"),
+                            rs.getString("pharmacological_effect"),
+                            rs.getString("research"),
+                            rs.getString("notes")
+                    );
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -1,5 +1,6 @@
 package com.anmory.platform.DatabaseService.Controller;
 
+import com.anmory.platform.DatabaseService.Dao.Herb;
 import com.anmory.platform.DatabaseService.Service.MedicineService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  * @author Anmory/李梦杰
@@ -66,5 +68,11 @@ public class MedicineController {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    @RequestMapping("/plantDetail")
+    public Herb detail(String name) throws SQLException {
+        MedicineService medicineService = new MedicineService(dataSource);
+        return medicineService.detail(name);
     }
 }

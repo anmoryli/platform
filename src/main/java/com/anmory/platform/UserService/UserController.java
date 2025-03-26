@@ -49,6 +49,7 @@ public class UserController {
 
     @RequestMapping("bindEmail")
     public boolean bindEmail(String username, String email) {
+        System.out.println("bindEmail:" + username + email);
         if(!StringUtils.hasLength(username)) {
             return false;
         }
@@ -58,7 +59,9 @@ public class UserController {
             userService.bindEmail(username,email);
             return true;
         }
-        return false;
+        else{
+            return true;
+        }
     }
 
 //    @PostMapping("/getCode")

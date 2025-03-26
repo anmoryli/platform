@@ -1,11 +1,13 @@
 .bot-container {
     /* 设置这个容器在页面右边 */
     position: fixed;
-    right: 0;
-    bottom: 0;
+    right: 20px;
+    bottom: 20px;
     width: 500px;
-    height: 85%;
+    height: 88%;
     margin-top: 100px;
+    margin-right: 40px;
+    margin-bottom: 40px;
     border-radius: 20px;
     /* 设置边框阴影 */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -21,10 +23,10 @@
     /* 设置在bot-container容器的页面底部  */
     position: fixed;
     bottom: 0;
-    width: 32%;
-    height: 15%;
-    margin-top: 100px;
-
+    /* width: 32%;
+    height: 15%; */
+    margin-top: 80px;
+    margin-bottom: 60px;
 }
 
 .loadBtn {
