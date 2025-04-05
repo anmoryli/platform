@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>藏药植物药知识平台</title>
+    <style>
+        /* Base Styles */
+        :root {
+            /* Primary Colors */
+            --primary-color: #7e57c2;
+            --primary-dark: #4d2c91;
+            --primary-light: #b085f5;
+            --accent-color: #ff7597;
+            --danger-color: #f44336;
+            --success-color: #4caf50;
+            --info-color: #2196f3;
+            --warning-color: #ff9800;
+            
+            /* Text Colors */
+            --text-color: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            
+            /* Background Colors */
+            --background-start: #1a1625;
+            --background-end: #2d2440;
+            --card-background: rgba(30, 25, 44, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            
+            /* Other Variables */
+            --border-radius: 16px;
+            --transition-speed: 0.3s;
+            --transition-long: 0.6s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--background-start), var(--background-end));
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background var(--transition-long) ease, color var(--transition-long) ease;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+            transition: background var(--transition-long) ease;
+        }
+
+        body::before {
+            top: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(126, 87, 194, 0.15), transparent 70%);
+        }
+
+        body::after {
+            bottom: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 117, 151, 0.1), transparent 70%);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 70px; /* Space for header */
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 25, 44, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 25, 44, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.7rem;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+            width: 20%;
+        }
+
+        .nav-item.active {
+            color: var(--primary-light);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 3px;
+        }
+
+        /* Page Styles */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-background);
+            backdrop-filter: blur(12px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 30px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        /* Button Styles */
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background var(--transition-speed) ease,
+                transform var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            backdrop-filter: blur(4px);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Image Recognition Page */
+        .recognize-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .img-preview {
+            width: 100%;
+            max-height: 300px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+
+        .control {
+            width: 100%;
+        }
+
+        .control h1 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result {
+            margin-bottom: 20px;
+        }
+
+        .result p {
+            margin-bottom: 8px;
+        }
+
+        .output {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: white !important;
+            margin-bottom: 15px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .button1 {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .button1 input[type="file"] {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .button1, .button2 {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background var(--transition-speed) ease,
+                transform var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+
+        .button1:hover, .button2:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Knowledge Graph Page */
+        .graph-container {
+            width: 100%;
+            height: 70vh;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #search-container {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        #search-button, #show-all {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* AI Chat Page */
+        .chat-container {
+            height: 60vh;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .bot-message {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .user-message .message-bubble {
+            background: var(--primary-color);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message .message-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .model-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .send-edit {
+            display: flex;
+            gap: 10px;
+        }
+
+        .send-edit input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .send-edit button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Database Page */
+        .tab-bar {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+        }
+
+        .tab-bar button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 10px 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .tab-bar button.active {
+            color: var(--primary-light);
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .table {
+            display: none;
+            width: 100%;
+        }
+
+        .table.active {
+            display: block;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Settings Page */
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .settings-title {
+            font-size: 1.2rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--primary-color);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(24px);
+        }
+
+        /* Plant Details Slide Panel */
+        .plant-details {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--background-start);
+            z-index: 1001;
+            padding: 20px;
+            padding-top: 60px;
+            overflow-y: auto;
+            transition: right 0.5s ease;
+        }
+
+        .plant-details.show {
+            right: 0;
+        }
+
+        .close-details {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(231, 76, 60, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            color: var(--primary-light);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .detail-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Login Form */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .auth-link {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>藏药植物药知识平台</h1>
+    </div>
+
+    <div class="container">
+        <!-- Image Recognition Page -->
+        <div id="recognize-page" class="page active">
+            <div class="recognize-container">
+                <div class="img-preview">
+                    <img id="preview" src="/images/recognize.gif" alt="图片预览">
+                </div>
+                <div class="control">
+                    <h1 id="header">开始识别</h1>
+                    <div class="result">
+                        <p id="result">识别结果：</p>
+                        <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+                    </div>
+                    <div class="button-container">
+                        <span class="button1">
+                            <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
+                        </span>
+                        <button class="button2" id="startButton" onclick="recognize()">开始识别</button>
+                        <button class="button2" id="testButton" onclick="viewKnowledgeGraph()">查看相关图谱</button>
+                        <button class="button2" id="viewDetailsButton" onclick="viewPlantDetails()">查看详细信息</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Knowledge Graph Page -->
+        <div id="graph-page" class="page">
+            <div id="search-container">
+                <input type="text" id="search-input" placeholder="请输入关键词">
+                <button id="search-button">搜索</button>
+                <button id="show-all">全部</button>
+            </div>
+            <div class="graph-container" id="main">
+                <!-- Graph will be rendered here -->
+            </div>
+        </div>
+
+        <!-- AI Chat Page -->
+        <div id="ai-page" class="page">
+            <div class="chat-container" id="chatContainer">
+                <!-- Chat messages will appear here -->
+                <div class="message bot-message">
+                    <div class="message-bubble">
+                        欢迎使用藏药植物知识助手，请选择模型并输入您的问题。
+                        <div class="message-time">今天 00:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-container">
+                <select id="modelSelect" class="model-select">
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="self">自研机器人</option>
+                </select>
+                <div class="send-edit">
+                    <input type="text" placeholder="输入内容" id="userInput" maxlength="500">
+                    <button id="sendBtn">发送</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Page -->
+        <div id="database-page" class="page">
+            <div class="tab-bar">
+                <button id="herb-tab" class="active" onclick="switchTab('herb')">药材信息表</button>
+                <button id="plant-tab" onclick="switchTab('plant')">植物信息表</button>
+                <button id="picture-tab" onclick="switchTab('picture')">药材图片表</button>
+            </div>
+
+            <!-- 数据内容区域 -->
+            <div id="content">
+                <!-- 药材信息表 -->
+                <div id="herb" class="table active">
+                    <div class="table-title">药材信息表</div>
+                    <div id="herb-cards" class="card-list"></div>
+                </div>
+
+                <!-- 植物信息表 -->
+                <div id="plant" class="table">
+                    <div class="table-title">植物信息表</div>
+                    <div id="plant-cards" class="card-list"></div>
+                </div>
+
+                <!-- 药材图片表 -->
+                <div id="picture" class="table">
+                    <div class="table-title">药材图片表</div>
+                    <div id="picture-cards" class="card-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+            <div class="card">
+                <div class="settings-section">
+                    <h2 class="settings-title">用户信息</h2>
+                    <div id="user-info-section">
+                        <!-- If logged in -->
+                        <div id="logged-in-view" style="display: none;">
+                            <div class="form-group">
+                                <label for="settings-name">用户名</label>
+                                <input type="text" id="settings-name" class="form-control" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-email">邮箱</label>
+                                <input type="email" id="settings-email" class="form-control" readonly>
+                            </div>
+                            <button class="btn" id="logout-btn">退出登录</button>
+                        </div>
+                        
+                        <!-- If not logged in -->
+                        <div id="not-logged-in-view">
+                            <div class="login-container">
+                                <form class="login-form">
+                                    <h2 class="login-title">用户登录</h2>
+                                    <div class="form-group">
+                                        <label for="login-username">用户名</label>
+                                        <input type="text" id="login-username" class="form-control" placeholder="请输入用户名" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="login-password">密码</label>
+                                        <input type="password" id="login-password" class="form-control" placeholder="请输入密码" required>
+                                    </div>
+                                    <button type="button" class="btn" id="login-btn">登录</button>
+                                    <div class="auth-footer">
+                                        还没有账号？ <a href="#" class="auth-link" id="show-register">注册</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="settings-section">
+                    <h2 class="settings-title">应用设置</h2>
+                    <div class="settings-option">
+                        <span>深色模式</span>
+                        <div class="toggle active" id="dark-mode-toggle"></div>
+                    </div>
+                    <div class="settings-option">
+                        <span>自动播放视频</span>
+                        <div class="toggle" id="autoplay-toggle"></div>
+                    </div>
+                    <div class="settings-option">
+                        <span>推送通知</span>
+                        <div class="toggle active" id="notification-toggle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="settings-section">
+                    <h2 class="settings-title">关于</h2>
+                    <p style="margin-bottom: 10px;">藏药植物药知识平台 v1.0.0</p>
+                    <p style="margin-bottom: 10px;">© 2023 All Rights Reserved</p>
+                    <p>联系我们: <a href="mailto:contact@example.com" style="color: var(--primary-light);">contact@example.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Details Slide Panel -->
+    <div class="plant-details" id="plantDetails">
+        <button class="close-details" onclick="closeDetails()">×</button>
+        <h2 id="plantName" style="font-size: 1.5rem; margin-bottom: 20px;">植物详情</h2>
+        <div id="plantDetailsContent">
+            <div class="loading-spinner"></div> 正在加载详情...
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a class="nav-item active" data-page="recognize-page">
+            <div class="nav-icon">🔍</div>
+            <span>图片识别</span>
+        </a>
+        <a class="nav-item" data-page="graph-page">
+            <div class="nav-icon">🔗</div>
+            <span>知识图谱</span>
+        </a>
+        <a class="nav-item" data-page="ai-page">
+            <div class="nav-icon">🤖</div>
+            <span>AI大模型</span>
+        </a>
+        <a class="nav-item" data-page="database-page">
+            <div class="nav-icon">📊</div>
+            <span>数据库</span>
+        </a>
+        <a class="nav-item" data-page="settings-page">
+            <div class="nav-icon">⚙️</div>
+            <span>设置</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script>
+        // DOM Elements
+        const pages = document.querySelectorAll('.page');
+        const navItems = document.querySelectorAll('.nav-item');
+        const plantDetails = document.getElementById('plantDetails');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const autoplayToggle = document.getElementById('autoplay-toggle');
+        const notificationToggle = document.getElementById('notification-toggle');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const showRegisterBtn = document.getElementById('show-register');
+        const sendBtn = document.getElementById('sendBtn');
+        const userInput = document.getElementById('userInput');
+        const chatContainer = document.getElementById('chatContainer');
+        const modelSelect = document.getElementById('modelSelect');
+        const searchButton = document.getElementById('search-button');
+        const showAllButton = document.getElementById('show-all');
+        const searchInput = document.getElementById('search-input');
+
+        // State
+        let currentUser = null;
+        let myChart = null;
+        let isWaitingForResponse = false;
+        let typingIndicator = null;
+
+        // Initialize App
+        function init() {
+            // Check if user is logged in
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserInterface();
+            }
+
+            // Initialize ECharts for knowledge graph
+            initializeGraph();
+
+            // Load initial data for database page
+            loadHerbData();
+        }
+
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const pageId = item.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+
+        function showPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation
+            navItems.forEach(item => {
+                if (item.getAttribute('data-page') === pageId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Special handling for graph page
+            if (pageId === 'graph-page' && myChart) {
+                myChart.resize();
+            }
+        }
+
+        // Toggle functions
+        function toggleActive(element) {
+            element.classList.toggle('active');
+            return element.classList.contains('active');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            toggleActive(darkModeToggle);
+            // Dark mode logic would go here
+        });
+
+        autoplayToggle.addEventListener('click', () => {
+            toggleActive(autoplayToggle);
+            // Autoplay logic would go here
+        });
+
+        notificationToggle.addEventListener('click', () => {
+            toggleActive(notificationToggle);
+            // Notification logic would go here
+        });
+
+        // User Authentication
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!username || !password) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            
+            // Simulate login API call
+            simulateLogin(username, password);
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            // Clear user data
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            updateUserInterface();
+        });
+
+        function simulateLogin(username, password) {
+            // In a real app, this would be an API call
+            setTimeout(() => {
+                // Simulate successful login
+                currentUser = {
+                    name: username,
+                    email: username + '@example.com'
+                };
+                
+                // Store in session storage
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Update UI
+                updateUserInterface();
+                
+                alert('登录成功');
+            }, 1000);
+        }
+
+        function updateUserInterface() {
+            const loggedInView = document.getElementById('logged-in-view');
+            const notLoggedInView = document.getElementById('not-logged-in-view');
+            
+            if (currentUser) {
+                // User is logged in
+                loggedInView.style.display = 'block';
+                notLoggedInView.style.display = 'none';
+                
+                // Update user info
+                document.getElementById('settings-name').value = currentUser.name;
+                document.getElementById('settings-email').value = currentUser.email;
+            } else {
+                // User is not logged in
+                loggedInView.style.display = 'none';
+                notLoggedInView.style.display = 'block';
+            }
+        }
+
+        // Image Recognition Functions
+        function refresh() {
+            document.getElementById("resultText").value = "";
+            document.getElementById("header").textContent = "开始识别";
+        }
+
+        function recognize() {
+            let filesInput = document.getElementById('uploadButton');
+            let imgPreview = document.getElementById('preview');
+
+            const file = filesInput.files[0];
+            if (!file) {
+                alert("请选择一个文件");
+                return;
+            }
+            imgPreview.src = URL.createObjectURL(file);
+
+            // Get h1 tag and modify its content
+            const headerElement = document.getElementById('header');
+            headerElement.textContent = '正在识别，请稍后...';
+
+            // Simulate API call for recognition
+            setTimeout(() => {
+                // Simulate successful recognition
+                headerElement.textContent = '识别成功';
+                document.getElementById("resultText").value = "白术";
+            }, 2000);
+        }
+
+        function viewKnowledgeGraph() {
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+            
+            // Switch to graph page
+            showPage('graph-page');
+            
+            // Set search input value
+            searchInput.value = result;
+            
+            // Trigger search
+            searchButton.click();
+        }
+
+        function viewPlantDetails() {
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+
+            // Show details panel
+            plantDetails.classList.add('show');
+
+            // Update plant name
+            document.getElementById('plantName').textContent = result + ' 详情';
+
+            // Show loading state
+            document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
+
+            // Fetch plant details
+            fetchPlantDetails(result);
+        }
+
+        function closeDetails() {
+            plantDetails.classList.remove('show');
+        }
+
+        function fetchPlantDetails(plantName) {
+            // Simulate API call delay
+            setTimeout(() => {
+                // Simulate data for "白术"
+                if (plantName === "白术") {
+                    const data = {
+                        "herbId": 39,
+                        "herbName": "白术",
+                        "herbTibetanName": "བོད་ཡིག5",
+                        "herbAlias": "于术",
+                        "herbDescription": "菊科植物白术的干燥根茎。",
+                        "partUsed": "根茎",
+                        "herbFeatures": "性温，味甘、苦。归脾、胃经。",
+                        "flavorTropism": "温、甘、苦；归脾、胃经",
+                        "functionIndication": "健脾益气，燥湿利水，止汗，安胎。",
+                        "clinicalApplication": "用于脾虚食少等",
+                        "pharmacologicalEffect": "调节肠胃功能等",
+                        "research": "含有苍术酮等成分。",
+                        "notes": "常与茯苓配伍使用。",
+                        "imageUrl": "/images/plant-sample.jpg"
+                    };
+                    displayPlantDetails(data);
+                } else {
+                    displayNoDetailsMessage();
+                }
+            }, 1500);
+        }
+
+        function displayPlantDetails(data) {
+            let detailsHtml = '';
+
+            // Add image if available
+            if (data.imageUrl) {
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.herbName}" class="detail-image">`;
+            }
+
+            // Basic information
+            detailsHtml += `
+                <div class="detail-section">
+                    <h3>基本信息</h3>
+                    <p><strong>学名：</strong> <em>${data.herbName}</em></p>
+                    <p><strong>藏文名：</strong> <em>${data.herbTibetanName}</em></p>
+                    <p><strong>别名：</strong> ${data.herbAlias}</p>
+                    <p><strong>分类：</strong> ${data.partUsed}</p>
+                </div>
+            `;
+
+            // Description
+            if (data.herbDescription) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>植物描述</h3>
+                        <p>${data.herbDescription}</p>
+                    </div>
+                `;
+            }
+
+            // Properties
+            if (data.flavorTropism) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>性味归经</h3>
+                        <p>${data.flavorTropism}</p>
+                    </div>
+                `;
+            }
+
+            // Functions
+            if (data.functionIndication) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>功能主治</h3>
+                        <p>${data.functionIndication}</p>
+                    </div>
+                `;
+            }
+
+            // Clinical application
+            if (data.clinicalApplication) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>临床应用</h3>
+                        <p>${data.clinicalApplication}</p>
+                    </div>
+                `;
+            }
+
+            // Pharmacological effects
+            if (data.pharmacologicalEffect) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>药理作用</h3>
+                        <p>${data.pharmacologicalEffect}</p>
+                    </div>
+                `;
+            }
+
+            // Research
+            if (data.research) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>研究</h3>
+                        <p>${data.research}</p>
+                    </div>
+                `;
+            }
+
+            // Notes
+            if (data.notes) {
+                detailsHtml += `
+                    <div class="detail-section">
+                        <h3>注意事项</h3>
+                        <p>${data.notes}</p>
+                    </div>
+                `;
+            }
+
+            // Action buttons
+            detailsHtml += `
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="button2" onclick="viewKnowledgeGraph()">查看相关图谱</button>
+                    <button class="button2" onclick="switchToDatabase('${data.herbName}')">在数据库中查看</button>
+                </div>
+            `;
+
+            document.getElementById('plantDetailsContent').innerHTML = detailsHtml;
+        }
+
+        function displayNoDetailsMessage() {
+            const noDetailsHtml = `
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🔍</div>
+                    <h3 style="color: var(--primary-light); margin-bottom: 15px;">未找到详细信息</h3>
+                    <p>抱歉，我们目前没有关于该植物的详细信息。</p>
+                    <p style="margin-top: 10px;">您可以：</p>
+                    <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                        <li style="margin-bottom: 10px;">• 检查植物名称是否正确</li>
+                        <li style="margin-bottom: 10px;">• 尝试查看相关图谱获取基本信息</li>
+                        <li>• 在数据库中搜索相似植物</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <button class="button2" onclick="viewKnowledgeGraph()">查看相关图谱</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('plantDetailsContent').innerHTML = noDetailsHtml;
+        }
+
+        function switchToDatabase(herbName) {
+            // Switch to database page
+            showPage('database-page');
+            
+            // Switch to herb tab
+            switchTab('herb');
+            
+            // Highlight the herb in the list (would need implementation)
+            // For now, just close the details panel
+            closeDetails();
+        }
+
+        // Knowledge Graph Functions
+        function initializeGraph() {
+            const chartDom = document.getElementById('main');
+            myChart = echarts.init(chartDom);
+            
+            // Show loading animation
+            myChart.showLoading();
+            
+            // Load initial data
+            loadGraphData();
+            
+            // Add event listeners
+            searchButton.addEventListener('click', () => {
+                const keyword = searchInput.value.trim();
+                if (!keyword) {
+                    alert("请输入关键词！");
+                    return;
+                }
+                
+                // Show loading animation
+                myChart.showLoading();
+                
+                // Search for keyword
+                searchGraphData(keyword);
+            });
+            
+            showAllButton.addEventListener('click', () => {
+                // Clear search input
+                searchInput.value = "";
+                
+                // Show loading animation
+                myChart.showLoading();
+                
+                // Load all data
+                loadGraphData();
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (myChart) {
+                    myChart.resize();
+                }
+            });
+        }
+
+        function loadGraphData() {
+            // Simulate API call
+            setTimeout(() => {
+                // Sample data
+                const data = [
+                    { name: "白术", category: 0, symbolSize: 50 },
+                    { name: "茯苓", category: 1, symbolSize: 40 },
+                    { name: "健脾", category: 2, symbolSize: 40 },
+                    { name: "益气", category: 2, symbolSize: 40 },
+                    { name: "西藏", category: 3, symbolSize: 40 },
+                    { name: "藏药", category: 4, symbolSize: 40 }
+                ];
+                
+                const links = [
+                    { source: 0, target: 1, value: "配伍" },
+                    { source: 0, target: 2, value: "功效" },
+                    { source: 0, target: 3, value: "功效" },
+                    { source: 0, target: 4, value: "产地" },
+                    { source: 0, target: 5, value: "分类" }
+                ];
+                
+                renderGraph(data, links);
+                
+                // Hide loading animation
+                myChart.hideLoading();
+            }, 1500);
+        }
+
+        function searchGraphData(keyword) {
+            // Simulate API call
+            setTimeout(() => {
+                // Sample data for "白术"
+                if (keyword === "白术") {
+                    const data = [
+                        { name: "白术", category: 0, symbolSize: 60 },
+                        { name: "茯苓", category: 1, symbolSize: 40 },
+                        { name: "人参", category: 1, symbolSize: 40 },
+                        { name: "健脾", category: 2, symbolSize: 40 },
+                        { name: "益气", category: 2, symbolSize: 40 },
+                        { name: "燥湿", category: 2, symbolSize: 40 },
+                        { name: "西藏", category: 3, symbolSize: 40 },
+                        { name: "藏药", category: 4, symbolSize: 40 }
+                    ];
+                    
+                    const links = [
+                        { source: 0, target: 1, value: "配伍" },
+                        { source: 0, target: 2, value: "配伍" },
+                        { source: 0, target: 3, value: "功效" },
+                        { source: 0, target: 4, value: "功效" },
+                        { source: 0, target: 5, value: "功效" },
+                        { source: 0, target: 6, value: "产地" },
+                        { source: 0, target: 7, value: "分类" }
+                    ];
+                    
+                    renderGraph(data, links);
+                } else {
+                    // Generic data for other keywords
+                    const data = [
+                        { name: keyword, category: 0, symbolSize: 60 },
+                        { name: "相关药材1", category: 1, symbolSize: 40 },
+                        { name: "相关药材2", category: 1, symbolSize: 40 },
+                        { name: "功效1", category: 2, symbolSize: 40 },
+                        { name: "功效2", category: 2, symbolSize: 40 },
+                        { name: "产地", category: 3, symbolSize: 40 },
+                        { name: "分类", category: 4, symbolSize: 40 }
+                    ];
+                    
+                    const links = [
+                        { source: 0, target: 1, value: "配伍" },
+                        { source: 0, target: 2, value: "配伍" },
+                        { source: 0, target: 3, value: "功效" },
+                        { source: 0, target: 4, value: "功效" },
+                        { source: 0, target: 5, value: "产地" },
+                        { source: 0, target: 6, value: "分类" }
+                    ];
+                    
+                    renderGraph(data, links);
+                }
+                
+                // Hide loading animation
+                myChart.hideLoading();
+            }, 1500);
+        }
+
+        function renderGraph(data, links) {
+            const option = {
+                title: {
+                    text: '药材关系图',
+                    textStyle: {
+                        color: '#fff',
+                        fontWeight: "lighter",
+                    }
+                },
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                legend: {
+                    x: "center",
+                    show: true,
+                    data: ["药材名称", "配伍药材", "药效", "采集地点", "藏药"],
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                series: [
+                    {
+                        type: 'graph',
+                        layout: 'force',
+                        symbolSize: 50,
+                        edgeSymbol: ['circle', 'arrow'],
+                        edgeSymbolSize: [4, 4],
+                        edgeLabel: {
+                            normal: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: 10,
+                                    color: '#fff'
+                                },
+                                formatter: "{c}"
+                            }
+                        },
+                        force: {
+                            repulsion: 2000,
+                            edgeLength: [100, 200],
+                            gravity: 0.3,
+                            layoutAnimation: true,
+                        },
+                        focusNodeAdjacency: true,
+                        draggable: true,
+                        roam: true,
+                        categories: [
+                            { name: '药材名称' },
+                            { name: '配伍药材' },
+                            { name: '药效' },
+                            { name: '采集地点' },
+                            { name: '藏药' }
+                        ],
+                        label: {
+                            normal: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: 12,
+                                    color: '#fff'
+                                },
+                            }
+                        },
+                        tooltip: {
+                            formatter: function (params) {
+                                if (!params.value) {
+                                    return params.data.name;
+                                } else {
+                                    return params.data.name + ": " + params.data.value;
+                                }
+                            },
+                        },
+                        lineStyle: {
+                            normal: {
+                                opacity: 0.9,
+                                width: 1,
+                                curveness: 0,
+                                color: '#aaa'
+                            }
+                        },
+                        nodes: data.map(function (node, idx) {
+                            node.id = idx;
+                            return node;
+                        }),
+                        links: links,
+                        linkStyle: {
+                            normal: {
+                                lineStyle: {
+                                    width: 2,
+                                    type: 'solid',
+                                    color: '#aaa'
+                                },
+                                label: {
+                                    show: true,
+                                    position: 'end',
+                                    formatter: '{b}',
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+                ],
+                backgroundColor: 'transparent'
+            };
+            
+            myChart.setOption(option);
+        }
+
+        // AI Chat Functions
+        sendBtn.addEventListener('click', function() {
+            if (isWaitingForResponse) {
+                alert("请等待上一个回复完成");
+                return;
+            }
+
+            const message = userInput.value.trim();
+            if (!message) {
+                alert("请输入内容");
+                return;
+            }
+
+            // Get selected model
+            const selectedModel = modelSelect.value;
+
+            // Display user message
+            appendMessage(message, 'user-message');
+
+            // Clear input
+            userInput.value = '';
+
+            // Show typing indicator
+            isWaitingForResponse = true;
+            showTypingIndicator();
+
+            // Simulate API call
+            setTimeout(() => {
+                // Hide typing indicator
+                hideTypingIndicator();
+                isWaitingForResponse = false;
+
+                // Generate response based on selected model
+                let response;
+                if (selectedModel === 'deepseek') {
+                    response = generateDeepSeekResponse(message);
+                } else {
+                    response = generateCustomBotResponse(message);
+                }
+
+                // Display bot message
+                appendMessage(response, 'bot-message');
+            }, 1500);
+        });
+
+        function appendMessage(content, className) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${className}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = content;
+
+            const timeStamp = document.createElement('div');
+            timeStamp.className = 'message-time';
+            timeStamp.textContent = getCurrentTime();
+            bubble.appendChild(timeStamp);
+
+            messageElement.appendChild(bubble);
+            chatContainer.appendChild(messageElement);
+
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            if (typingIndicator) return;
+
+            typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message bot-message';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = '<div style="display: flex; gap: 5px;"><span style="width: 8px; height: 8px; background: var(--primary-light); border-radius: 50%; animation: pulse 1s infinite alternate;"></span><span style="width: 8px; height: 8px; background: var(--primary-light); border-radius: 50%; animation: pulse 1s infinite alternate 0.2s;"></span><span style="width: 8px; height: 8px; background: var(--primary-light); border-radius: 50%; animation: pulse 1s infinite alternate 0.4s;"></span></div>';
+            
+            typingIndicator.appendChild(bubble);
+            chatContainer.appendChild(typingIndicator);
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            if (typingIndicator) {
+                typingIndicator.remove();
+                typingIndicator = null;
+            }
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `今天 ${hours}:${minutes}`;
+        }
+
+        function generateDeepSeekResponse(message) {
+            // Simple response generation based on keywords
+            if (message.includes('白术')) {
+                return '白术是常用中药，性温，味甘、苦。归脾、胃经。具有健脾益气，燥湿利水，止汗，安胎的功效。常用于脾虚食少、腹泻、水肿、自汗等症状。';
+            } else if (message.includes('藏药') || message.includes('藏医')) {
+                return '藏医药是我国传统医学的重要组成部分，有着悠久的历史。藏药主要来源于青藏高原的天然药物资源，具有独特的理论体系和治疗方法。';
+            } else {
+                return '您好，我是DeepSeek模型，可以为您提供关于藏药植物的专业知识。请问您想了解什么具体的植物或药材信息？';
+            }
+        }
+
+        function generateCustomBotResponse(message) {
+            // Simple response generation for custom bot
+            if (message.includes('白术')) {
+                return '白术，藏名བོད་ཡིག5，别名于术，是菊科植物白术的干燥根茎。性温，味甘、苦。归脾、胃经。具有健脾益气，燥湿利水，止汗，安胎的功效。';
+            } else if (message.includes('藏药') || message.includes('藏医')) {
+                return '藏医药学是藏族人民在长期医疗实践中创造和发展起来的医学科学，是中国传统医学的重要组成部分。藏药多采用青藏高原特有的药用植物，具有独特的药效。';
+            } else {
+                return '您好，我是自研机器人，专注于藏药植物知识。我可以回答关于藏药材的功效、用法、产地等问题。请问有什么可以帮助您的？';
+            }
+        }
+
+        // Database Functions
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-bar button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.table').forEach(table => {
+                table.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            // Load data if needed
+            if (tabName === 'herb' && document.getElementById('herb-cards').children.length === 0) {
+                loadHerbData();
+            } else if (tabName === 'plant' && document.getElementById('plant-cards').children.length === 0) {
+                loadPlantData();
+            } else if (tabName === 'picture' && document.getElementById('picture-cards').children.length === 0) {
+                loadPictureData();
+            }
+        }
+
+        function loadHerbData() {
+            // Simulate API call
+            setTimeout(() => {
+                const herbs = [
+                    {
+                        herbName: "白术",
+                        herbTibetanName: "བོད་ཡིག5",
+                        herbAlias: "于术",
+                        herbDescription: "菊科植物白术的干燥根茎。",
+                        partUsed: "根茎",
+                        herbFeatures: "性温，味甘、苦。归脾、胃经。",
+                        flavorTropism: "温、甘、苦；归脾、胃经",
+                        functionIndication: "健脾益气，燥湿利水，止汗，安胎。"
+                    },
+                    {
+                        herbName: "藏红花",
+                        herbTibetanName: "བོད་ཡིག6",
+                        herbAlias: "番红花",
+                        herbDescription: "鸢尾科植物番红花的干燥柱头。",
+                        partUsed: "柱头",
+                        herbFeatures: "性温，味甘、微苦。归心、肝经。",
+                        flavorTropism: "温、甘、微苦；归心、肝经",
+                        functionIndication: "活血化瘀，凉血解毒，解郁安神。"
+                    }
+                ];
+
+                renderHerbCards(herbs);
+            }, 1000);
+        }
+
+        function loadPlantData() {
+            // Simulate API call
+            setTimeout(() => {
+                const plants = [
+                    {
+                        plantName: "白术",
+                        plantLatin: "Atractylodes macrocephala Koidz.",
+                        plantAlias: "于术",
+                        plantTibetanName: "བོད་ཡིག5",
+                        plantFamilyName: "菊科",
+                        plantGenusName: "苍术属",
+                        plantFeatures: "多年生草本，根茎肥厚，茎直立，叶片羽状分裂。",
+                        plantOrigin: "中国中部和东部",
+                        plantProtectLevel: "未列入保护名录"
+                    },
+                    {
+                        plantName: "雪莲花",
+                        plantLatin: "Saussurea involucrata Kar. et Kir.",
+                        plantAlias: "天山雪莲",
+                        plantTibetanName: "བོད་ཡིག7",
+                        plantFamilyName: "菊科",
+                        plantGenusName: "风毛菊属",
+                        plantFeatures: "多年生草本，全株被白色绒毛，花序头状，外围有白色苞片。",
+                        plantOrigin: "青藏高原、天山山脉",
+                        plantProtectLevel: "国家二级保护植物"
+                    }
+                ];
+
+                renderPlantCards(plants);
+            }, 1000);
+        }
+
+        function loadPictureData() {
+            // Simulate API call
+            setTimeout(() => {
+                const pictures = [
+                    {
+                        fileName: "/images/plant-sample.jpg",
+                        picName: "白术",
+                        picCate: "药材",
+                        picPart: "根茎",
+                        description: "白术的干燥根茎，表面黄白色，质坚实。",
+                        picPlace: "四川省",
+                        picTime: "2022-05-15",
+                        picPerson: "张三"
+                    },
+                    {
+                        fileName: "/images/plant-sample.jpg",
+                        picName: "藏红花",
+                        picCate: "药材",
+                        picPart: "柱头",
+                        description: "藏红花的干燥柱头，呈深红色丝状。",
+                        picPlace: "西藏自治区",
+                        picTime: "2022-06-20",
+                        picPerson: "李四"
+                    }
+                ];
+
+                renderPictureCards(pictures);
+            }, 1000);
+        }
+
+        function renderHerbCards(herbs) {
+            const container = document.getElementById('herb-cards');
+            container.innerHTML = '';
+
+            herbs.forEach(herb => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span class="block mb-2 text-lg font-semibold">药材名称: ${escapeHtml(herb.herbName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">藏文名: ${escapeHtml(herb.herbTibetanName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">别名: ${escapeHtml(herb.herbAlias)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">描述: ${escapeHtml(herb.herbDescription)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">使用部位: ${escapeHtml(herb.partUsed)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">特征: ${escapeHtml(herb.herbFeatures)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">性味归经: ${escapeHtml(herb.flavorTropism)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">功效与主治: ${escapeHtml(herb.functionIndication)}</span>
+                    <button class="btn mt-4" onclick="viewHerbDetails('${escapeHtml(herb.herbName)}')">查看详情</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderPlantCards(plants) {
+            const container = document.getElementById('plant-cards');
+            container.innerHTML = '';
+
+            plants.forEach(plant => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span class="block mb-2 text-lg font-semibold">植物名称: ${escapeHtml(plant.plantName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拉丁名: ${escapeHtml(plant.plantLatin)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">别名: ${escapeHtml(plant.plantAlias)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">藏文名: ${escapeHtml(plant.plantTibetanName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">科名: ${escapeHtml(plant.plantFamilyName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">属名: ${escapeHtml(plant.plantGenusName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">特征: ${escapeHtml(plant.plantFeatures)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">原产地: ${escapeHtml(plant.plantOrigin)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">保护级别: ${escapeHtml(plant.plantProtectLevel)}</span>
+                    <button class="btn mt-4" onclick="viewPlantDetails('${escapeHtml(plant.plantName)}')">查看详情</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderPictureCards(pictures) {
+            const container = document.getElementById('picture-cards');
+            container.innerHTML = '';
+
+            pictures.forEach(picture => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(picture.picName)}</span>
+                    <hr class="my-2">
+                    <img src="${picture.fileName}" alt="${escapeHtml(picture.picName)}" class="mb-4 w-full h-auto rounded">
+                    <span class="block mb-2">类别: ${escapeHtml(picture.picCate)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">部位: ${escapeHtml(picture.picPart)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">描述: ${escapeHtml(picture.description)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄地点: ${escapeHtml(picture.picPlace)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄时间: ${new Date(picture.picTime).toLocaleDateString()}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄人: ${escapeHtml(picture.picPerson)}</span>
+                    <button class="btn mt-4" onclick="viewPictureDetails('${escapeHtml(picture.picName)}')">查看详情</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function viewHerbDetails(herbName) {
+            // Show plant details panel with herb information
+            viewPlantDetails(herbName);
+        }
+
+        function viewPictureDetails(picName) {
+            // Show plant details panel with picture information
+            viewPlantDetails(picName);
+        }
+
+        // Helper Functions
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function (match) {
+                const escapeMap = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                };
+                return escapeMap[match];
+            });
+        }
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

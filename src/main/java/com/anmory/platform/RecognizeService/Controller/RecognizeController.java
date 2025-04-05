@@ -1,18 +1,25 @@
 package com.anmory.platform.RecognizeService.Controller;
 
+import com.anmory.platform.RecordService.service.UserImageRecognitionService;
+import com.anmory.platform.UserService.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
-
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1", maxAge = 3600)
 public class RecognizeController {
+    @Autowired
+    UserImageRecognitionService userImageRecognitionService;
     @PostMapping("/recognize")
-    public String recognize(@RequestParam("file") MultipartFile file) {
+    public String recognize(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
         System.out.println("[RecognizeService] 收到图片识别请求");
 
         StringBuilder output = new StringBuilder();
@@ -62,6 +69,7 @@ public class RecognizeController {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator());
+                    userImageRecognitionService.insert(user.getId(), file.getOriginalFilename(), tempFile.getAbsolutePath(), output.toString());
                 }
                 System.out.println("[RecognizeService] 读取Python进程的标准输出");
             }

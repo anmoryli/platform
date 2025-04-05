@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon3.gif">
+    <link rel="shortcut icon" href="images/favicon3.gif">
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2874a6;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --border-color: #d6dbdf;
+            --background-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --header-bg: #1a5276;
+            --footer-bg: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Remove violet glow */
+        .violet-glow {
+            display: none;
+        }
+
+        /* Header styling */
+        .blurry-navbar {
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-content h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .navbar-content nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-content nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        .navbar-content nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-content nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Tab bar styling */
+        .tab-bar {
+            display: flex;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .tab-bar button {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-bar button.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-bar button:hover:not(.active) {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-bottom-color: var(--accent-color);
+        }
+
+        /* Table title styling */
+        .table-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Card styling */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card span {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .card span.text-lg {
+            color: var(--primary-color);
+        }
+
+        .card hr {
+            border: 0;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 0.75rem 0;
+        }
+
+        .card img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        /* CRUD buttons styling */
+        .crud-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* Action bar styling */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar-content nav {
+                margin-top: 1rem;
+            }
+
+            .navbar-content nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navbar-content nav ul li {
+                margin: 0.5rem;
+            }
+
+            .tab-bar {
+                flex-direction: column;
+            }
+
+            .tab-bar button {
+                width: 100%;
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+
+            .tab-bar button.active {
+                border-left-color: var(--primary-color);
+            }
+
+            .action-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .crud-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animation for text */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize_v.html">图片识别</a></li>
+                    <li><a href="graph_v.html">知识图谱</a></li>
+                    <li><a href="db_v.html">数据库</a></li>
+                    <li><a href="admin_login_v.html">管理中心</a></li>
+                    <li><a href="me_v.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4">
+        <!-- Tab 栏 -->
+        <div class="tab-bar mb-6">
+            <button id="herb-tab" class="active" onclick="switchTab('herb')">药材信息表</button>
+            <button id="plant-tab" onclick="switchTab('plant')">植物信息表</button>
+            <button id="picture-tab" onclick="switchTab('picture')">药材图片表</button>
+        </div>
+
+        <!-- 数据内容区域 -->
+        <div id="content" class="w-full">
+            <!-- 药材信息表 -->
+            <div id="herb" class="table w-full">
+                <div class="action-bar">
+                    <div class="table-title mb-0">药材信息表</div>
+                    <button class="btn btn-success" onclick="openCreateModal('herb')">添加药材</button>
+                </div>
+                <div id="herb-cards" class="grid grid-cols-1 gap-4"></div>
+            </div>
+
+            <!-- 植物信息表 -->
+            <div id="plant" class="table hidden w-full">
+                <div class="action-bar">
+                    <div class="table-title mb-0">植物信息表</div>
+                    <button class="btn btn-success" onclick="openCreateModal('plant')">添加植物</button>
+                </div>
+                <div id="plant-cards" class="grid grid-cols-1 gap-4"
+                    style="display: grid; grid-template-columns: 1fr;"></div>
+            </div>
+
+            <!-- 药材图片表 -->
+            <div id="picture" class="table hidden w-full">
+                <div class="action-bar">
+                    <div class="table-title mb-0">药材图片表</div>
+                    <button class="btn btn-success" onclick="openCreateModal('picture')">添加图片</button>
+                </div>
+                <div id="picture-cards" class="grid grid-cols-1 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑药材模态框 -->
+    <div id="herb-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="herb-modal-title">添加药材</h3>
+                <button class="modal-close" onclick="closeModal('herb-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="herb-form">
+                    <div class="form-group">
+                        <label class="form-label" for="herbName">药材名称</label>
+                        <input type="text" class="form-control" id="herbName" name="herbName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="herbTibetanName">藏文名</label>
+                        <input type="text" class="form-control" id="herbTibetanName" name="herbTibetanName">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="herbAlias">别名</label>
+                        <input type="text" class="form-control" id="herbAlias" name="herbAlias">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="herbDescription">描述</label>
+                        <textarea class="form-control" id="herbDescription" name="herbDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="partUsed">使用部位</label>
+                        <input type="text" class="form-control" id="partUsed" name="partUsed">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="herbFeatures">特征</label>
+                        <textarea class="form-control" id="herbFeatures" name="herbFeatures" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="flavorTropism">性味归经</label>
+                        <input type="text" class="form-control" id="flavorTropism" name="flavorTropism">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="functionIndication">功效与主治</label>
+                        <textarea class="form-control" id="functionIndication" name="functionIndication" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="clinicalApplication">临床应用</label>
+                        <textarea class="form-control" id="clinicalApplication" name="clinicalApplication" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="pharmacologicalEffect">药理作用</label>
+                        <textarea class="form-control" id="pharmacologicalEffect" name="pharmacologicalEffect" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="research">研究</label>
+                        <textarea class="form-control" id="research" name="research" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="notes">备注</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('herb-modal')">取消</button>
+                <button class="btn btn-success" onclick="saveHerb()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑植物模态框 -->
+    <div id="plant-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="plant-modal-title">添加植物</h3>
+                <button class="modal-close" onclick="closeModal('plant-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plant-form">
+                    <div class="form-group">
+                        <label class="form-label" for="plantName">植物名称</label>
+                        <input type="text" class="form-control" id="plantName" name="plantName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantLatin">拉丁名</label>
+                        <input type="text" class="form-control" id="plantLatin" name="plantLatin">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantAlias">别名</label>
+                        <input type="text" class="form-control" id="plantAlias" name="plantAlias">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantTibetanName">藏文名</label>
+                        <input type="text" class="form-control" id="plantTibetanName" name="plantTibetanName">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantFamilyName">科名</label>
+                        <input type="text" class="form-control" id="plantFamilyName" name="plantFamilyName">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantGenusName">属名</label>
+                        <input type="text" class="form-control" id="plantGenusName" name="plantGenusName">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantFeatures">特征</label>
+                        <textarea class="form-control" id="plantFeatures" name="plantFeatures" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantOrigin">原产地</label>
+                        <input type="text" class="form-control" id="plantOrigin" name="plantOrigin">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantProtectLevel">保护级别</label>
+                        <input type="text" class="form-control" id="plantProtectLevel" name="plantProtectLevel">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="plantNotes">备注</label>
+                        <textarea class="form-control" id="plantNotes" name="plantNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('plant-modal')">取消</button>
+                <button class="btn btn-success" onclick="savePlant()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑图片模态框 -->
+    <div id="picture-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="picture-modal-title">添加图片</h3>
+                <button class="modal-close" onclick="closeModal('picture-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="picture-form">
+                    <div class="form-group">
+                        <label class="form-label" for="picName">名称</label>
+                        <input type="text" class="form-control" id="picName" name="picName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picFile">图片文件</label>
+                        <input type="file" class="form-control" id="picFile" name="picFile" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picCate">类别</label>
+                        <input type="text" class="form-control" id="picCate" name="picCate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picPart">部位</label>
+                        <input type="text" class="form-control" id="picPart" name="picPart">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picDescription">描述</label>
+                        <textarea class="form-control" id="picDescription" name="picDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picPlace">拍摄地点</label>
+                        <input type="text" class="form-control" id="picPlace" name="picPlace">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picTime">拍摄时间</label>
+                        <input type="date" class="form-control" id="picTime" name="picTime">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="picPerson">拍摄人</label>
+                        <input type="text" class="form-control" id="picPerson" name="picPerson">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('picture-modal')">取消</button>
+                <button class="btn btn-success" onclick="savePicture()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看详情模态框 -->
+    <div id="detail-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detail-modal-title">详细信息</h3>
+                <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="detail-modal-body">
+                <!-- 详情内容将在这里动态生成 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('detail-modal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">确认删除</h3>
+                <button class="modal-close" onclick="closeModal('confirm-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>您确定要删除这条记录吗？此操作不可撤销。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('confirm-modal')">取消</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前编辑的项目ID
+        let currentEditId = null;
+        let currentTab = 'herb';
+
+        // 模拟数据
+        const mockHerbData = [
+            { name: "药材1", category: "分类A", usage: "功效A", description: "描述A" },
+            { name: "药材2", category: "分类B", usage: "功效B", description: "描述B" }
+        ];
+
+        const mockPlantData = [
+            { name: "植物1", category: "分类C", distribution: "分布C", description: "描述C" },
+            { name: "植物2", category: "分类D", distribution: "分布D", description: "描述D" }
+        ];
+
+        const mockPictureData = [
+            { name: "图片1", url: "https://via.placeholder.com/150", description: "描述E" },
+            { name: "图片2", url: "https://via.placeholder.com/150", description: "描述F" }
+        ];
+
+        // 切换 Tab 并更新按钮样式
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // 隐藏所有表格
+            document.querySelectorAll('.table').forEach(table => table.classList.add('hidden'));
+
+            // 显示对应的表格
+            document.getElementById(tabName).classList.remove('hidden');
+
+            // 移除所有按钮的 active 类
+            document.querySelectorAll('.tab-bar button').forEach(button => button.classList.remove('active'));
+
+            // 给当前按钮添加 active 类
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // 加载对应的数据
+            loadTabData(tabName);
+        }
+
+        // 加载对应 Tab 的数据
+        function loadTabData(tabName) {
+            if (tabName === 'herb') {
+                loadHerbData();
+            } else if (tabName === 'plant') {
+                loadPlantData();
+            } else if (tabName === 'picture') {
+                loadPictureData();
+            }
+        }
+
+        // 加载药材信息数据
+        function loadHerbData() {
+            let html = "";
+            $.ajax({
+                type: 'get',
+                url: '/herb',
+                success: function (herb) {
+                    var json = JSON.stringify(herb);
+                    console.log("药材数据：", json);
+                    // 遍历 herb 数组
+                    for (var i of herb) {
+                        console.log("herb:", i);
+                        html += `
+            <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                <span class="block mb-2 text-lg font-semibol  style="background: transparent;">
+                <span class="block mb-2 text-lg font-semibold">药材名称: ${escapeHtml(i.herbName)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">藏文名: ${escapeHtml(i.herbTibetanName)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">别名: ${escapeHtml(i.herbAlias)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">描述: ${escapeHtml(i.herbDescription)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">使用部位: ${escapeHtml(i.partUsed)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">特征: ${escapeHtml(i.herbFeatures)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">性味归经: ${escapeHtml(i.flavorTropism)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">功效与主治: ${escapeHtml(i.functionIndication)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">临床应用: ${escapeHtml(i.clinicalApplication)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">药理作用: ${escapeHtml(i.pharmacologicalEffect)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">研究: ${escapeHtml(i.research)}</span>
+                <hr class="my-2">
+                <span class="block mb-2">备注: ${escapeHtml(i.notes)}</span>
+                <div class="crud-buttons">
+                    <button class="btn btn-primary" onclick="viewHerbDetail('${escapeHtml(i.herbName)}')">查看</button>
+                    <button class="btn btn-warning" onclick="editHerb('${escapeHtml(i.herbName)}')">编辑</button>
+                    <button class="btn btn-danger" onclick="confirmDelete('herb', '${escapeHtml(i.herbName)}')">删除</button>
+                </div>
+            </div>
+        `;
+                    }
+                    $("#herb-cards").html(html);
+                }
+            })
+        }
+
+        // 加载植物信息数据
+        function loadPlantData() {
+            let html = "";
+            $.ajax({
+                type: 'get',
+                url: '/plant', // 修改了接口地址为'/plant'
+                success: function (plants) {
+                    var json = JSON.stringify(plants);
+                    console.log("植物数据：", json);
+
+                    for (var plant of plants) { // 使用了plant替代原来的herb变量名
+                        console.log("plant:", plant);
+                        html += `
+                <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                    <span class="block mb-2 text-lg font-semibold">植物名称: ${escapeHtml(plant.plantName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拉丁名: ${escapeHtml(plant.plantLatin)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">别名: ${escapeHtml(plant.plantAlias)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">藏文名: ${escapeHtml(plant.plantTibetanName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">科名: ${escapeHtml(plant.plantFamilyName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">属名: ${escapeHtml(plant.plantGenusName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">特征: ${escapeHtml(plant.plantFeatures)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">原产地: ${escapeHtml(plant.plantOrigin)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">保护级别: ${escapeHtml(plant.plantProtectLevel)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">备注: ${escapeHtml(plant.notes)}</span>
+                    <div class="crud-buttons">
+                        <button class="btn btn-primary" onclick="viewPlantDetail('${escapeHtml(plant.plantName)}')">查看</button>
+                        <button class="btn btn-warning" onclick="editPlant('${escapeHtml(plant.plantName)}')">编辑</button>
+                        <button class="btn btn-danger" onclick="confirmDelete('plant', '${escapeHtml(plant.plantName)}')">删除</button>
+                    </div>
+                </div>
+            `;
+                    }
+                    $("#plant-cards").html(html); // 确保选择器与HTML中的元素ID相匹配
+                },
+                error: function (xhr, status, error) {
+                    console.error("请求失败：", error);
+                }
+            });
+        }
+
+        // 加载药材图片数据
+        function loadPictureData() {
+            let html = "";
+            $.ajax({
+                type: 'get',
+                url: '/pic', // 使用 /pic 接口
+                success: function (pictures) {
+                    var json = JSON.stringify(pictures);
+                    console.log("图片数据：", json);
+
+                    pictures.forEach(picture => {
+                        html += `
+                <div class="card p-6 shadow-md rounded-lg transition-transform duration-300 hover:scale-105" style="background: transparent;">
+                    <span class="block mb-2 text-lg font-semibold">文件名称: ${escapeHtml(picture.fileName)}</span>
+                    <hr class="my-2">
+                    <img src="${picture.fileName}" alt="${escapeHtml(picture.picName)}" class="mb-4 w-full h-auto rounded">
+                    <span class="block mb-2 text-lg font-semibold">名称: ${escapeHtml(picture.picName)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">类别: ${escapeHtml(picture.picCate)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">部位: ${escapeHtml(picture.picPart)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">描述: ${escapeHtml(picture.description)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄地点: ${escapeHtml(picture.picPlace)}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄时间: ${new Date(picture.picTime).toLocaleDateString()}</span>
+                    <hr class="my-2">
+                    <span class="block mb-2">拍摄人: ${escapeHtml(picture.picPerson)}</span>
+                    <div class="crud-buttons">
+                        <button class="btn btn-primary" onclick="viewPictureDetail('${escapeHtml(picture.picName)}')">查看</button>
+                        <button class="btn btn-warning" onclick="editPicture('${escapeHtml(picture.picName)}')">编辑</button>
+                        <button class="btn btn-danger" onclick="confirmDelete('picture', '${escapeHtml(picture.picName)}')">删除</button>
+                    </div>
+                </div>
+            `;
+                    });
+
+                    $("#picture-cards").html(html); // 更新页面内容
+                },
+                error: function (xhr, status, error) {
+                    console.error("请求失败：", error);
+                }
+            });
+        }
+
+        // 打开创建模态框
+        function openCreateModal(type) {
+            currentEditId = null;
+            
+            if (type === 'herb') {
+                document.getElementById('herb-modal-title').textContent = '添加药材';
+                document.getElementById('herb-form').reset();
+                openModal('herb-modal');
+            } else if (type === 'plant') {
+                document.getElementById('plant-modal-title').textContent = '添加植物';
+                document.getElementById('plant-form').reset();
+                openModal('plant-modal');
+            } else if (type === 'picture') {
+                document.getElementById('picture-modal-title').textContent = '添加图片';
+                document.getElementById('picture-form').reset();
+                openModal('picture-modal');
+            }
+        }
+
+        // 查看药材详情
+        function viewHerbDetail(name) {
+            $.ajax({
+                type: 'get',
+                url: `/herb/${name}`,
+                success: function(herb) {
+                    let detailHtml = `
+                        <div class="detail-content">
+                            <p><strong>药材名称:</strong> ${escapeHtml(herb.herbName)}</p>
+                            <p><strong>藏文名:</strong> ${escapeHtml(herb.herbTibetanName)}</p>
+                            <p><strong>别名:</strong> ${escapeHtml(herb.herbAlias)}</p>
+                            <p><strong>描述:</strong> ${escapeHtml(herb.herbDescription)}</p>
+                            <p><strong>使用部位:</strong> ${escapeHtml(herb.partUsed)}</p>
+                            <p><strong>特征:</strong> ${escapeHtml(herb.herbFeatures)}</p>
+                            <p><strong>性味归经:</strong> ${escapeHtml(herb.flavorTropism)}</p>
+                            <p><strong>功效与主治:</strong> ${escapeHtml(herb.functionIndication)}</p>
+                            <p><strong>临床应用:</strong> ${escapeHtml(herb.clinicalApplication)}</p>
+                            <p><strong>药理作用:</strong> ${escapeHtml(herb.pharmacologicalEffect)}</p>
+                            <p><strong>研究:</strong> ${escapeHtml(herb.research)}</p>
+                            <p><strong>备注:</strong> ${escapeHtml(herb.notes)}</p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('detail-modal-title').textContent = '药材详情';
+                    document.getElementById('detail-modal-body').innerHTML = detailHtml;
+                    openModal('detail-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取药材详情失败:", error);
+                    alert("获取药材详情失败");
+                }
+            });
+        }
+
+        // 查看植物详情
+        function viewPlantDetail(name) {
+            $.ajax({
+                type: 'get',
+                url: `/plant/${name}`,
+                success: function(plant) {
+                    let detailHtml = `
+                        <div class="detail-content">
+                            <p><strong>植物名称:</strong> ${escapeHtml(plant.plantName)}</p>
+                            <p><strong>拉丁名:</strong> ${escapeHtml(plant.plantLatin)}</p>
+                            <p><strong>别名:</strong> ${escapeHtml(plant.plantAlias)}</p>
+                            <p><strong>藏文名:</strong> ${escapeHtml(plant.plantTibetanName)}</p>
+                            <p><strong>科名:</strong> ${escapeHtml(plant.plantFamilyName)}</p>
+                            <p><strong>属名:</strong> ${escapeHtml(plant.plantGenusName)}</p>
+                            <p><strong>特征:</strong> ${escapeHtml(plant.plantFeatures)}</p>
+                            <p><strong>原产地:</strong> ${escapeHtml(plant.plantOrigin)}</p>
+                            <p><strong>保护级别:</strong> ${escapeHtml(plant.plantProtectLevel)}</p>
+                            <p><strong>备注:</strong> ${escapeHtml(plant.notes)}</p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('detail-modal-title').textContent = '植物详情';
+                    document.getElementById('detail-modal-body').innerHTML = detailHtml;
+                    openModal('detail-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取植物详情失败:", error);
+                    alert("获取植物详情失败");
+                }
+            });
+        }
+
+        // 查看图片详情
+        function viewPictureDetail(name) {
+            $.ajax({
+                type: 'get',
+                url: `/pic/${name}`,
+                success: function(picture) {
+                    let detailHtml = `
+                        <div class="detail-content">
+                            <img src="${picture.fileName}" alt="${escapeHtml(picture.picName)}" class="mb-4 w-full h-auto rounded">
+                            <p><strong>名称:</strong> ${escapeHtml(picture.picName)}</p>
+                            <p><strong>文件名称:</strong> ${escapeHtml(picture.fileName)}</p>
+                            <p><strong>类别:</strong> ${escapeHtml(picture.picCate)}</p>
+                            <p><strong>部位:</strong> ${escapeHtml(picture.picPart)}</p>
+                            <p><strong>描述:</strong> ${escapeHtml(picture.description)}</p>
+                            <p><strong>拍摄地点:</strong> ${escapeHtml(picture.picPlace)}</p>
+                            <p><strong>拍摄时间:</strong> ${new Date(picture.picTime).toLocaleDateString()}</p>
+                            <p><strong>拍摄人:</strong> ${escapeHtml(picture.picPerson)}</p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('detail-modal-title').textContent = '图片详情';
+                    document.getElementById('detail-modal-body').innerHTML = detailHtml;
+                    openModal('detail-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取图片详情失败:", error);
+                    alert("获取图片详情失败");
+                }
+            });
+        }
+
+        // 编辑药材
+        function editHerb(name) {
+            $.ajax({
+                type: 'get',
+                url: `/herb/${name}`,
+                success: function(herb) {
+                    currentEditId = name;
+                    
+                    document.getElementById('herb-modal-title').textContent = '编辑药材';
+                    document.getElementById('herbName').value = herb.herbName;
+                    document.getElementById('herbTibetanName').value = herb.herbTibetanName;
+                    document.getElementById('herbAlias').value = herb.herbAlias;
+                    document.getElementById('herbDescription').value = herb.herbDescription;
+                    document.getElementById('partUsed').value = herb.partUsed;
+                    document.getElementById('herbFeatures').value = herb.herbFeatures;
+                    document.getElementById('flavorTropism').value = herb.flavorTropism;
+                    document.getElementById('functionIndication').value = herb.functionIndication;
+                    document.getElementById('clinicalApplication').value = herb.clinicalApplication;
+                    document.getElementById('pharmacologicalEffect').value = herb.pharmacologicalEffect;
+                    document.getElementById('research').value = herb.research;
+                    document.getElementById('notes').value = herb.notes;
+                    
+                    openModal('herb-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取药材详情失败:", error);
+                    alert("获取药材详情失败");
+                }
+            });
+        }
+
+        // 编辑植物
+        function editPlant(name) {
+            $.ajax({
+                type: 'get',
+                url: `/plant/${name}`,
+                success: function(plant) {
+                    currentEditId = name;
+                    
+                    document.getElementById('plant-modal-title').textContent = '编辑植物';
+                    document.getElementById('plantName').value = plant.plantName;
+                    document.getElementById('plantLatin').value = plant.plantLatin;
+                    document.getElementById('plantAlias').value = plant.plantAlias;
+                    document.getElementById('plantTibetanName').value = plant.plantTibetanName;
+                    document.getElementById('plantFamilyName').value = plant.plantFamilyName;
+                    document.getElementById('plantGenusName').value = plant.plantGenusName;
+                    document.getElementById('plantFeatures').value = plant.plantFeatures;
+                    document.getElementById('plantOrigin').value = plant.plantOrigin;
+                    document.getElementById('plantProtectLevel').value = plant.plantProtectLevel;
+                    document.getElementById('plantNotes').value = plant.notes;
+                    
+                    openModal('plant-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取植物详情失败:", error);
+                    alert("获取植物详情失败");
+                }
+            });
+        }
+
+        // 编辑图片
+        function editPicture(name) {
+            $.ajax({
+                type: 'get',
+                url: `/pic/${name}`,
+                success: function(picture) {
+                    currentEditId = name;
+                    
+                    document.getElementById('picture-modal-title').textContent = '编辑图片';
+                    document.getElementById('picName').value = picture.picName;
+                    document.getElementById('picCate').value = picture.picCate;
+                    document.getElementById('picPart').value = picture.picPart;
+                    document.getElementById('picDescription').value = picture.description;
+                    document.getElementById('picPlace').value = picture.picPlace;
+                    document.getElementById('picTime').value = new Date(picture.picTime).toISOString().split('T')[0];
+                    document.getElementById('picPerson').value = picture.picPerson;
+                    
+                    openModal('picture-modal');
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取图片详情失败:", error);
+                    alert("获取图片详情失败");
+                }
+            });
+        }
+
+        // 确认删除
+        function confirmDelete(type, name) {
+            currentEditId = name;
+            
+            document.getElementById('confirm-delete-btn').onclick = function() {
+                deleteItem(type, name);
+            };
+            
+            openModal('confirm-modal');
+        }
+
+        // 删除项目
+        function deleteItem(type, name) {
+            let url = '';
+            
+            if (type === 'herb') {
+                url = `/herb/${name}`;
+            } else if (type === 'plant') {
+                url = `/plant/${name}`;
+            } else if (type === 'picture') {
+                url = `/pic/${name}`;
+            }
+            
+            $.ajax({
+                type: 'delete',
+                url: url,
+                success: function(response) {
+                    closeModal('confirm-modal');
+                    alert(`删除${type === 'herb' ? '药材' : type === 'plant' ? '植物' : '图片'}成功`);
+                    loadTabData(currentTab);
+                },
+                error: function(xhr, status, error) {
+                    console.error(`删除${type}失败:`, error);
+                    alert(`删除失败: ${error}`);
+                }
+            });
+        }
+
+        // 保存药材
+        function saveHerb() {
+            const formData = {
+                herbName: document.getElementById('herbName').value,
+                herbTibetanName: document.getElementById('herbTibetanName').value,
+                herbAlias: document.getElementById('herbAlias').value,
+                herbDescription: document.getElementById('herbDescription').value,
+                partUsed: document.getElementById('partUsed').value,
+                herbFeatures: document.getElementById('herbFeatures').value,
+                flavorTropism: document.getElementById('flavorTropism').value,
+                functionIndication: document.getElementById('functionIndication').value,
+                clinicalApplication: document.getElementById('clinicalApplication').value,
+                pharmacologicalEffect: document.getElementById('pharmacologicalEffect').value,
+                research: document.getElementById('research').value,
+                notes: document.getElementById('notes').value
+            };
+            
+            const method = currentEditId ? 'put' : 'post';
+            const url = currentEditId ? `/herb/${currentEditId}` : '/herb';
+            
+            $.ajax({
+                type: method,
+                url: url,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    closeModal('herb-modal');
+                    alert(currentEditId ? '药材更新成功' : '药材添加成功');
+                    loadHerbData();
+                },
+                error: function(xhr, status, error) {
+                    console.error("保存药材失败:", error);
+                    alert("保存药材失败");
+                }
+            });
+        }
+
+        // 保存植物
+        function savePlant() {
+            const formData = {
+                plantName: document.getElementById('plantName').value,
+                plantLatin: document.getElementById('plantLatin').value,
+                plantAlias: document.getElementById('plantAlias').value,
+                plantTibetanName: document.getElementById('plantTibetanName').value,
+                plantFamilyName: document.getElementById('plantFamilyName').value,
+                plantGenusName: document.getElementById('plantGenusName').value,
+                plantFeatures: document.getElementById('plantFeatures').value,
+                plantOrigin: document.getElementById('plantOrigin').value,
+                plantProtectLevel: document.getElementById('plantProtectLevel').value,
+                notes: document.getElementById('plantNotes').value
+            };
+            
+            const method = currentEditId ? 'put' : 'post';
+            const url = currentEditId ? `/plant/${currentEditId}` : '/plant';
+            
+            $.ajax({
+                type: method,
+                url: url,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    closeModal('plant-modal');
+                    alert(currentEditId ? '植物更新成功' : '植物添加成功');
+                    loadPlantData();
+                },
+                error: function(xhr, status, error) {
+                    console.error("保存植物失败:", error);
+                    alert("保存植物失败");
+                }
+            });
+        }
+
+        // 保存图片
+        function savePicture() {
+            const formData = new FormData();
+            formData.append('picName', document.getElementById('picName').value);
+            formData.append('picCate', document.getElementById('picCate').value);
+            formData.append('picPart', document.getElementById('picPart').value);
+            formData.append('description', document.getElementById('picDescription').value);
+            formData.append('picPlace', document.getElementById('picPlace').value);
+            formData.append('picTime', document.getElementById('picTime').value);
+            formData.append('picPerson', document.getElementById('picPerson').value);
+            
+            const fileInput = document.getElementById('picFile');
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
+            
+            const method = currentEditId ? 'put' : 'post';
+            const url = currentEditId ? `/pic/${currentEditId}` : '/pic';
+            
+            $.ajax({
+                type: method,
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    closeModal('picture-modal');
+                    alert(currentEditId ? '图片更新成功' : '图片添加成功');
+                    loadPictureData();
+                },
+                error: function(xhr, status, error) {
+                    console.error("保存图片失败:", error);
+                    alert("保存图片失败");
+                }
+            });
+        }
+
+        // 打开模态框
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模态框
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 防止 XSS 攻击的转义函数
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.toString().replace(/[&<>"']/g, function (match) {
+                const escapeMap = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                };
+                return escapeMap[match];
+            });
+        }
+        // 页面加载时默认显示药材信息表
+        window.onload = () => {
+            switchTab('herb');
+        };
+    </script>
+</body>
+
+</html>

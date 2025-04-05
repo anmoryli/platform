@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>图片识别</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2874a6;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --border-color: #d6dbdf;
+            --background-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --header-bg: #1a5276;
+            --footer-bg: #2c3e50;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header styling */
+        .blurry-navbar {
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-content h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .navbar-content nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-content nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        .navbar-content nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-content nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Remove violet glow */
+        .violet-glow {
+            display: none;
+        }
+
+        /* Title styling */
+        .title {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* Main container styling */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* Recognize section styling */
+        .recognize {
+            transition: all 0.5s ease;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+        }
+
+        .recognize.slide-left {
+            width: 50%;
+        }
+
+        .img-preview {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .img-preview img {
+            max-height: 300px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .recognize.slide-left .img-preview {
+            margin-top: 0;
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .recognize.slide-left .img-preview img {
+            max-height: 280px;
+            object-fit: contain;
+        }
+
+        .control {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .control h1 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .result {
+            margin-bottom: 1.5rem;
+        }
+
+        .result p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .output {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            color: var(--text-color) !important;
+        }
+
+        /* Button styling */
+        .button1, .button2 {
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .button1 input, .button2 button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button1 input {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .button1 input::before {
+            content: "📁";
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .button2 button:hover, .button1 input:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Plant details styling */
+        .plant-details {
+            position: absolute;
+            right: -50%;
+            width: 50%;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 2rem;
+            transition: all 0.5s ease;
+            overflow-y: auto;
+            max-height: 80vh;
+            z-index: 0;
+        }
+
+        .plant-details.show {
+            right: 0;
+            z-index: 2;
+        }
+
+        .plant-details h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .plant-details-content {
+            color: var(--text-color);
+        }
+
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section h3 {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .detail-section p {
+            line-height: 1.6;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .close-details {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-details:hover {
+            background-color: #c0392b;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar-content nav {
+                margin-top: 1rem;
+            }
+
+            .navbar-content nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navbar-content nav ul li {
+                margin: 0.5rem;
+            }
+
+            .recognize.slide-left {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+
+            .plant-details {
+                width: 100%;
+                right: -100%;
+            }
+
+            .plant-details.show {
+                right: 0;
+            }
+
+            .main-container {
+                margin: 1rem;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="violet-glow"></div>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize_v.html">图片识别</a></li>
+                    <li><a href="graph_v.html">知识图谱</a></li>
+                    <li><a href="db_v.html">数据库</a></li>
+                    <li><a href="admin_login_v.html">管理中心</a></li>
+                    <li><a href="me_v.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="title animate">
+        <h1>上传你的图片</h1>
+    </div>
+
+    <div class="main-container">
+        <div class="recognize">
+            <div class="img-preview">
+                <img id="preview" src="/images/recognize.gif" alt="图片预览">
+            </div>
+            <div class="control">
+                <h1 id="header">开始识别</h1>
+                <div class="result">
+                    <p id="result">识别结果：</p>
+                    <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+                </div>
+                <span class="button1">
+                    <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
+                </span>
+                <span class="button2">
+                    <button id="startButton" onclick="recognize()">开始识别</button>
+                </span>
+                <span class="button2">
+                    <button id="testButton" onclick="graph_load()">查看相关图谱</button>
+                </span>
+                <span class="button2">
+                    <button id="viewDetailsButton" onclick="viewPlantDetails()">查看详细信息</button>
+                </span>
+            </div>
+        </div>
+
+        <!-- 植物详情面板 -->
+        <div class="plant-details" id="plantDetails">
+            <button class="close-details" onclick="closeDetails()">×</button>
+            <h2 id="plantName">植物详情</h2>
+            <div class="plant-details-content" id="plantDetailsContent">
+                <div class="loading-spinner"></div> 正在加载详情...
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        function graph_load() {
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+            // 将识别结果作为查询参数传递
+            console.log("获取的参数为:" + result);
+            location.href = "graph_recognize_v.html?name=" + encodeURIComponent(result);
+        }
+
+        function refresh() {
+            document.getElementById("resultText").value = "";
+            document.getElementById("header").textContent = "开始识别";
+        }
+
+        function recognize() {
+            let filesInput = document.getElementById('uploadButton');
+            let imgPreview = document.getElementById('preview');
+
+            const file = filesInput.files[0];
+            if (!file) {
+                alert("请选择一个文件");
+                return;
+            }
+            imgPreview.src = URL.createObjectURL(file);
+            console.log(imgPreview.src);
+
+            let formData = new FormData();
+            formData.append("file", file); // 直接上传文件对象
+
+            // 获取h1标签并修改其内容
+            const headerElement = document.getElementById('header');
+            headerElement.textContent = '正在识别，请稍后...';
+
+            $.ajax({
+                type: "POST",
+                url: "/recognize",
+                data: formData,
+                contentType: false,  // 必须设置为 false
+                processData: false,  // 必须设置为 false
+                success: function (result) {
+                    console.log(result);
+                    if (result === "") {
+                        alert("识别失败");
+                    } else {
+                        // 获取h1标签并修改其内容
+                        headerElement.textContent = '识别成功';
+                        document.getElementById("resultText").value = result;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    alert("识别过程中发生错误，请重试！");
+                }
+            });
+        }
+
+        // 图片预览
+        let filesInput = document.getElementById('uploadButton');
+        let imgPreview = document.getElementById('preview');
+
+        filesInput.addEventListener('change', function () {
+            const file = filesInput.files[0];
+            if (file) {
+                imgPreview.src = URL.createObjectURL(file);
+            }
+        });
+
+        // 点击 test 按钮时触发动画
+        document.getElementById('testButton').addEventListener('click', function () {
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.add('slide-left');
+        });
+
+        // 查看植物详情
+        function viewPlantDetails() {
+            let result = document.getElementById("resultText").value.trim();
+            if (!result) {
+                alert("请先完成图片识别！");
+                return;
+            }
+
+            // 添加滑动效果
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.add('slide-left');
+
+            // 显示详情面板
+            const plantDetails = document.getElementById('plantDetails');
+            plantDetails.classList.add('show');
+
+            // 更新植物名称
+            document.getElementById('plantName').textContent = result + ' 详情';
+
+            // 显示加载状态
+            document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
+
+            // 从后端获取植物详情
+            fetchPlantDetails(result);
+        }
+
+        // 从后端获取植物详情
+        function fetchPlantDetails(plantName) {
+            // 模拟API请求延迟
+            setTimeout(function () {
+                // 这里应该是实际的API请求
+                $.ajax({
+                    type: "GET",
+                    url: "/plantDetail",
+                    data: { name: plantName },
+                    success: function (data) {
+                        displayPlantDetails(data);
+                    },
+                    error: function () {
+                        displayNoDetailsMessage();
+                    }
+                });
+
+                // 模拟API响应
+                if (plantName === "白术") {
+                    const data = {
+                        "herbId": 39,
+                        "herbName": "白术",
+                        "herbTibetanName": "བོད་ཡིག5",
+                        "herbAlias": "于术",
+                        "herbDescription": "菊科植物白术的干燥根茎。",
+                        "partUsed": "根茎",
+                        "herbFeatures": "性温，味甘、苦。归脾、胃经。",
+                        "flavorTropism": "温、甘、苦；归脾、胃经",
+                        "functionIndication": "健脾益气，燥湿利水，止汗，安胎。",
+                        "clinicalApplication": "用于脾虚食少等",
+                        "pharmacologicalEffect": "调节肠胃功能等",
+                        "research": "含有苍术酮等成分。",
+                        "notes": "常与茯苓配伍使用。",
+                        "imageUrl": "/images/plant-sample.jpg"
+                    };
+                    displayPlantDetails(data);
+                } else {
+                    displayNoDetailsMessage();
+                }
+            }, 1500);
+        }
+
+        // 显示植物详情
+        function displayPlantDetails(data) {
+            let detailsHtml = '';
+
+            // 添加图片（如果有）
+            if (data.imageUrl) {
+                detailsHtml += `<img src="${data.imageUrl}" alt="${data.herbName}" class="detail-image">`;
+            }
+
+            // 基本信息
+            detailsHtml += `
+        <div class="detail-section">
+            <h3>基本信息</h3>
+            <p><strong>学名：</strong> <em>${data.herbName}</em></p>
+            <p><strong>藏文名：</strong> <em>${data.herbTibetanName}</em></p>
+            <p><strong>别名：</strong> ${data.herbAlias}</p>
+            <p><strong>分类：</strong> ${data.partUsed}</p>
+        </div>
+    `;
+
+            // 描述
+            if (data.herbDescription) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>植物描述</h3>
+                <p>${data.herbDescription}</p>
+            </div>
+        `;
+            }
+
+            // 性味归经
+            if (data.flavorTropism) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>性味归经</h3>
+                <p>${data.flavorTropism}</p>
+            </div>
+        `;
+            }
+
+            // 功能主治
+            if (data.functionIndication) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>功能主治</h3>
+                <p>${data.functionIndication}</p>
+            </div>
+        `;
+            }
+
+            // 临床应用
+            if (data.clinicalApplication) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>临床应用</h3>
+                <p>${data.clinicalApplication}</p>
+            </div>
+        `;
+            }
+
+            // 药理作用
+            if (data.pharmacologicalEffect) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>药理作用</h3>
+                <p>${data.pharmacologicalEffect}</p>
+            </div>
+        `;
+            }
+
+            // 研究
+            if (data.research) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>研究</h3>
+                <p>${data.research}</p>
+            </div>
+        `;
+            }
+
+            // 注意事项
+            if (data.notes) {
+                detailsHtml += `
+            <div class="detail-section">
+                <h3>注意事项</h3>
+                <p>${data.notes}</p>
+            </div>
+        `;
+            }
+
+            // 添加操作按钮
+            detailsHtml += `
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button class="button2" onclick="graph_load()">查看相关图谱</button>
+            <button class="button2" onclick="window.location.href='db.html?search=${data.herbName}'">在数据库中查看</button>
+        </div>
+    `;
+
+            document.getElementById('plantDetailsContent').innerHTML = detailsHtml;
+        }
+
+        // 显示无详情信息
+        function displayNoDetailsMessage() {
+            const noDetailsHtml = `
+                <div style="text-align: center; padding: 30px;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🔍</div>
+                    <h3 style="color: var(--primary-color); margin-bottom: 15px;">未找到详细信息</h3>
+                    <p>抱歉，我们目前没有关于该植物的详细信息。</p>
+                    <p style="margin-top: 10px;">您可以：</p>
+                    <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                        <li style="margin-bottom: 10px;">• 检查植物名称是否正确</li>
+                        <li style="margin-bottom: 10px;">• 尝试查看相关图谱获取基本信息</li>
+                        <li>• 在数据库中搜索相似植物</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <button class="button2" onclick="graph_load()">查看相关图谱</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('plantDetailsContent').innerHTML = noDetailsHtml;
+        }
+
+        // 关闭详情面板
+        function closeDetails() {
+            const recognizeElement = document.querySelector('.recognize');
+            recognizeElement.classList.remove('slide-left');
+
+            const plantDetails = document.getElementById('plantDetails');
+            plantDetails.classList.remove('show');
+        }
+
+        // 确保按钮点击事件也能够触发识别函数
+        document.getElementById('startButton').addEventListener('click', recognize);
+    </script>
+</body>
+
+</html>
