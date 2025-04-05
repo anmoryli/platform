@@ -41,10 +41,7 @@ public class UserController {
         }
         User user = new User();
         user = userService.getByName(username);
-        if(user != null) {
             return userService.addUser(username, password);
-        }
-        return -1;
     }
 
     @RequestMapping("bindEmail")

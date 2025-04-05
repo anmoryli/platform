@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识图谱</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 设置网页图标 -->
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+
+    <!--JAVASCRIPT-->
+    <!--=================================================-->
+
+    <!--Pace - Page Load Progress Par [OPTIONAL]-->
+    <link href="css/pace.min.css" rel="stylesheet">
+
+    <script src="js/pace.min.js"></script>
+
+
+
+    <!--jQuery [ REQUIRED ]-->
+    <script src="js/jquery-2.2.4.min.js"></script>
+
+
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="js/nifty.min.js"></script>
+    <script src="js/icons.js"></script>
+
+
+    <script src="js/echarts.min.js"></script>
+
+
+    <!--=================================================-->
+
+    <!--Demo script [ DEMONSTRATION ]-->
+    <script src="js/nifty-demo.min.js"></script>
+
+    <!-- 引入 ECharts 文件 -->
+    <script>
+        $(document).ready(function () {
+            // 获取图表容器元素
+            var chartDom = document.getElementById('main');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            // 显示加载动画
+            myChart.showLoading();
+
+            /**
+             * 通用函数：加载数据并渲染图表
+             * @param url 请求的接口地址
+             * @param params 请求参数（可选）
+             */
+            function loadDataAndRenderChart(url, params) {
+                $.getJSON(url, params, function (json) {
+                    console.log("正在发送请求到:", url, "参数:", params);
+                    // 检查返回的数据是否存在
+                    if (!json || !Array.isArray(json.data) || !Array.isArray(json.links)) {
+                        alert("未找到相关数据！");
+                        myChart.hideLoading();
+                        return;
+                    }
+
+                    // 打印搜索到的数据
+                    console.log("原始响应数据:", json); // 打印原始数据
+                    console.log("搜索的数据: " + JSON.stringify(json)); // 打印字符串化的数据
+
+                    // 使用新数据重新渲染图表
+                    renderChart(json.data, json.links);
+
+                    // 隐藏加载动画
+                    myChart.hideLoading();
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data: ", textStatus, errorThrown);
+                    myChart.hideLoading();
+                    alert("无法从服务器获取数据，请稍后再试。");
+                });
+            }
+
+            function renderChart(data, links) {
+                var option = {
+                    title: {
+                        text: '药材关系图',
+                        textStyle: {
+                            fontWeight: "lighter",
+                        }
+                    },
+                    animationDurationUpdate: 1500,
+                    animationEasingUpdate: 'quinticInOut',
+                    legend: {
+                        x: "center",
+                        show: true,
+                        data: ["药材名称", "配伍药材", "药效", "采集地点", "藏药"]
+                    },
+                    series: [
+                        {
+                            type: 'graph',
+                            layout: 'force',
+                            symbolSize: 100,
+                            edgeSymbol: ['circle', 'arrow'],
+                            edgeSymbolSize: [4, 4],
+                            edgeLabel: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 10
+                                    },
+                                    formatter: "{c}"
+                                }
+                            },
+                            force: {
+                                repulsion: 4000,
+                                edgeLength: [300, 400],
+                                gravity: 0.3,
+                                layoutAnimation: true,
+                            },
+                            focusNodeAdjacency: true,
+                            draggable: true,
+                            roam: true,
+                            categories: [
+                                { name: '药材名称' },
+                                { name: '配伍药材' },
+                                { name: '药效' },
+                                { name: '采集地点' },
+                                { name: '藏药' }
+                            ],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 12
+                                    },
+                                }
+                            },
+                            tooltip: {
+                                formatter: function (params) {
+                                    if (!params.value) {
+                                        return params.data.name;
+                                    } else {
+                                        return params.data.name + ": " + params.data.value;
+                                    }
+                                },
+                            },
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.9,
+                                    width: 1,
+                                    curveness: 0
+                                }
+                            },
+                            nodes: data.map(function (node, idx) {
+                                node.id = idx; // 确保每个节点有唯一的 id
+                                return node;
+                            }),
+                            links: links,
+                            linkStyle: {
+                                normal: {
+                                    lineStyle: {
+                                        width: 2,
+                                        type: 'solid',
+                                        color: '#666'
+                                    },
+                                    label: {
+                                        show: true,
+                                        position: 'end',
+                                        formatter: '{b}'
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                };
+
+                // 设置图表选项
+                myChart.setOption(option);
+            }
+
+            // 页面加载时，默认加载所有数据
+            loadDataAndRenderChart('http://101.132.173.174:8080/echarts');
+
+            // 搜索按钮点击事件
+            $('#search-button').on('click', function () {
+                var keyword = $('#search-input').val().trim(); // 获取输入框中的关键词
+                if (!keyword) {
+                    alert("请输入关键词！");
+                    return;
+                }
+
+                // 显示加载动画
+                myChart.showLoading();
+
+                // 加载与关键词相关的数据
+                loadDataAndRenderChart('http://101.132.173.174:8080/queryByName', { name: keyword });
+            });
+
+            $('#show-all').on('click', function () {
+                // 显示加载动画
+                myChart.showLoading();
+                // 加载与关键词相关的数据
+                loadDataAndRenderChart('http://101.132.173.174:8080/echarts');
+            });
+
+            // 初始化自定义图谱生成
+            var customChartDom = document.getElementById('custom-graph');
+            var customChart = echarts.init(customChartDom);
+            
+            $('#generate-custom-graph').on('click', function() {
+                var customInput = $('#custom-graph-input').val().trim();
+                if (!customInput) {
+                    alert("请输入自定义图谱内容！");
+                    return;
+                }
+                
+                // 显示加载动画
+                customChart.showLoading();
+                
+                // 这里应该发送请求到后端生成自定义图谱
+                // 为了演示，我们使用模拟数据
+                setTimeout(function() {
+                    $.ajax({
+                        url: '/addSelfGraph',
+                        type: 'POST',
+                        data: JSON.stringify({ content: customInput }),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            console.log("自定义图谱生成成功:", response);
+                        },
+                    })
+                    var mockData = {
+                        data: [
+                            {name: '辐射凤仙花', symbolSize: 70, category: 0},
+                            {name: '中国西藏', symbolSize: 50, category: 1},
+                            {name: '冬月严寒', symbolSize: 40, category: 2},
+                            {name: '驱寒', symbolSize: 40, category: 3},
+                        ],
+                        links: [
+                            {source: 0, target: 1, name: '采集地点'},
+                            {source: 0, target: 2, name: '生长条件'},
+                            {source: 1, target: 3, name: '药效'}
+                        ]
+                    };
+                    renderCustomChart(mockData.data, mockData.links);
+                    customChart.hideLoading();
+                }, 1000);
+            });
+            
+            function renderCustomChart(data, links) {
+                var option = {
+                    title: {
+                        text: '自定义知识图谱',
+                        textStyle: {
+                            fontWeight: "lighter",
+                        }
+                    },
+                    animationDurationUpdate: 1500,
+                    animationEasingUpdate: 'quinticInOut',
+                    series: [
+                        {
+                            type: 'graph',
+                            layout: 'force',
+                            symbolSize: 50,
+                            edgeSymbol: ['circle', 'arrow'],
+                            edgeSymbolSize: [4, 4],
+                            edgeLabel: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 10
+                                    },
+                                    formatter: "{c}"
+                                }
+                            },
+                            force: {
+                                repulsion: 2000,
+                                edgeLength: [150, 200],
+                                gravity: 0.2,
+                                layoutAnimation: true,
+                            },
+                            focusNodeAdjacency: true,
+                            draggable: true,
+                            roam: true,
+                            categories: [
+                                { name: '药材' },
+                                { name: '采集地点' },
+                                { name: '生长条件' },
+                                { name: '药效' }
+                            ],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 12
+                                    },
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.9,
+                                    width: 1,
+                                    curveness: 0
+                                }
+                            },
+                            nodes: data.map(function (node, idx) {
+                                node.id = idx;
+                                return node;
+                            }),
+                            links: links
+                        }
+                    ]
+                };
+                
+                customChart.setOption(option);
+            }
+
+            // 初始化化学成分预测图表
+            var chemicalChartDom = document.getElementById('chemical-chart');
+            var chemicalChart = echarts.init(chemicalChartDom);
+            
+            $('#predict-chemical').on('click', function() {
+                var herbName = $('#chemical-input').val().trim();
+                if (!herbName) {
+                    alert("请输入药材名称！");
+                    return;
+                }
+                
+                // 显示加载动画
+                chemicalChart.showLoading();
+                
+                // 这里应该发送请求到后端预测化学成分
+                // 为了演示，我们使用模拟数据
+                setTimeout(function() {
+                    var mockData = [
+                        {value: 35, name: '黄酮类'},
+                        {value: 20, name: '生物碱'},
+                        {value: 15, name: '多糖'},
+                        {value: 10, name: '挥发油'},
+                        {value: 20, name: '其他成分'}
+                    ];
+                    
+                    renderChemicalChart(mockData);
+                    chemicalChart.hideLoading();
+                    
+                    // 更新预测结果文本
+                    $('#prediction-result').html(`
+                        <div class="prediction-item">
+                            <h4>主要化学成分预测</h4>
+                            <p><strong>黄酮类:</strong> 约35%，包括芦丁、槲皮素等</p>
+                            <p><strong>生物碱:</strong> 约20%，包括小檗碱、巴马汀等</p>
+                            <p><strong>多糖:</strong> 约15%，具有免疫调节作用</p>
+                            <p><strong>挥发油:</strong> 约10%，具有抗菌作用</p>
+                            <p><strong>其他成分:</strong> 约20%，包括有机酸、氨基酸等</p>
+                        </div>
+                    `);
+                }, 1000);
+            });
+            
+            function renderChemicalChart(data) {
+                var option = {
+                    title: {
+                        text: '化学成分预测',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 10,
+                        data: data.map(item => item.name)
+                    },
+                    series: [
+                        {
+                            name: '化学成分',
+                            type: 'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: data,
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                
+                chemicalChart.setOption(option);
+            }
+
+            // 初始化药材比较图表
+            var compareChartDom = document.getElementById('compare-chart');
+            var compareChart = echarts.init(compareChartDom);
+            
+            $('#compare-herbs').on('click', function() {
+                var herb1 = $('#herb1').val().trim();
+                var herb2 = $('#herb2').val().trim();
+                
+                if (!herb1 || !herb2) {
+                    alert("请输入两种药材名称进行比较！");
+                    return;
+                }
+                
+                // 显示加载动画
+                compareChart.showLoading();
+                
+                // 这里应该发送请求到后端比较药材
+                // 为了演示，我们使用模拟数据
+                setTimeout(function() {
+                    renderCompareChart(herb1, herb2);
+                    compareChart.hideLoading();
+                    
+                    // 更新比较结果文本
+                    $('#compare-result').html(`
+                        <div class="comparison-details">
+                            <h4>药材比较详情</h4>
+                            <table class="comparison-table">
+                                <tr>
+                                    <th>特性</th>
+                                    <th>${herb1}</th>
+                                    <th>${herb2}</th>
+                                </tr>
+                                <tr>
+                                    <td>药性</td>
+                                    <td>温</td>
+                                    <td>寒</td>
+                                </tr>
+                                <tr>
+                                    <td>归经</td>
+                                    <td>肝、脾经</td>
+                                    <td>肺、胃经</td>
+                                </tr>
+                                <tr>
+                                    <td>主治</td>
+                                    <td>活血化瘀，温经通络</td>
+                                    <td>清热解毒，凉血止血</td>
+                                </tr>
+                                <tr>
+                                    <td>禁忌</td>
+                                    <td>孕妇慎用</td>
+                                    <td>脾胃虚寒者慎用</td>
+                                </tr>
+                                <tr>
+                                    <td>配伍</td>
+                                    <td>常与当归、川芎配伍</td>
+                                    <td>常与金银花、连翘配伍</td>
+                                </tr>
+                            </table>
+                        </div>
+                    `);
+                }, 1000);
+            });
+            
+            function renderCompareChart(herb1, herb2) {
+                var option = {
+                    title: {
+                        text: '药材功效比较',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: [herb1, herb2],
+                        top: 30
+                    },
+                    radar: {
+                        indicator: [
+                            { name: '清热解毒', max: 100 },
+                            { name: '活血化瘀', max: 100 },
+                            { name: '补气养血', max: 100 },
+                            { name: '祛风湿', max: 100 },
+                            { name: '安神', max: 100 },
+                            { name: '抗菌消炎', max: 100 }
+                        ]
+                    },
+                    series: [
+                        {
+                            type: 'radar',
+                            data: [
+                                {
+                                    value: [30, 85, 70, 40, 20, 35],
+                                    name: herb1,
+                                    areaStyle: {
+                                        color: 'rgba(26, 82, 118, 0.6)'
+                                    }
+                                },
+                                {
+                                    value: [90, 20, 30, 15, 60, 80],
+                                    name: herb2,
+                                    areaStyle: {
+                                        color: 'rgba(46, 134, 193, 0.6)'
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                };
+                
+                compareChart.setOption(option);
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2874a6;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --border-color: #d6dbdf;
+            --background-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --header-bg: #1a5276;
+            --footer-bg: #2c3e50;
+            --chat-bg: #f8f9fa;
+            --user-message-bg: #e8f4fc;
+            --bot-message-bg: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Remove violet glow */
+        .violet-glow {
+            display: none;
+        }
+
+        /* Header styling */
+        .blurry-navbar {
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-content h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .navbar-content nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-content nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        .navbar-content nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-content nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .navbar-content nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Main content layout */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Search container styling */
+        #search-container {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        #search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        #search-button, #show-all {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-left: 0.5rem;
+        }
+
+        #search-button:hover, #show-all:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Main content grid layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Left column - Chemical prediction */
+        .chemical-prediction {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chemical-prediction h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .chemical-input-container {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        #chemical-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        #predict-chemical {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        #predict-chemical:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #chemical-chart {
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        #prediction-result {
+            background-color: var(--chat-bg);
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .prediction-item h4 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .prediction-item p {
+            margin: 0.5rem 0;
+        }
+
+        /* Middle column - Main graph */
+        .graph-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main {
+            height: 500px;
+        }
+
+        /* Right column - Custom graph */
+        .custom-graph-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .custom-graph-container h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .custom-input-container {
+            margin-bottom: 1rem;
+        }
+
+        #custom-graph-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            height: 100px;
+            resize: vertical;
+        }
+
+        #generate-custom-graph {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        #generate-custom-graph:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #custom-graph {
+            height: 300px;
+            flex: 1;
+        }
+
+        /* Bottom section - Chat and comparison */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Chat container styling */
+        .bot-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bot-container h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .chat-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .chat-actions button {
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .chat-actions button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .char-counter {
+            font-size: 0.8rem;
+            color: #777;
+            align-self: center;
+        }
+
+        .chat-container {
+            height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: var(--chat-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .bot-message {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .user-message .message-bubble {
+            background-color: var(--user-message-bg);
+            color: var(--text-color);
+        }
+
+        .bot-message .message-bubble {
+            background-color: var(--bot-message-bg);
+            color: var(--text-color);
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #777;
+            margin-top: 0.25rem;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .input-container input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .input-container button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .input-container button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Herb comparison section */
+        .herb-comparison {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .herb-comparison h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .compare-input-container {
+            display: flex;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+        }
+
+        .compare-input-container input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        #compare-herbs {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        #compare-herbs:hover {
+            background-color: var(--secondary-color);
+        }
+
+        #compare-chart {
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        #compare-result {
+            background-color: var(--chat-bg);
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .comparison-details h4 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background-color: rgba(26, 82, 118, 0.1);
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(240, 240, 240, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .main-content, .bottom-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar-content nav {
+                margin-top: 1rem;
+            }
+
+            .navbar-content nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navbar-content nav ul li {
+                margin: 0.5rem;
+            }
+
+            #search-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            #search-input {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .chemical-input-container, .compare-input-container {
+                flex-direction: column;
+            }
+
+            #predict-chemical, #compare-herbs {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            .input-container {
+                flex-wrap: wrap;
+            }
+
+            .model-select, #voiceBtn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1 class="text-3xl font-bold">藏药植物药知识平台</h1>
+            <nav>
+                <ul>
+                    <li><a href="recognize_v.html">图片识别</a></li>
+                    <li><a href="graph_v.html">知识图谱</a></li>
+                    <li><a href="db_v.html">数据库</a></li>
+                    <li><a href="admin_login_v.html">管理中心</a></li>
+                    <li><a href="me_v.html">个人中心</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 搜索容器 -->
+    <div id="search-container">
+        <label for="search-input"></label><input type="text" id="search-input" placeholder="请输入关键词">
+        <button id="search-button">搜索</button>
+        <button id="show-all">展示全部</button>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <!-- 左侧 - 化学成分预测 -->
+        <div class="chemical-prediction">
+            <h3>化学成分预测</h3>
+            <div class="chemical-input-container">
+                <input type="text" id="chemical-input" placeholder="输入药材名称">
+                <button id="predict-chemical">预测</button>
+            </div>
+            <div id="chemical-chart"></div>
+            <div id="prediction-result">
+                <p>请输入药材名称进行化学成分预测...</p>
+            </div>
+        </div>
+
+        <!-- 中间 - 主要知识图谱 -->
+        <div class="graph-container">
+            <div id="main"></div>
+        </div>
+
+        <!-- 右侧 - 自定义图谱生成 -->
+        <div class="custom-graph-container">
+            <h3>自定义图谱生成</h3>
+            <div class="custom-input-container">
+                <textarea id="custom-graph-input" placeholder="请输入自定义图谱内容，例如：药材名称、关系、属性等"></textarea>
+                <button id="generate-custom-graph">生成图谱</button>
+            </div>
+            <div id="custom-graph"></div>
+        </div>
+    </div>
+
+    <!-- 底部区域 -->
+    <div class="bottom-section">
+        <!-- 聊天容器 -->
+        <div class="bot-container">
+            <h3>智能问答</h3>
+            <div class="chat-actions">
+                <button id="clearChatBtn">清空对话</button>
+                <div class="char-counter">0/500</div>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <!-- 对话内容将在这里动态生成 -->
+                <div class="message bot-message">
+                    <div class="message-bubble">
+                        欢迎使用藏药植物知识助手，请选择模型并输入您的问题。
+                        <div class="message-time">今天 00:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-container">
+                <span class="loadBtn">
+                    <button id="voiceBtn">点击语音输入</button>
+                </span>
+                <select id="modelSelect" class="model-select">
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="self">自研机器人</option>
+                </select>
+                <span class="send-edit">
+                    <input type="text" placeholder="输入内容" class="input" id="userInput" maxlength="500">
+                    <button id="sendBtn">发送</button>
+                </span>
+            </div>
+        </div>
+
+        <!-- 药材比较 -->
+        <div class="herb-comparison">
+            <h3>药材比较</h3>
+            <div class="compare-input-container">
+                <input type="text" id="herb1" placeholder="药材1">
+                <input type="text" id="herb2" placeholder="药材2">
+                <button id="compare-herbs">比较</button>
+            </div>
+            <div id="compare-chart"></div>
+            <div id="compare-result">
+                <p>请输入两种药材名称进行比较...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 初始化变量
+            let isWaitingForResponse = false;
+            let typingIndicator = null;
+            let isRecognizing = false;
+            let recognition = null;
+
+            // 检查浏览器是否支持语音识别
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+            const SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+
+            // 检查浏览器是否支持语音识别
+            const isSpeechRecognitionSupported = !!SpeechRecognition;
+
+            // 如果不支持语音识别，禁用语音按钮并显示提示
+            if (!isSpeechRecognitionSupported) {
+                $("#voiceBtn").prop("disabled", true).text("浏览器不支持语音识别").css("opacity", "0.5");
+                console.warn("当前浏览器不支持语音识别功能");
+            } else {
+                // 初始化语音识别
+                initSpeechRecognition();
+            }
+
+            // 更新字符计数器
+            function updateCharCounter() {
+                const currentLength = $("#userInput").val().length;
+                $(".char-counter").text(currentLength + "/500");
+            }
+
+            // 监听输入框变化，更新字符计数
+            $("#userInput").on('input', updateCharCounter);
+
+            // 获取当前时间
+            function getCurrentTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                return `今天 ${hours}:${minutes}`;
+            }
+
+            // 显示打字指示器
+            function showTypingIndicator() {
+                if (typingIndicator) return; // 如果已经存在，不再创建
+
+                typingIndicator = $("<div>").addClass("message bot-message");
+                const bubble = $("<div>").addClass("message-bubble").html(
+                    '<div class="typing-indicator"><span></span><span></span><span></span></div>'
+                );
+                typingIndicator.append(bubble);
+                $("#chatContainer").append(typingIndicator);
+                scrollToBottom();
+            }
+
+            // 隐藏打字指示器
+            function hideTypingIndicator() {
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                    typingIndicator = null;
+                }
+            }
+
+            // 滚动到底部
+            function scrollToBottom() {
+                const chatContainer = $("#chatContainer");
+                chatContainer.scrollTop(chatContainer[0].scrollHeight);
+            }
+
+            // 复制消息内容
+            function copyMessage(text) {
+                navigator.clipboard.writeText(text).then(function () {
+                    alert("已复制到剪贴板");
+                }, function () {
+                    alert("复制失败，请手动复制");
+                });
+            }
+
+            // 清空聊天
+            $("#clearChatBtn").click(function () {
+                if (confirm("确定要清空所有对话吗？")) {
+                    $("#chatContainer").html('');
+                    // 添加欢迎消息
+                    appendMessage("欢迎使用藏药植物知识助手，请选择模型并输入您的问题。", 'bot-message');
+                }
+            });
+
+            // 发送消息
+            $("#sendBtn").click(function () {
+                if (isWaitingForResponse) {
+                    alert("请等待上一个回复完成");
+                    return;
+                }
+
+                const userInput = $("#userInput").val().trim();
+                if (!userInput) {
+                    alert("请输入内容");
+                    return;
+                }
+
+                // 获取选择的模型
+                const selectedModel = $("#modelSelect").val();
+                console.log("选择的模型:", selectedModel);
+
+                // 显示用户消息
+                appendMessage(userInput, 'user-message');
+
+                // 清空输入框并重置字符计数
+                $("#userInput").val('');
+                updateCharCounter();
+
+                // 显示打字指示器
+                isWaitingForResponse = true;
+                showTypingIndicator();
+
+                // 根据选择的模型发送不同的请求
+                const endpoint = selectedModel === 'deepseek' ? '/ds_chat' : '/qa';
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    type: "POST",
+                    url: endpoint,
+                    contentType: "application/json",
+                    data: JSON.stringify({ userInput: userInput }),
+                    success: function (response) {
+                        // 隐藏打字指示器
+                        hideTypingIndicator();
+                        isWaitingForResponse = false;
+
+                        // 显示 AI 回复
+                        console.log(response);
+                        appendMessage(response, 'bot-message');
+                    },
+                    error: function (xhr, status, error) {
+                        // 隐藏打字指示器
+                        hideTypingIndicator();
+                        isWaitingForResponse = false;
+
+                        console.error("请求失败:", error);
+                        appendMessage("请求失败: " + error, 'bot-message');
+                    }
+                });
+            });
+
+            // 按Enter键发送消息
+            $("#userInput").keypress(function (e) {
+                if (e.which === 13) {
+                    $("#sendBtn").click();
+                    return false;
+                }
+            });
+
+            // 添加消息到聊天窗口
+            function appendMessage(content, className) {
+                const chatContainer = $("#chatContainer");
+                const messageElement = $("<div>").addClass("message").addClass(className);
+
+                // 创建消息气泡，添加复制按钮和时间戳
+                const bubble = $("<div>").addClass("message-bubble");
+
+                // 添加消息内容
+                bubble.text(content);
+
+                // 添加复制按钮和时间戳
+                const timeStamp = $("<div>").addClass("message-time").text(getCurrentTime());
+
+                // 只为机器人消息添加复制按钮
+                if (className === 'bot-message') {
+                    const copyBtn = $("<button>")
+                        .addClass("copy-btn")
+                        .text("复制")
+                        .click(function () {
+                            copyMessage(content);
+                        });
+                    bubble.append(copyBtn);
+                }
+
+                bubble.append(timeStamp);
+                messageElement.append(bubble);
+                chatContainer.append(messageElement);
+
+                // 滚动到底部
+                scrollToBottom();
+            }
+
+            // 初始化字符计数
+            updateCharCounter();
+
+            // 初始化语音识别
+            function initSpeechRecognition() {
+                if (!SpeechRecognition) return;
+
+                recognition = new SpeechRecognition();
+                
+                // 配置语音识别
+                recognition.continuous = false; // 不连续识别
+                recognition.interimResults = true; // 返回临时结果
+                recognition.maxAlternatives = 1; // 返回最可能的识别结果
+                recognition.lang = 'zh-CN'; // 设置语言为中文
+
+                // 识别结果事件
+                recognition.onresult = function(event) {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    // 处理识别结果
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    // 如果有最终结果，填入输入框
+                    if (finalTranscript) {
+                        $("#userInput").val(finalTranscript);
+                        updateCharCounter();
+                    } else if (interimTranscript) {
+                        // 显示临时结果
+                        $("#userInput").val(interimTranscript);
+                        updateCharCounter();
+                    }
+                };
+
+                // 识别结束事件
+                recognition.onend = function() {
+                    console.log("语音识别结束");
+                    
+                    // 更新按钮状态
+                    $("#voiceBtn").removeClass("recording");
+                    $("#voiceBtn").text("点击语音输入");
+                    $(".recording-animation").remove();
+                    
+                    isRecognizing = false;
+                };
+
+                // 识别错误事件
+                recognition.onerror = function(event) {
+                    console.error("语音识别错误:", event.error);
+                    
+                    let errorMessage = "语音识别失败";
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMessage = "未检测到语音";
+                            break;
+                        case 'aborted':
+                            errorMessage = "识别被中止";
+                            break;
+                        case 'audio-capture':
+                            errorMessage = "无法捕获音频";
+                            break;
+                        case 'network':
+                            errorMessage = "网络错误";
+                            break;
+                        case 'not-allowed':
+                            errorMessage = "未授权使用麦克风";
+                            break;
+                        case 'service-not-allowed':
+                            errorMessage = "服务不可用";
+                            break;
+                        case 'bad-grammar':
+                            errorMessage = "语法错误";
+                            break;
+                        case 'language-not-supported':
+                            errorMessage = "不支持所选语言";
+                            break;
+                    }
+                    
+                    // 显示错误消息
+                    if (event.error !== 'aborted') {
+                        alert(errorMessage);
+                    }
+                    
+                    // 更新按钮状态
+                    $("#voiceBtn").removeClass("recording");
+                    $("#voiceBtn").text("点击语音输入");
+                    $(".recording-animation").remove();
+                    
+                    isRecognizing = false;
+                };
+
+                // 识别开始事件
+                recognition.onstart = function() {
+                    console.log("语音识别开始");
+                    isRecognizing = true;
+                };
+            }
+
+            // 语音按钮点击事件
+            $("#voiceBtn").click(function() {
+                if (!isSpeechRecognitionSupported) {
+                    alert("您的浏览器不支持语音识别功能，请使用Chrome、Edge或Safari浏览器");
+                    return;
+                }
+
+                if (isRecognizing) {
+                    // 如果正在识别，停止识别
+                    stopSpeechRecognition();
+                } else {
+                    // 如果没有识别，开始识别
+                    startSpeechRecognition();
+                }
+            });
+
+            // 开始语音识别
+            function startSpeechRecognition() {
+                if (!recognition) return;
+                
+                try {
+                    // 开始识别
+                    recognition.start();
+                    
+                    // 更新按钮状态
+                    $("#voiceBtn").addClass("recording");
+                    $("#voiceBtn").text("正在听...");
+                    
+                    // 添加动画效果
+                    $("<div>").addClass("recording-animation").appendTo(".loadBtn");
+                    
+                    console.log("语音识别已开始");
+                } catch (error) {
+                    console.error("启动语音识别失败:", error);
+                    alert("启动语音识别失败，请重试");
+                }
+            }
+
+            // 停止语音识别
+            function stopSpeechRecognition() {
+                if (!recognition) return;
+                
+                try {
+                    // 停止识别
+                    recognition.stop();
+                    console.log("语音识别已手动停止");
+                } catch (error) {
+                    console.error("停止语音识别失败:", error);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
+

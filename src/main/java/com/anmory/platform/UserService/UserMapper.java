@@ -30,4 +30,7 @@ public interface UserMapper {
 
     @Update("update medicine.user_info set medicine.user_info.password where medicine.user_info.username = #{username}")
     int changePassword(String username, String password);
+
+    @Select("select count(*) from medicine.user_info")
+    int countUsers();
 }

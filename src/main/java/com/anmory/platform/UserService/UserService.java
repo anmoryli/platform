@@ -37,4 +37,8 @@ public class UserService {
         return userMapper.changePassword(username, password);
     }
 
+    public int countUsers() {
+        return userMapper.countUsers();
+    }
+
 }
