@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>图片识别</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="stylesheet" href="/css/inter.css"/>
     <!-- 引入 ECharts -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="/css/echarts.min.js"></script>
     <!-- 设置网页图标 -->
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
@@ -24,6 +24,10 @@
             --card-bg: #ffffff;
             --header-bg: #1a5276;
             --footer-bg: #2c3e50;
+            --history-bg: #f8f9fa;
+            --history-hover: #e9ecef;
+            --tab-active: #1a5276;
+            --tab-inactive: #f8f9fa;
         }
 
         body {
@@ -338,46 +342,6 @@
             background-color: #c0392b;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .navbar-content {
-                flex-direction: column;
-                padding: 1rem;
-            }
-
-            .navbar-content nav {
-                margin-top: 1rem;
-            }
-
-            .navbar-content nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .navbar-content nav ul li {
-                margin: 0.5rem;
-            }
-
-            .recognize.slide-left {
-                width: 100%;
-                transform: translateX(-100%);
-            }
-
-            .plant-details {
-                width: 100%;
-                right: -100%;
-            }
-
-            .plant-details.show {
-                right: 0;
-            }
-
-            .main-container {
-                margin: 1rem;
-                width: auto;
-            }
-        }
-
         /* 训练集上传部分样式 */
         .training-set-upload {
             margin-top: 2rem;
@@ -521,6 +485,359 @@
             color: #721c24;
             height: auto;
         }
+
+        /* New styles for recognition history */
+        .app-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .app-tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+            background-color: var(--tab-inactive);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .app-tab.active {
+            background-color: var(--tab-active);
+            color: white;
+            border-color: var(--tab-active);
+        }
+
+        .app-tab:hover:not(.active) {
+            background-color: var(--history-hover);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .history-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .history-header h2 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .history-item {
+            display: flex;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--history-bg);
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item:hover {
+            background-color: var(--history-hover);
+        }
+
+        .history-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-result {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .history-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .history-confidence {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .history-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        /* Image enhancement controls */
+        .image-enhancement {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .enhancement-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .enhancement-toggle {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .enhancement-controls {
+            display: none;
+        }
+
+        .enhancement-controls.show {
+            display: block;
+        }
+
+        .enhancement-control {
+            margin-bottom: 1rem;
+        }
+
+        .enhancement-control label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .enhancement-control input[type="range"] {
+            width: 100%;
+        }
+
+        .enhancement-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .enhancement-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .similar-plants {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .similar-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .similar-list {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .similar-item {
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .similar-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .similar-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .similar-match {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .batch-recognition {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .batch-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .batch-toggle {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .batch-controls {
+            display: none;
+        }
+
+        .batch-controls.show {
+            display: block;
+        }
+
+        .batch-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .batch-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .batch-actions {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar-content nav {
+                margin-top: 1rem;
+            }
+
+            .navbar-content nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navbar-content nav ul li {
+                margin: 0.5rem;
+            }
+
+            .recognize.slide-left {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+
+            .plant-details {
+                width: 100%;
+                right: -100%;
+            }
+
+            .plant-details.show {
+                right: 0;
+            }
+
+            .main-container {
+                margin: 1rem;
+                width: auto;
+            }
+
+            .app-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 0.5rem;
+            }
+
+            .app-tab {
+                display: inline-block;
+            }
+
+            .history-item {
+                flex-direction: column;
+            }
+
+            .history-image {
+                width: 100%;
+                height: 150px;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
     </style>
 </head>
 
@@ -541,57 +858,181 @@
         </div>
     </header>
     <div class="title animate">
-        <h1>上传你的图片</h1>
+        <h1>植物识别与分析</h1>
     </div>
 
     <div class="main-container">
         <div class="recognize">
-            <div class="img-preview">
-                <img id="preview" src="/images/recognize.gif" alt="图片预览">
+            <!-- 标签页导航 -->
+            <div class="app-tabs">
+                <div class="app-tab active" data-tab="recognition-tab">图片识别</div>
+                <div class="app-tab" data-tab="history-tab">识别历史</div>
+                <div class="app-tab" data-tab="batch-tab">批量识别</div>
+                <div class="app-tab" data-tab="training-tab">训练集上传</div>
             </div>
-            <div class="control">
-                <h1 id="header">开始识别</h1>
-                <div class="result">
-                    <p id="result">识别结果：</p>
-                    <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
+
+            <!-- 图片识别标签页内容 -->
+            <div class="tab-content active" id="recognition-tab">
+                <div class="img-preview">
+                    <img id="preview" src="/images/recognize.gif" alt="图片预览">
                 </div>
-                <span class="button1">
-                    <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
-                </span>
-                <span class="button2">
-                    <button id="startButton" onclick="recognize()">开始识别</button>
-                </span>
-                <span class="button2">
-                    <button id="testButton" onclick="graph_load()">查看相关图谱</button>
-                </span>
-                <span class="button2">
-                    <button id="viewDetailsButton" onclick="viewPlantDetails()">查看详细信息</button>
-                </span>
-            </div>
-            <!-- 训练集上传部分 -->
-            <div class="training-set-upload">
-                <h2>上传训练集</h2>
-                <p class="upload-description">您可以上传个人训练集数据，这些数据将用于改进系统。上传的数据集与图片识别功能无关，仅供个人研究使用。</p>
-
-                <div class="upload-area">
-                    <div class="file-input-container">
-                        <input type="file" id="trainingSetInput" multiple accept="image/*" class="file-input">
-                        <label for="trainingSetInput" class="file-input-label">
-                            <span class="file-icon">📁</span>
-                            选择图片文件（可多选）
-                        </label>
+                <div class="control">
+                    <h1 id="header">开始识别</h1>
+                    <div class="result">
+                        <p id="result">识别结果：</p>
+                        <input type="text" placeholder="识别结果将展示在这里" class="output" id="resultText">
                     </div>
-
-                    <div class="selected-files" id="selectedFiles">
-                        <p>未选择文件</p>
-                    </div>
-
-                    <div class="upload-actions">
-                        <button id="uploadTrainingSetBtn" class="upload-btn">提交训练集</button>
-                    </div>
+                    <span class="button1">
+                        <input type="file" id="uploadButton" onchange="refresh()">上传图片</input>
+                    </span>
+                    <span class="button2">
+                        <button id="startButton" onclick="recognize()">开始识别</button>
+                    </span>
+                    <span class="button2">
+                        <button id="testButton" onclick="graph_load()">查看相关图谱</button>
+                    </span>
+                    <span class="button2">
+                        <button id="viewDetailsButton" onclick="viewPlantDetails()">查看详细信息</button>
+                    </span>
                 </div>
 
-                <div id="uploadStatus" class="upload-status"></div>
+                <!-- 图像增强控制 -->
+                <div class="image-enhancement">
+                    <div class="enhancement-title">
+                        图像增强
+                        <span class="enhancement-toggle" id="enhancementToggle">显示控制</span>
+                    </div>
+                    <div class="enhancement-controls" id="enhancementControls">
+                        <div class="enhancement-control">
+                            <label for="brightness">亮度</label>
+                            <input type="range" id="brightness" min="0" max="200" value="100">
+                            <div class="enhancement-values">
+                                <span>暗</span>
+                                <span>正常</span>
+                                <span>亮</span>
+                            </div>
+                        </div>
+                        <div class="enhancement-control">
+                            <label for="contrast">对比度</label>
+                            <input type="range" id="contrast" min="0" max="200" value="100">
+                            <div class="enhancement-values">
+                                <span>低</span>
+                                <span>正常</span>
+                                <span>高</span>
+                            </div>
+                        </div>
+                        <div class="enhancement-control">
+                            <label for="saturation">饱和度</label>
+                            <input type="range" id="saturation" min="0" max="200" value="100">
+                            <div class="enhancement-values">
+                                <span>低</span>
+                                <span>正常</span>
+                                <span>高</span>
+                            </div>
+                        </div>
+                        <div class="enhancement-actions">
+                            <button class="button2" id="applyEnhancement">
+                                <button>应用增强</button>
+                            </button>
+                            <button class="button2" id="resetEnhancement">
+                                <button>重置</button>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 相似植物推荐 -->
+                <div class="similar-plants" id="similarPlants" style="display: none;">
+                    <div class="similar-title">相似植物</div>
+                    <div class="similar-list" id="similarList">
+                        <!-- 相似植物将在这里动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 识别历史标签页内容 -->
+            <div class="tab-content" id="history-tab">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2>识别历史记录</h2>
+                        <div class="history-actions">
+                            <button class="button2" id="clearHistoryBtn">
+                                <button>清空历史</button>
+                            </button>
+                            <button class="button2" id="exportHistoryBtn">
+                                <button>导出记录</button>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <!-- 历史记录将在这里动态加载 -->
+                        <div class="history-empty">暂无识别记录</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量识别标签页内容 -->
+            <div class="tab-content" id="batch-tab">
+                <div class="batch-recognition">
+                    <div class="batch-title">
+                        批量识别
+                        <span class="batch-toggle" id="batchToggle">开始批量识别</span>
+                    </div>
+                    <div class="batch-controls" id="batchControls">
+                        <div class="file-input-container">
+                            <input type="file" id="batchInput" multiple accept="image/*" class="file-input">
+                            <label for="batchInput" class="file-input-label">
+                                <span class="file-icon">📁</span>
+                                选择多张图片（可多选）
+                            </label>
+                        </div>
+                        <div class="batch-preview" id="batchPreview">
+                            <p>未选择文件</p>
+                        </div>
+                        <div class="batch-actions">
+                            <button class="button2" id="startBatchBtn">
+                                <button>开始批量识别</button>
+                            </button>
+                            <button class="button2" id="clearBatchBtn">
+                                <button>清空选择</button>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="batchResults" style="margin-top: 1.5rem; display: none;">
+                    <h3 style="font-weight: 600; color: var(--primary-color); margin-bottom: 1rem;">识别结果</h3>
+                    <div id="batchResultsList" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem;">
+                        <!-- 批量识别结果将在这里动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 训练集上传标签页内容 -->
+            <div class="tab-content" id="training-tab">
+                <div class="training-set-upload">
+                    <h2>上传训练集</h2>
+                    <p class="upload-description">您可以上传个人训练集数据，这些数据将用于改进系统。上传的数据集与图片识别功能无关，仅供个人研究使用。</p>
+
+                    <div class="upload-area">
+                        <div class="file-input-container">
+                            <input type="file" id="trainingSetInput" multiple accept="image/*" class="file-input">
+                            <label for="trainingSetInput" class="file-input-label">
+                                <span class="file-icon">📁</span>
+                                选择图片文件（可多选）
+                            </label>
+                        </div>
+
+                        <div class="selected-files" id="selectedFiles">
+                            <p>未选择文件</p>
+                        </div>
+
+                        <div class="upload-actions">
+                            <button id="uploadTrainingSetBtn" class="upload-btn">提交训练集</button>
+                        </div>
+                    </div>
+
+                    <div id="uploadStatus" class="upload-status"></div>
+                </div>
             </div>
         </div>
 
@@ -607,6 +1048,328 @@
 
     <script src="/js/jquery.min.js"></script>
     <script>
+        // 存储识别历史记录
+        let recognitionHistory = [];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载历史记录
+            loadHistory();
+            
+            // 初始化标签页切换
+            initTabs();
+            
+            // 初始化图像增强控制
+            initImageEnhancement();
+            
+            // 初始化批量识别
+            initBatchRecognition();
+            
+            // 初始化历史记录操作
+            initHistoryActions();
+        });
+
+        // 初始化标签页切换
+        function initTabs() {
+            const tabs = document.querySelectorAll('.app-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签页的活动状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // 添加当前标签页的活动状态
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 显示当前标签页对应的内容
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // 初始化图像增强控制
+        function initImageEnhancement() {
+            const enhancementToggle = document.getElementById('enhancementToggle');
+            const enhancementControls = document.getElementById('enhancementControls');
+            
+            enhancementToggle.addEventListener('click', function() {
+                if (enhancementControls.classList.contains('show')) {
+                    enhancementControls.classList.remove('show');
+                    enhancementToggle.textContent = '显示控制';
+                } else {
+                    enhancementControls.classList.add('show');
+                    enhancementToggle.textContent = '隐藏控制';
+                }
+            });
+            
+            // 应用图像增强
+            document.getElementById('applyEnhancement').addEventListener('click', function() {
+                applyImageEnhancement();
+            });
+            
+            // 重置图像增强
+            document.getElementById('resetEnhancement').addEventListener('click', function() {
+                resetImageEnhancement();
+            });
+        }
+
+        // 应用图像增强
+        function applyImageEnhancement() {
+            const preview = document.getElementById('preview');
+            const brightness = document.getElementById('brightness').value;
+            const contrast = document.getElementById('contrast').value;
+            const saturation = document.getElementById('saturation').value;
+            
+            // 应用CSS滤镜
+            preview.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+        }
+
+        // 重置图像增强
+        function resetImageEnhancement() {
+            document.getElementById('brightness').value = 100;
+            document.getElementById('contrast').value = 100;
+            document.getElementById('saturation').value = 100;
+            document.getElementById('preview').style.filter = 'none';
+        }
+
+        // 初始化批量识别
+        function initBatchRecognition() {
+            const batchToggle = document.getElementById('batchToggle');
+            const batchControls = document.getElementById('batchControls');
+            
+            batchToggle.addEventListener('click', function() {
+                if (batchControls.classList.contains('show')) {
+                    batchControls.classList.remove('show');
+                    batchToggle.textContent = '开始批量识别';
+                } else {
+                    batchControls.classList.add('show');
+                    batchToggle.textContent = '隐藏控制';
+                }
+            });
+            
+            // 批量图片选择
+            const batchInput = document.getElementById('batchInput');
+            const batchPreview = document.getElementById('batchPreview');
+            
+            batchInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    batchPreview.innerHTML = '';
+                    
+                    for (let i = 0; i < this.files.length; i++) {
+                        const file = this.files[i];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'batch-image';
+                            img.title = file.name;
+                            batchPreview.appendChild(img);
+                        }
+                        
+                        reader.readAsDataURL(file);
+                    }
+                } else {
+                    batchPreview.innerHTML = '<p>未选择文件</p>';
+                }
+            });
+            
+            // 开始批量识别
+            document.getElementById('startBatchBtn').addEventListener('click', function() {
+                startBatchRecognition();
+            });
+            
+            // 清空批量选择
+            document.getElementById('clearBatchBtn').addEventListener('click', function() {
+                batchInput.value = '';
+                batchPreview.innerHTML = '<p>未选择文件</p>';
+                document.getElementById('batchResults').style.display = 'none';
+            });
+        }
+
+        // 开始批量识别
+        function startBatchRecognition() {
+            const files = document.getElementById('batchInput').files;
+            
+            if (files.length === 0) {
+                alert('请选择至少一张图片');
+                return;
+            }
+            
+            const batchResults = document.getElementById('batchResults');
+            const batchResultsList = document.getElementById('batchResultsList');
+            
+            batchResults.style.display = 'block';
+            batchResultsList.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="loading-spinner"></div> 正在批量识别中，请稍候...</div>';
+            
+            // 模拟批量识别过程
+            setTimeout(function() {
+                batchResultsList.innerHTML = '';
+                
+                const plantNames = ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '当归', '三七', '枸杞'];
+                const confidences = [98, 95, 92, 89, 87, 85, 82, 80];
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // 随机选择一个植物名称和置信度
+                        const randomIndex = Math.floor(Math.random() * plantNames.length);
+                        const plantName = plantNames[randomIndex];
+                        const confidence = confidences[randomIndex];
+                        
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'history-item';
+                        resultItem.innerHTML = `
+                            <img src="${e.target.result}" class="history-image" alt="${file.name}">
+                            <div class="history-info">
+                                <div class="history-result">${plantName}</div>
+                                <div class="history-date">文件名: ${file.name}</div>
+                                <div class="history-confidence">置信度: ${confidence}%</div>
+                                <button class="button2" style="margin-top: 0.5rem;" onclick="viewPlantDetailsFromHistory('${plantName}')">
+                                    <button>查看详情</button>
+                                </button>
+                            </div>
+                        `;
+                        
+                        batchResultsList.appendChild(resultItem);
+                        
+                        // 添加到历史记录
+                        addToHistory({
+                            plantName: plantName,
+                            imageSrc: e.target.result,
+                            confidence: confidence,
+                            date: new Date().toLocaleString()
+                        });
+                    }
+                    
+                    reader.readAsDataURL(file);
+                }
+            }, 2000);
+        }
+
+        // 初始化历史记录操作
+        function initHistoryActions() {
+            // 清空历史记录
+            document.getElementById('clearHistoryBtn').addEventListener('click', function() {
+                if (confirm('确定要清空所有识别历史记录吗？')) {
+                    recognitionHistory = [];
+                    localStorage.removeItem('recognitionHistory');
+                    updateHistoryList();
+                }
+            });
+            
+            // 导出历史记录
+            document.getElementById('exportHistoryBtn').addEventListener('click', function() {
+                exportHistory();
+            });
+        }
+
+        // 导出历史记录
+        function exportHistory() {
+            if (recognitionHistory.length === 0) {
+                alert('暂无历史记录可导出');
+                return;
+            }
+            
+            // 创建CSV内容
+            let csvContent = '植物名称,识别时间,置信度\n';
+            
+            recognitionHistory.forEach(record => {
+                csvContent += `${record.plantName},${record.date},${record.confidence}%\n`;
+            });
+            
+            // 创建下载链接
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', '识别历史记录.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 加载历史记录
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('recognitionHistory');
+            
+            if (savedHistory) {
+                recognitionHistory = JSON.parse(savedHistory);
+                updateHistoryList();
+            }
+        }
+
+        // 更新历史记录列表
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            
+            if (recognitionHistory.length === 0) {
+                historyList.innerHTML = '<div class="history-empty">暂无识别记录</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            // 按时间倒序排列
+            const sortedHistory = [...recognitionHistory].reverse();
+            
+            sortedHistory.forEach((record, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <img src="${record.imageSrc}" class="history-image" alt="${record.plantName}">
+                    <div class="history-info">
+                        <div class="history-result">${record.plantName}</div>
+                        <div class="history-date">${record.date}</div>
+                        <div class="history-confidence">置信度: ${record.confidence}%</div>
+                    </div>
+                `;
+                
+                // 点击历史记录项查看详情
+                historyItem.addEventListener('click', function() {
+                    viewPlantDetailsFromHistory(record.plantName);
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // 从历史记录查看植物详情
+        function viewPlantDetailsFromHistory(plantName) {
+            // 更新植物名称
+            document.getElementById('plantName').textContent = plantName + ' 详情';
+            
+            // 显示详情面板
+            const plantDetails = document.getElementById('plantDetails');
+            plantDetails.classList.add('show');
+            
+            // 显示加载状态
+            document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
+            
+            // 从后端获取植物详情
+            fetchPlantDetails(plantName);
+        }
+
+        // 添加到历史记录
+        function addToHistory(record) {
+            // 限制历史记录数量为50条
+            if (recognitionHistory.length >= 50) {
+                recognitionHistory.shift(); // 移除最旧的记录
+            }
+            
+            recognitionHistory.push(record);
+            localStorage.setItem('recognitionHistory', JSON.stringify(recognitionHistory));
+            updateHistoryList();
+        }
+
         function graph_load() {
             let result = document.getElementById("resultText").value.trim();
             if (!result) {
@@ -621,6 +1384,12 @@
         function refresh() {
             document.getElementById("resultText").value = "";
             document.getElementById("header").textContent = "开始识别";
+            
+            // 重置图像增强
+            resetImageEnhancement();
+            
+            // 隐藏相似植物推荐
+            document.getElementById('similarPlants').style.display = 'none';
         }
 
         function recognize() {
@@ -632,6 +1401,17 @@
                 alert("请选择一个文件");
                 return;
             }
+            
+            // 获取图像的 Data URL 用于历史记录
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageDataUrl = e.target.result;
+                
+                // 保存图像 URL 用于后续添加到历史记录
+                window.currentImageDataUrl = imageDataUrl;
+            };
+            reader.readAsDataURL(file);
+            
             imgPreview.src = URL.createObjectURL(file);
             console.log(imgPreview.src);
 
@@ -656,6 +1436,17 @@
                         // 获取h1标签并修改其内容
                         headerElement.textContent = '识别成功';
                         document.getElementById("resultText").value = result;
+                        
+                        // 添加到历史记录
+                        addToHistory({
+                            plantName: result,
+                            imageSrc: window.currentImageDataUrl,
+                            confidence: Math.floor(Math.random() * 10) + 90, // 模拟置信度
+                            date: new Date().toLocaleString()
+                        });
+                        
+                        // 显示相似植物推荐
+                        showSimilarPlants(result);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -663,6 +1454,58 @@
                     alert("识别过程中发生错误，请重试！");
                 }
             });
+        }
+
+        // 显示相似植物推荐
+        function showSimilarPlants(plantName) {
+            const similarPlants = document.getElementById('similarPlants');
+            const similarList = document.getElementById('similarList');
+            
+            // 清空列表
+            similarList.innerHTML = '';
+            
+            // 根据识别结果生成相似植物
+            const similarNames = getSimilarPlants(plantName);
+            
+            similarNames.forEach(plant => {
+                const similarItem = document.createElement('div');
+                similarItem.className = 'similar-item';
+                similarItem.innerHTML = `
+                    <img src="/images/plant-sample.jpg" class="similar-image" alt="${plant.name}">
+                    <div class="similar-name">${plant.name}</div>
+                    <div class="similar-match">相似度: ${plant.similarity}%</div>
+                `;
+                
+                // 点击相似植物查看详情
+                similarItem.addEventListener('click', function() {
+                    viewPlantDetailsFromHistory(plant.name);
+                });
+                
+                similarList.appendChild(similarItem);
+            });
+            
+            // 显示相似植物区域
+            similarPlants.style.display = 'block';
+        }
+
+        // 获取相似植物（模拟数据）
+        function getSimilarPlants(plantName) {
+            const allPlants = [
+                { name: '白术', similarity: 95 },
+                { name: '藏红花', similarity: 92 },
+                { name: '冬虫夏草', similarity: 88 },
+                { name: '人参', similarity: 85 },
+                { name: '黄芪', similarity: 82 },
+                { name: '当归', similarity: 78 },
+                { name: '三七', similarity: 75 },
+                { name: '枸杞', similarity: 72 }
+            ];
+            
+            // 过滤掉当前植物
+            const filteredPlants = allPlants.filter(plant => plant.name !== plantName);
+            
+            // 返回前4个相似植物
+            return filteredPlants.slice(0, 4);
         }
 
         // 图片预览
@@ -987,7 +1830,6 @@
                 const k = 1024;
                 const sizes = ['Bytes', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
-
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
         });

@@ -1,18 +1,15 @@
-package com.anmory.platform.BotService.Controller;
+package com.anmory.platform.BotService.Service;
 
-import com.anmory.platform.BotService.Service.GetEntityService;
-import com.anmory.platform.RecordService.service.UserAiConversationService;
+import com.anmory.platform.BotService.Controller.BotController;
 import com.anmory.platform.UserService.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,24 +22,14 @@ import java.util.Map;
 /**
  * @author Anmory/李梦杰
  * @description TODO
- * @date 2025-03-24 下午9:43
+ * @date 2025-04-07 上午10:27
  */
 
-@RestController
-public class QAController {
+@Service
+public class GetEntityService {
     private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
     private static final String API_KEY = "sk-c1de8d51734546a8ba435dd905c3b02b";
-    @Autowired
-    Neo4jService neo4jService;
-    @Autowired
-    GetEntityService getEntityService;
-    @Autowired
-    UserAiConversationService userAiConversationService;
-    @RequestMapping("/qa")
-    public String qa(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("session_user_key");
-        String userInput = requestMap.get("userInput");
+    public String getEntity(String userInput) throws IOException {
         System.out.println(userInput);
         // 创建请求体
         var requestBody = new JsonObject();
@@ -52,8 +39,9 @@ public class QAController {
         // 添加消息
         JsonObject systemMessage = new JsonObject();
         systemMessage.addProperty("role", "system");
-        systemMessage.addProperty("content", "你需要简短地恢复用户的问题，不超过30个字，简明扼要地指出答案，例如：" +
-                "红景天的药效是缓解高原反应");
+        systemMessage.addProperty("content", "你需要提取用户输入中的实体，提取两个实体，你的回答必须用json格式返回" +
+                "具体的例子：[{药材:红景天},{药效:治疗咳嗽}]类似这样的，药材,药效,相关疾病,药用部位,化学组成,分别表示" +
+                "药材，药效，与其相关的疾病，药用部位，化学组成,如果用户输入的不存在这些实体，那么就返回error的对象");
 
         JsonObject userMessage = new JsonObject();
         userMessage.addProperty("role", "user");
@@ -104,7 +92,6 @@ public class QAController {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
-            userAiConversationService.insert(user.getId(),userInput,replyContent);
             return replyContent;
 
         } else {
@@ -119,18 +106,4 @@ public class QAController {
         }
         return "访问出错";
     }
-
-//    private static String extractPlantName(String question) {
-//        System.out.println("[question]" + question);
-//        return question.split("可以治疗什么疾病")[0].trim();
-//    }
-
-//    private String queryDiseaseForPlant(Object entity) {
-//        String cypher = String.format(
-//                "MATCH (p:`药材` {Name: \"%s\"})-[r:`药效`]->(n:`药材`) RETURN n.Name LIMIT 1",plantName
-//        );
-//        System.out.println(cypher);
-//        List<String> diseases = neo4jService.executeQuery(cypher);
-//        return String.join(",",diseases);
-//    }
 }

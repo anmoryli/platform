@@ -107,16 +107,15 @@ public class RecognizeController {
                 process.destroy();
                 System.out.println("[RecognizeService] 已销毁Python进程");
             }
-            if (tempFile != null && tempFile.exists()) {
-                boolean deleted = tempFile.delete();
-                if (deleted) {
-                    System.out.println("[RecognizeService] 已删除临时文件: " + tempFile.getAbsolutePath());
-                } else {
-                    System.out.println("[RecognizeService] 无法删除临时文件: " + tempFile.getAbsolutePath());
-                }
-            }
+//            if (tempFile != null && tempFile.exists()) {
+//                boolean deleted = tempFile.delete();
+//                if (deleted) {
+//                    System.out.println("[RecognizeService] 已删除临时文件: " + tempFile.getAbsolutePath());
+//                } else {
+//                    System.out.println("[RecognizeService] 无法删除临时文件: " + tempFile.getAbsolutePath());
+//                }
+//            }
         }
-
         return output.toString();
     }
 }

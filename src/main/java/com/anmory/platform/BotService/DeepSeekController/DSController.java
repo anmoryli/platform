@@ -33,13 +33,13 @@ import java.util.Map;
 @RestController
 public class DSController {
     @Autowired
-    static UserAiConversationService userAiConversationService;
+    UserAiConversationService userAiConversationService;
     private static final Logger log = LoggerFactory.getLogger(BotController.class);
     private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
     private static final String API_KEY = "sk-c1de8d51734546a8ba435dd905c3b02b";
 
     @RequestMapping("/ds_chat")
-    public static String chat(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
+    public String chat(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
 
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("session_user_key");

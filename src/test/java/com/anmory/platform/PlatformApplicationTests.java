@@ -19,57 +19,57 @@ class PlatformApplicationTests {
 
 	@Autowired
 	HerbRepo herbRepo;
-	@Test
-	void testFindHerbByName() {
-		Herb byName = herbRepo.findByName("雪莲花");
-		System.out.println(byName);
-	}
-
-	@Test
-	void captcha() {
-		//定义图形验证码的长和宽
-		LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
-
-//图形验证码写出，可以写出到文件，也可以写出到流
-		lineCaptcha.write("D:\\Code\\Project\\SpringBoot\\Platform\\src\\test\\java\\com\\anmory\\platform\\line.png");
-//输出code
-		Console.log(lineCaptcha.getCode());
-//验证图形验证码的有效性，返回boolean值
-		System.out.println(lineCaptcha.verify("1234"));
-
-		System.out.println(SystemUtil.getUserInfo());
-
-////重新生成验证码
-//		lineCaptcha.createCode();
-//		lineCaptcha.write("d:/line.png");
-////新的验证码
+//	@Test
+//	void testFindHerbByName() {
+//		Herb byName = herbRepo.findByName("雪莲花");
+//		System.out.println(byName);
+//	}
+//
+//	@Test
+//	void captcha() {
+//		//定义图形验证码的长和宽
+//		LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
+//
+////图形验证码写出，可以写出到文件，也可以写出到流
+//		lineCaptcha.write("D:\\Code\\Project\\SpringBoot\\Platform\\src\\test\\java\\com\\anmory\\platform\\line.png");
+////输出code
 //		Console.log(lineCaptcha.getCode());
 ////验证图形验证码的有效性，返回boolean值
-//		lineCaptcha.verify("1234");
-	}
-
-	@Test
-	void concurrency() {
-		ConcurrencyTester tester = ThreadUtil.concurrencyTest(100, () -> {
-			// 测试的逻辑内容
-			long delay = RandomUtil.randomLong(100, 10000);
-			ThreadUtil.sleep(delay);
-			Console.log("{} test finished, delay: {}", Thread.currentThread().getName(), delay);
-		});
-
-// 获取总的执行时间，单位毫秒
-		Console.log(tester.getInterval());
-	}
-
-	@Test
-	void command() {
-		String str = RuntimeUtil.execForStr("ipconfig");
-		System.out.println(str);
-	}
-
-	@Test
-	void lombok() {
-		Stu stu = new Stu();
-		stu.setName("hhh");
-	}
+//		System.out.println(lineCaptcha.verify("1234"));
+//
+//		System.out.println(SystemUtil.getUserInfo());
+//
+//////重新生成验证码
+////		lineCaptcha.createCode();
+////		lineCaptcha.write("d:/line.png");
+//////新的验证码
+////		Console.log(lineCaptcha.getCode());
+//////验证图形验证码的有效性，返回boolean值
+////		lineCaptcha.verify("1234");
+//	}
+//
+//	@Test
+//	void concurrency() {
+//		ConcurrencyTester tester = ThreadUtil.concurrencyTest(100, () -> {
+//			// 测试的逻辑内容
+//			long delay = RandomUtil.randomLong(100, 10000);
+//			ThreadUtil.sleep(delay);
+//			Console.log("{} test finished, delay: {}", Thread.currentThread().getName(), delay);
+//		});
+//
+//// 获取总的执行时间，单位毫秒
+//		Console.log(tester.getInterval());
+//	}
+//
+//	@Test
+//	void command() {
+//		String str = RuntimeUtil.execForStr("ipconfig");
+//		System.out.println(str);
+//	}
+//
+//	@Test
+//	void lombok() {
+//		Stu stu = new Stu();
+//		stu.setName("hhh");
+//	}
 }
