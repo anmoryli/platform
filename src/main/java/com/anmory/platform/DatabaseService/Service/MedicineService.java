@@ -124,7 +124,7 @@ public class MedicineService {
                 while (rs.next()) {
                     Picture picture = new Picture(
                             rs.getInt("id"), // 修改为 herb_id
-                            rs.getInt("herb_id"), // 修改为 herb_id
+                            rs.getInt("plant_id"), // 修改为 herb_id
                             rs.getString("pic_name"), // 修改为 herb_name
                             rs.getString("pic_cate"), // 修改为 herb_tibetan_name
                             rs.getString("pic_part"), // 修改为 herb_alias
@@ -147,7 +147,7 @@ public class MedicineService {
 
     public Herb detail(String name) throws SQLException {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM `herb` WHERE `herb_name`=?")) {
+             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM `herb` WHERE `herb_name`= ?")) {
             pstmt.setString(1, name);
             try (java.sql.ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {

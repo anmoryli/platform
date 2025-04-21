@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>图片识别</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/inter.css"/>
+    <link rel="stylesheet" href="/css/inter.css" />
     <!-- 引入 ECharts -->
     <script src="/css/echarts.min.js"></script>
     <!-- 设置网页图标 -->
@@ -209,13 +209,15 @@
         }
 
         /* Button styling */
-        .button1, .button2 {
+        .button1,
+        .button2 {
             display: inline-block;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
         }
 
-        .button1 input, .button2 button {
+        .button1 input,
+        .button2 button {
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -240,7 +242,8 @@
             transform: translateY(-50%);
         }
 
-        .button2 button:hover, .button1 input:hover {
+        .button2 button:hover,
+        .button1 input:hover {
             background-color: var(--secondary-color);
         }
 
@@ -838,6 +841,44 @@
                 margin-bottom: 1rem;
             }
         }
+
+        /* Add this to the style section */
+        .recognition-info {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .recognition-info .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .recognition-info-box {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            border: 1px solid #b8daff;
+            font-size: 0.9rem;
+        }
+
+        .recognition-info-box .info-header {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .recognition-info-box .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -867,14 +908,13 @@
             <div class="app-tabs">
                 <div class="app-tab active" data-tab="recognition-tab">图片识别</div>
                 <div class="app-tab" data-tab="history-tab">识别历史</div>
-                <div class="app-tab" data-tab="batch-tab">批量识别</div>
                 <div class="app-tab" data-tab="training-tab">训练集上传</div>
             </div>
 
             <!-- 图片识别标签页内容 -->
             <div class="tab-content active" id="recognition-tab">
                 <div class="img-preview">
-                    <img id="preview" src="/images/recognize.gif" alt="图片预览">
+                    <img id="preview" src="/images/2.jpg" alt="图片预览">
                 </div>
                 <div class="control">
                     <h1 id="header">开始识别</h1>
@@ -896,50 +936,6 @@
                     </span>
                 </div>
 
-                <!-- 图像增强控制 -->
-                <div class="image-enhancement">
-                    <div class="enhancement-title">
-                        图像增强
-                        <span class="enhancement-toggle" id="enhancementToggle">显示控制</span>
-                    </div>
-                    <div class="enhancement-controls" id="enhancementControls">
-                        <div class="enhancement-control">
-                            <label for="brightness">亮度</label>
-                            <input type="range" id="brightness" min="0" max="200" value="100">
-                            <div class="enhancement-values">
-                                <span>暗</span>
-                                <span>正常</span>
-                                <span>亮</span>
-                            </div>
-                        </div>
-                        <div class="enhancement-control">
-                            <label for="contrast">对比度</label>
-                            <input type="range" id="contrast" min="0" max="200" value="100">
-                            <div class="enhancement-values">
-                                <span>低</span>
-                                <span>正常</span>
-                                <span>高</span>
-                            </div>
-                        </div>
-                        <div class="enhancement-control">
-                            <label for="saturation">饱和度</label>
-                            <input type="range" id="saturation" min="0" max="200" value="100">
-                            <div class="enhancement-values">
-                                <span>低</span>
-                                <span>正常</span>
-                                <span>高</span>
-                            </div>
-                        </div>
-                        <div class="enhancement-actions">
-                            <button class="button2" id="applyEnhancement">
-                                <button>应用增强</button>
-                            </button>
-                            <button class="button2" id="resetEnhancement">
-                                <button>重置</button>
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- 相似植物推荐 -->
                 <div class="similar-plants" id="similarPlants" style="display: none;">
@@ -967,42 +963,6 @@
                     <div class="history-list" id="historyList">
                         <!-- 历史记录将在这里动态加载 -->
                         <div class="history-empty">暂无识别记录</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 批量识别标签页内容 -->
-            <div class="tab-content" id="batch-tab">
-                <div class="batch-recognition">
-                    <div class="batch-title">
-                        批量识别
-                        <span class="batch-toggle" id="batchToggle">开始批量识别</span>
-                    </div>
-                    <div class="batch-controls" id="batchControls">
-                        <div class="file-input-container">
-                            <input type="file" id="batchInput" multiple accept="image/*" class="file-input">
-                            <label for="batchInput" class="file-input-label">
-                                <span class="file-icon">📁</span>
-                                选择多张图片（可多选）
-                            </label>
-                        </div>
-                        <div class="batch-preview" id="batchPreview">
-                            <p>未选择文件</p>
-                        </div>
-                        <div class="batch-actions">
-                            <button class="button2" id="startBatchBtn">
-                                <button>开始批量识别</button>
-                            </button>
-                            <button class="button2" id="clearBatchBtn">
-                                <button>清空选择</button>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="batchResults" style="margin-top: 1.5rem; display: none;">
-                    <h3 style="font-weight: 600; color: var(--primary-color); margin-bottom: 1rem;">识别结果</h3>
-                    <div id="batchResultsList" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem;">
-                        <!-- 批量识别结果将在这里动态加载 -->
                     </div>
                 </div>
             </div>
@@ -1046,25 +1006,19 @@
         </div>
     </div>
 
-    <script src="/js/jquery.min.js"></script>
     <script>
         // 存储识别历史记录
         let recognitionHistory = [];
-        
+
         // 初始化页面
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOMContentLoaded is working');
             // 加载历史记录
             loadHistory();
-            
+
             // 初始化标签页切换
             initTabs();
-            
-            // 初始化图像增强控制
-            initImageEnhancement();
-            
-            // 初始化批量识别
-            initBatchRecognition();
-            
+
             // 初始化历史记录操作
             initHistoryActions();
         });
@@ -1072,201 +1026,43 @@
         // 初始化标签页切换
         function initTabs() {
             const tabs = document.querySelectorAll('.app-tab');
+            console.log('Tabs:', tabs); // 检查是否获取到元素
+            if (!tabs.length) {
+                console.error('No tabs found!');
+                return;
+            }
             tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
+                tab.addEventListener('click', function () {
                     // 移除所有标签页的活动状态
                     tabs.forEach(t => t.classList.remove('active'));
-                    
+
                     // 添加当前标签页的活动状态
                     this.classList.add('active');
-                    
+
                     // 隐藏所有内容
                     document.querySelectorAll('.tab-content').forEach(content => {
                         content.classList.remove('active');
                     });
-                    
+
                     // 显示当前标签页对应的内容
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
         }
-
-        // 初始化图像增强控制
-        function initImageEnhancement() {
-            const enhancementToggle = document.getElementById('enhancementToggle');
-            const enhancementControls = document.getElementById('enhancementControls');
-            
-            enhancementToggle.addEventListener('click', function() {
-                if (enhancementControls.classList.contains('show')) {
-                    enhancementControls.classList.remove('show');
-                    enhancementToggle.textContent = '显示控制';
-                } else {
-                    enhancementControls.classList.add('show');
-                    enhancementToggle.textContent = '隐藏控制';
-                }
-            });
-            
-            // 应用图像增强
-            document.getElementById('applyEnhancement').addEventListener('click', function() {
-                applyImageEnhancement();
-            });
-            
-            // 重置图像增强
-            document.getElementById('resetEnhancement').addEventListener('click', function() {
-                resetImageEnhancement();
-            });
-        }
-
-        // 应用图像增强
-        function applyImageEnhancement() {
-            const preview = document.getElementById('preview');
-            const brightness = document.getElementById('brightness').value;
-            const contrast = document.getElementById('contrast').value;
-            const saturation = document.getElementById('saturation').value;
-            
-            // 应用CSS滤镜
-            preview.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
-        }
-
-        // 重置图像增强
-        function resetImageEnhancement() {
-            document.getElementById('brightness').value = 100;
-            document.getElementById('contrast').value = 100;
-            document.getElementById('saturation').value = 100;
-            document.getElementById('preview').style.filter = 'none';
-        }
-
-        // 初始化批量识别
-        function initBatchRecognition() {
-            const batchToggle = document.getElementById('batchToggle');
-            const batchControls = document.getElementById('batchControls');
-            
-            batchToggle.addEventListener('click', function() {
-                if (batchControls.classList.contains('show')) {
-                    batchControls.classList.remove('show');
-                    batchToggle.textContent = '开始批量识别';
-                } else {
-                    batchControls.classList.add('show');
-                    batchToggle.textContent = '隐藏控制';
-                }
-            });
-            
-            // 批量图片选择
-            const batchInput = document.getElementById('batchInput');
-            const batchPreview = document.getElementById('batchPreview');
-            
-            batchInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    batchPreview.innerHTML = '';
-                    
-                    for (let i = 0; i < this.files.length; i++) {
-                        const file = this.files[i];
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.className = 'batch-image';
-                            img.title = file.name;
-                            batchPreview.appendChild(img);
-                        }
-                        
-                        reader.readAsDataURL(file);
-                    }
-                } else {
-                    batchPreview.innerHTML = '<p>未选择文件</p>';
-                }
-            });
-            
-            // 开始批量识别
-            document.getElementById('startBatchBtn').addEventListener('click', function() {
-                startBatchRecognition();
-            });
-            
-            // 清空批量选择
-            document.getElementById('clearBatchBtn').addEventListener('click', function() {
-                batchInput.value = '';
-                batchPreview.innerHTML = '<p>未选择文件</p>';
-                document.getElementById('batchResults').style.display = 'none';
-            });
-        }
-
-        // 开始批量识别
-        function startBatchRecognition() {
-            const files = document.getElementById('batchInput').files;
-            
-            if (files.length === 0) {
-                alert('请选择至少一张图片');
-                return;
-            }
-            
-            const batchResults = document.getElementById('batchResults');
-            const batchResultsList = document.getElementById('batchResultsList');
-            
-            batchResults.style.display = 'block';
-            batchResultsList.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="loading-spinner"></div> 正在批量识别中，请稍候...</div>';
-            
-            // 模拟批量识别过程
-            setTimeout(function() {
-                batchResultsList.innerHTML = '';
-                
-                const plantNames = ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '当归', '三七', '枸杞'];
-                const confidences = [98, 95, 92, 89, 87, 85, 82, 80];
-                
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        // 随机选择一个植物名称和置信度
-                        const randomIndex = Math.floor(Math.random() * plantNames.length);
-                        const plantName = plantNames[randomIndex];
-                        const confidence = confidences[randomIndex];
-                        
-                        const resultItem = document.createElement('div');
-                        resultItem.className = 'history-item';
-                        resultItem.innerHTML = `
-                            <img src="${e.target.result}" class="history-image" alt="${file.name}">
-                            <div class="history-info">
-                                <div class="history-result">${plantName}</div>
-                                <div class="history-date">文件名: ${file.name}</div>
-                                <div class="history-confidence">置信度: ${confidence}%</div>
-                                <button class="button2" style="margin-top: 0.5rem;" onclick="viewPlantDetailsFromHistory('${plantName}')">
-                                    <button>查看详情</button>
-                                </button>
-                            </div>
-                        `;
-                        
-                        batchResultsList.appendChild(resultItem);
-                        
-                        // 添加到历史记录
-                        addToHistory({
-                            plantName: plantName,
-                            imageSrc: e.target.result,
-                            confidence: confidence,
-                            date: new Date().toLocaleString()
-                        });
-                    }
-                    
-                    reader.readAsDataURL(file);
-                }
-            }, 2000);
-        }
-
         // 初始化历史记录操作
         function initHistoryActions() {
             // 清空历史记录
-            document.getElementById('clearHistoryBtn').addEventListener('click', function() {
+            document.getElementById('clearHistoryBtn').addEventListener('click', function () {
                 if (confirm('确定要清空所有识别历史记录吗？')) {
                     recognitionHistory = [];
                     localStorage.removeItem('recognitionHistory');
                     updateHistoryList();
                 }
             });
-            
+
             // 导出历史记录
-            document.getElementById('exportHistoryBtn').addEventListener('click', function() {
+            document.getElementById('exportHistoryBtn').addEventListener('click', function () {
                 exportHistory();
             });
         }
@@ -1277,14 +1073,14 @@
                 alert('暂无历史记录可导出');
                 return;
             }
-            
+
             // 创建CSV内容
             let csvContent = '植物名称,识别时间,置信度\n';
-            
+
             recognitionHistory.forEach(record => {
                 csvContent += `${record.plantName},${record.date},${record.confidence}%\n`;
             });
-            
+
             // 创建下载链接
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -1300,8 +1096,8 @@
         // 加载历史记录
         function loadHistory() {
             const savedHistory = localStorage.getItem('recognitionHistory');
-            
-            if (savedHistory) {
+
+            if (!savedHistory) {
                 recognitionHistory = JSON.parse(savedHistory);
                 updateHistoryList();
             }
@@ -1310,61 +1106,100 @@
         // 更新历史记录列表
         function updateHistoryList() {
             const historyList = document.getElementById('historyList');
-            
-            if (recognitionHistory.length === 0) {
-                historyList.innerHTML = '<div class="history-empty">暂无识别记录</div>';
-                return;
-            }
-            
-            historyList.innerHTML = '';
-            
-            // 按时间倒序排列
-            const sortedHistory = [...recognitionHistory].reverse();
-            
-            sortedHistory.forEach((record, index) => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <img src="${record.imageSrc}" class="history-image" alt="${record.plantName}">
+
+            // 发送 AJAX 请求获取历史记录数据
+            fetch('/getRecognitionHistory') // 替换为实际的API路径
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应失败');
+                    }
+                    else {
+                        console.log('获取历史记录成功:', response);
+                        return response.json(); // 假设返回的是JSON格式数据
+                    }
+                })
+                .then(data => {
+                    if (data.length === 0) {
+                        // 如果没有历史记录，显示提示信息
+                        historyList.innerHTML = '<div class="history-empty">暂无识别记录</div>';
+                        return;
+                    }
+
+                    historyList.innerHTML = ''; // 清空现有内容
+
+                    // 按时间倒序排列
+                    const sortedHistory = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                    // 遍历历史记录并生成HTML
+                    sortedHistory.forEach(record => {
+                        const { recordId, userId, imageName, imagePath, imageResult, timestamp } = record;
+                        console.log('历史记录:', record);
+                        var imgUrl = "http://175.24.205.213:80" + imagePath;
+                        console.log(imgUrl);
+
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.innerHTML = `
+                    <img src="${imgUrl}" class="history-image" alt="${imageResult}">
                     <div class="history-info">
-                        <div class="history-result">${record.plantName}</div>
-                        <div class="history-date">${record.date}</div>
-                        <div class="history-confidence">置信度: ${record.confidence}%</div>
+                        <div class="history-result">${imageResult}</div>
+                        <div class="history-date">${formatDate(timestamp)}</div>
                     </div>
                 `;
-                
-                // 点击历史记录项查看详情
-                historyItem.addEventListener('click', function() {
-                    viewPlantDetailsFromHistory(record.plantName);
+
+                        // 点击历史记录项查看详情
+                        historyItem.addEventListener('click', function () {
+                            viewPlantDetailsFromHistory(recordId);
+                        });
+
+                        historyList.appendChild(historyItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('获取历史记录失败:', error);
+                    historyList.innerHTML = '<div class="history-error">加载历史记录失败，请稍后重试。</div>';
                 });
-                
-                historyList.appendChild(historyItem);
-            });
+        }
+
+        // 格式化日期
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        // 查看详情函数
+        function viewPlantDetailsFromHistory(recordId) {
+            // 示例：根据recordId请求详情数据
+            fetch(`/api/getPlantDetails?recordId=${recordId}`)
+                .then(response => response.json())
+                .then(details => {
+                    console.log('查看详情:', details);
+                    alert(`植物名称: ${details.plantName}\n置信度: ${details.confidence}%`);
+                })
+                .catch(error => {
+                    console.error('查看详情失败:', error);
+                    alert('查看详情失败，请稍后重试。');
+                });
         }
 
         // 从历史记录查看植物详情
         function viewPlantDetailsFromHistory(plantName) {
             // 更新植物名称
             document.getElementById('plantName').textContent = plantName + ' 详情';
-            
+
             // 显示详情面板
             const plantDetails = document.getElementById('plantDetails');
             plantDetails.classList.add('show');
-            
+
             // 显示加载状态
             document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
-            
+
             // 从后端获取植物详情
             fetchPlantDetails(plantName);
         }
 
         // 添加到历史记录
         function addToHistory(record) {
-            // 限制历史记录数量为50条
-            if (recognitionHistory.length >= 50) {
-                recognitionHistory.shift(); // 移除最旧的记录
-            }
-            
             recognitionHistory.push(record);
             localStorage.setItem('recognitionHistory', JSON.stringify(recognitionHistory));
             updateHistoryList();
@@ -1384,10 +1219,10 @@
         function refresh() {
             document.getElementById("resultText").value = "";
             document.getElementById("header").textContent = "开始识别";
-            
+
             // 重置图像增强
             resetImageEnhancement();
-            
+
             // 隐藏相似植物推荐
             document.getElementById('similarPlants').style.display = 'none';
         }
@@ -1401,17 +1236,17 @@
                 alert("请选择一个文件");
                 return;
             }
-            
+
             // 获取图像的 Data URL 用于历史记录
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const imageDataUrl = e.target.result;
-                
+
                 // 保存图像 URL 用于后续添加到历史记录
                 window.currentImageDataUrl = imageDataUrl;
             };
             reader.readAsDataURL(file);
-            
+
             imgPreview.src = URL.createObjectURL(file);
             console.log(imgPreview.src);
 
@@ -1436,7 +1271,9 @@
                         // 获取h1标签并修改其内容
                         headerElement.textContent = '识别成功';
                         document.getElementById("resultText").value = result;
-                        
+                        // Simulate sending recognition data to server
+                        simulateSendRecognitionData(result);
+
                         // 添加到历史记录
                         addToHistory({
                             plantName: result,
@@ -1444,7 +1281,7 @@
                             confidence: Math.floor(Math.random() * 10) + 90, // 模拟置信度
                             date: new Date().toLocaleString()
                         });
-                        
+
                         // 显示相似植物推荐
                         showSimilarPlants(result);
                     }
@@ -1456,17 +1293,64 @@
             });
         }
 
+        // Simulate sending recognition data to server
+        function simulateSendRecognitionData(result) {
+            // Mock user data (in a real app, this would come from authentication)
+            const mockUser = {
+                username: "annmory",
+                userId: "user123"
+            };
+
+            // Create recognition data object
+            const recognitionData = {
+                username: mockUser.username,
+                userId: mockUser.userId,
+                result: result,
+                timestamp: new Date().toISOString(),
+                confidence: Math.floor(Math.random() * 10) + 90 // Random confidence between 90-99%
+            };
+
+            console.log("Sending recognition data:", recognitionData);
+
+            // Simulate API request with a timeout
+            const recognitionInfoElement = document.createElement('div');
+            recognitionInfoElement.className = 'recognition-info';
+            recognitionInfoElement.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px;"></div> 正在记录识别信息...';
+
+            // Insert the element after the result input
+            const resultElement = document.getElementById('resultText');
+            resultElement.parentNode.insertBefore(recognitionInfoElement, resultElement.nextSibling);
+
+            // Simulate API response after 1.5 seconds
+            setTimeout(() => {
+                // Update with success message
+                recognitionInfoElement.innerHTML = `
+                    <div style="margin-top: 15px; padding: 10px; background-color: #e8f4fc; border-radius: 4px; border: 1px solid #b8daff;">
+                        <div style="margin-bottom: 5px;"><strong>识别信息已记录</strong></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>用户: ${recognitionData.username}</span>
+                            <span>时间: ${new Date(recognitionData.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 5px;">
+                            <span>识别结果: ${recognitionData.result}</span>
+                            <span>置信度: ${recognitionData.confidence}%</span>
+                        </div>
+                    </div>
+                `;
+            }, 1500);
+        }
+
         // 显示相似植物推荐
         function showSimilarPlants(plantName) {
             const similarPlants = document.getElementById('similarPlants');
             const similarList = document.getElementById('similarList');
-            
+
             // 清空列表
             similarList.innerHTML = '';
-            
+
             // 根据识别结果生成相似植物
             const similarNames = getSimilarPlants(plantName);
-            
+
             similarNames.forEach(plant => {
                 const similarItem = document.createElement('div');
                 similarItem.className = 'similar-item';
@@ -1475,15 +1359,15 @@
                     <div class="similar-name">${plant.name}</div>
                     <div class="similar-match">相似度: ${plant.similarity}%</div>
                 `;
-                
+
                 // 点击相似植物查看详情
-                similarItem.addEventListener('click', function() {
+                similarItem.addEventListener('click', function () {
                     viewPlantDetailsFromHistory(plant.name);
                 });
-                
+
                 similarList.appendChild(similarItem);
             });
-            
+
             // 显示相似植物区域
             similarPlants.style.display = 'block';
         }
@@ -1500,10 +1384,10 @@
                 { name: '三七', similarity: 75 },
                 { name: '枸杞', similarity: 72 }
             ];
-            
+
             // 过滤掉当前植物
             const filteredPlants = allPlants.filter(plant => plant.name !== plantName);
-            
+
             // 返回前4个相似植物
             return filteredPlants.slice(0, 4);
         }
@@ -1561,6 +1445,7 @@
                     url: "/plantDetail",
                     data: { name: plantName },
                     success: function (data) {
+                        console.log("植物信息:",data);
                         displayPlantDetails(data);
                     },
                     error: function () {
@@ -1728,14 +1613,14 @@
         document.getElementById('startButton').addEventListener('click', recognize);
 
         // 训练集上传功能
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const trainingSetInput = document.getElementById('trainingSetInput');
             const selectedFilesContainer = document.getElementById('selectedFiles');
             const uploadTrainingSetBtn = document.getElementById('uploadTrainingSetBtn');
             const uploadStatus = document.getElementById('uploadStatus');
 
             // 监听文件选择变化
-            trainingSetInput.addEventListener('change', function() {
+            trainingSetInput.addEventListener('change', function () {
                 if (this.files.length > 0) {
                     let filesHTML = '';
 
@@ -1758,7 +1643,7 @@
             });
 
             // 上传训练集
-            uploadTrainingSetBtn.addEventListener('click', function() {
+            uploadTrainingSetBtn.addEventListener('click', function () {
                 const files = trainingSetInput.files;
 
                 if (files.length === 0) {
@@ -1771,7 +1656,7 @@
                 uploadTrainingSetBtn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; margin-right: 8px;"></span>上传中...';
 
                 // 模拟上传过程
-                setTimeout(function() {
+                setTimeout(function () {
                     // 这里应该是实际的上传逻辑
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
@@ -1785,13 +1670,10 @@
                         data: formData,
                         contentType: false,
                         processData: false,
-                        success: function(response) {
+                        success: function (response) {
                             showUploadStatus('提交成功，等待管理员审核', 'success');
                         },
-                        error: function() {
-                            showUploadStatus('上传失败，请稍后重试', 'error');
-                        },
-                        complete: function() {
+                        complete: function () {
                             resetUploadForm();
                         }
                     });
@@ -1809,7 +1691,7 @@
 
                 // 5秒后自动隐藏错误消息
                 if (type === 'error') {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         uploadStatus.className = 'upload-status';
                     }, 5000);
                 }
@@ -1834,7 +1716,8 @@
             }
         });
     </script>
+    <script src="/js/jquery.min.js"></script>
+
 </body>
 
 </html>
-

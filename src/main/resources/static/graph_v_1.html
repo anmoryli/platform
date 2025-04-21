@@ -397,90 +397,6 @@
             animation: pulse 1.5s infinite;
         }
 
-        /* 自定义浮窗样式 */
-        #custom-tooltip {
-            position: absolute;
-            display: none;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            max-width: 500px;
-            /* 增加最大宽度 */
-            pointer-events: none;
-            /* 确保鼠标事件可以穿透浮窗 */
-        }
-
-        .tooltip-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #1a5276;
-            margin-bottom: 10px;
-            /* 增加底部间距 */
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .tooltip-content {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 15px;
-            /* 增加底部间距 */
-            white-space: normal;
-            /* 允许文本换行 */
-            word-break: break-all;
-            /* 长单词自动换行 */
-            overflow: hidden;
-            /* 隐藏溢出的内容 */
-            text-overflow: ellipsis;
-            /* 显示省略号 */
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            /* 控制显示的行数 */
-            -webkit-box-orient: vertical;
-        }
-
-        .tooltip-properties {
-            margin-top: 10px;
-            /* 增加顶部间距 */
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-
-        .tooltip-property {
-            display: flex;
-            font-size: 12px;
-            margin-bottom: 10px;
-            /* 增加底部间距 */
-        }
-
-        .property-name {
-            font-weight: bold;
-            width: 80px;
-            color: #555;
-            white-space: nowrap;
-            /* 不换行 */
-        }
-
-        .property-value {
-            flex: 1;
-            color: #666;
-            white-space: normal;
-            /* 允许文本换行 */
-            word-break: break-all;
-            /* 长单词自动换行 */
-            overflow: hidden;
-            /* 隐藏溢出的内容 */
-            text-overflow: ellipsis;
-            /* 显示省略号 */
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            /* 控制显示的行数 */
-            -webkit-box-orient: vertical;
-        }
-
         @keyframes pulse {
             0% {
                 opacity: 1;
@@ -722,8 +638,6 @@
         <!-- 知识图谱 -->
         <div class="graph-container">
             <div id="main"></div>
-            <!-- 自定义浮窗 -->
-            <div id="custom-tooltip"></div>
         </div>
     </div>
 
@@ -783,8 +697,6 @@
             var myChart = echarts.init(chartDom);
             var option;
 
-            // 自定义浮窗元素
-            var customTooltip = document.getElementById('custom-tooltip');
             // 显示加载动画
             myChart.showLoading();
 
@@ -818,105 +730,6 @@
                     alert("无法从服务器获取数据，请稍后再试。");
                 });
             }
-            // 鼠标悬浮事件
-            myChart.on('mouseover', { seriesType: 'graph' }, function (params) {
-                console.log(params.data);
-                // 在这里可以添加鼠标悬停时的逻辑，例如显示提示框等
-                var nodeName = params.data.name;
-                $.ajax({
-                    type: "GET",
-                    url: '/plantDetail',
-                    data: { name: nodeName },
-                    success: function (response) {
-                        var details = response; // 用于存储药材详细信息
-                        console.log("获取到的详细信息:", response);
-                        console.log("药材详细信息:", details);
-                        // console.log("悬浮的节点名称:", nodeName);
-                        // var nodeValue = params.data.id || "";
-                        // console.log("悬浮的节点id:", nodeValue);
-                        // 获取节点详细信息
-
-                        // 构建浮窗HTML内容
-                        var tooltipContent = '<div class="tooltip-title">' + nodeName + '</div>';
-
-                        if (details) {
-                            console.log("结点药材名称:", details.herbName);
-                            tooltipContent += '<div class="tooltip-properties">';
-
-                            tooltipContent += '<div class="tooltip-property">' +
-                                '<div class="property-name">' + details.herbName + '：</div>' +
-                                '<div class="property-value">' + details.herbAlias + '</div>' +
-                                '<div class="property-value">' + details.herbTibetanName + '</div>' +
-                                '<div class="property-value">' + details.partUsed + '</div>' +
-                                '<div class="property-value">' + details.herbDescription + '</div>' +
-                                '<div class="property-value">' + details.herbFeatures + '</div>' +
-                                '<div class="property-value">' + details.functionIndication + '</div>' +
-                                '<div class="property-value">' + details.pharmacologicalEffect + '</div>' +
-                                '<div class="property-value">' + details.flavorTropism + '</div>' +
-                                '</div>';
-
-                            tooltipContent += '</div>';
-                        }
-
-                        // 更新浮窗内容
-                        customTooltip.innerHTML = tooltipContent;
-
-                        // 显示浮窗
-                        customTooltip.style.display = 'block';
-
-                        // 更新浮窗位置
-                        updateTooltipPosition(params.event.offsetX, params.event.offsetY);
-                    }
-                })
-            });
-            myChart.on('mouseout', { seriesType: 'graph' }, function () {
-                // 隐藏浮窗
-                customTooltip.style.display = 'none';
-            });
-
-            // 鼠标移动时更新浮窗位置
-            chartDom.addEventListener('mousemove', function (event) {
-                if (customTooltip.style.display === 'block') {
-                    updateTooltipPosition(event.offsetX, event.offsetY);
-                }
-            });
-
-            // 更新浮窗位置的函数
-            function updateTooltipPosition(x, y) {
-                // 获取浮窗和容器的尺寸
-                var tooltipWidth = customTooltip.offsetWidth;
-                var tooltipHeight = customTooltip.offsetHeight;
-                var containerWidth = chartDom.offsetWidth;
-                var containerHeight = chartDom.offsetHeight;
-
-                // 计算浮窗位置，确保不超出容器边界
-                var left = x + 20; // 默认在鼠标右侧20px处
-                var top = y - tooltipHeight / 2; // 默认垂直居中
-
-                // 如果浮窗右侧超出容器
-                if (left + tooltipWidth > containerWidth) {
-                    left = x - tooltipWidth - 10; // 放在鼠标左侧
-                }
-
-                // 如果浮窗顶部超出容器
-                if (top < 0) {
-                    top = 0;
-                }
-
-                // 如果浮窗底部超出容器
-                if (top + tooltipHeight > containerHeight) {
-                    top = containerHeight - tooltipHeight;
-                }
-
-                // 设置浮窗位置
-                customTooltip.style.left = left + 'px';
-                customTooltip.style.top = top + 'px';
-            }
-
-            // 窗口大小变化时重新调整图表大小
-            window.addEventListener('resize', function () {
-                myChart.resize();
-            });
 
             function renderChart(data, links) {
                 var option = {
@@ -1017,7 +830,7 @@
             }
 
             // 页面加载时，默认加载所有数据
-            loadDataAndRenderChart('http://175.24.205.213:8082/echarts');
+            loadDataAndRenderChart('http://101.132.173.174:8082/echarts');
 
             // 搜索按钮点击事件
             $('#search-button').on('click', function () {
@@ -1031,14 +844,14 @@
                 myChart.showLoading();
 
                 // 加载与关键词相关的数据
-                loadDataAndRenderChart('http://175.24.205.213:8082/queryByName', { name: keyword });
+                loadDataAndRenderChart('http://101.132.173.174:8082/queryByName', { name: keyword });
             });
 
             $('#show-all').on('click', function () {
                 // 显示加载动画
                 myChart.showLoading();
                 // 加载与关键词相关的数据
-                loadDataAndRenderChart('http://175.24.205.213:8082/echarts');
+                loadDataAndRenderChart('http://101.132.173.174:8082/echarts');
             });
 
             // 窗口大小变化时重新调整图表大小
@@ -1067,7 +880,7 @@
                 // 是否使用WebSocket
                 useWebSocket: false,
                 // WebSocket URL（如果使用）
-                webSocketUrl: 'ws://175.24.205.213:8080/voice-ws'
+                webSocketUrl: 'ws://localhost:8080/voice-ws'
             };
 
             // 初始化语音识别 - 使用Web Speech API或自定义实现

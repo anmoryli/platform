@@ -14,8 +14,8 @@ import java.util.List;
  */
 @Mapper
 public interface UserImageRecognitionMapper {
-    @Select("select * from user_image_recognition")
-    List<UserImageRecognition> selectAll();
+    @Select("select * from user_image_recognition where user_id = #{userId}")
+    List<UserImageRecognition> selectAll(int userId);
 
     @Insert("insert into user_image_recognition (user_id,image_name,image_path,image_result) values (#{userId},#{imageName},#{imagePath},#{imageResult})")
     int insert(int userId,String imageName,String imagePath,String imageResult);

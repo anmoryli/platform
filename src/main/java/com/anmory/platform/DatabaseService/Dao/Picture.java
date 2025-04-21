@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class Picture {
     private int id;
-    private int herbId;
+    private int plantId;
     private String picName;
     private String picCate;
     private String picPart;
@@ -32,7 +32,7 @@ public class Picture {
     public String toString() {
         return "Picture{" +
                 "id=" + id +
-                ", herbId=" + herbId +
+                ", herbId=" + plantId +
                 ", picName='" + picName + '\'' +
                 ", picCate='" + picCate + '\'' +
                 ", picPart='" + picPart + '\'' +
@@ -45,11 +45,11 @@ public class Picture {
     }
 
     public int getHerbId() {
-        return herbId;
+        return plantId;
     }
 
     public void setHerbId(int herbId) {
-        this.herbId = herbId;
+        this.plantId = herbId;
     }
 
     public String getPicName() {
@@ -118,7 +118,7 @@ public class Picture {
 
     public Picture(int id, int herbId, String picName, String picCate, String picPart, String fileName, String description, String picPlace, Date picTime, String picPerson) {
         this.id = id;
-        this.herbId = herbId;
+        this.plantId = herbId;
         this.picName = picName;
         this.picCate = picCate;
         this.picPart = picPart;

@@ -18,8 +18,8 @@ public class UserImageRecognitionService {
     @Autowired
     UserImageRecognitionMapper userImageRecognitionMapper;
 
-    public List<UserImageRecognition> getAll(){
-        return userImageRecognitionMapper.selectAll();
+    public List<UserImageRecognition> getAll(int userId){
+        return userImageRecognitionMapper.selectAll(userId);
     }
 
     public int insert(int userId,String imageName,String imagePath,String imageResult){
@@ -29,4 +29,5 @@ public class UserImageRecognitionService {
     public int countImages(){
         return userImageRecognitionMapper.countImages();
     }
+
 }

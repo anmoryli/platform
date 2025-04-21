@@ -73,6 +73,7 @@ public class MedicineController {
     @RequestMapping("/plantDetail")
     public Herb detail(String name) throws SQLException {
         MedicineService medicineService = new MedicineService(dataSource);
+        System.out.println("植物名称:" + name);
         return medicineService.detail(name);
     }
 }

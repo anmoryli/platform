@@ -1030,12 +1030,14 @@ function loadPictureData() {
             
             let html = "";
             pictures.forEach(picture => {
+                const imgUrl = "http://175.24.205.213:81" + picture.fileName;
+                console.log("图像路径:",imgUrl);
                 html += `
                 <div class="db-card">
                     <div class="db-card-header">
                         ${escapeHtml(picture.picName)}
                     </div>
-                    <img src="${picture.fileName}" alt="${escapeHtml(picture.picName)}" class="db-card-image">
+                    <img src="${imgUrl}" alt="${escapeHtml(picture.picName)}" class="db-card-image">
                     <div class="db-card-body">
                         <div class="db-card-field">
                             <div class="db-card-label">类别</div>

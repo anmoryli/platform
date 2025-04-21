@@ -16,7 +16,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # 读取 TXT 文件
-with open('import.txt', 'r', encoding='utf-8') as file:
+with open('test.txt', 'r', encoding='utf-8') as file:
     lines = file.readlines()
     for line in lines:
         # 去除行尾的换行符

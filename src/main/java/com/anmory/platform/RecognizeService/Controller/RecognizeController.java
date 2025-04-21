@@ -37,7 +37,7 @@ public class RecognizeController {
             String pythonScript = "/root/predict.py"; // Python 脚本路径
 
             // 指定临时文件目录
-            String tempDirPath = "/root/platform/tmp";
+            String tempDirPath = "/etc/nginx/images/tmp";
             File tempDir = new File(tempDirPath);
 
             // 确保目录存在
@@ -82,6 +82,7 @@ public class RecognizeController {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator());
+                    System.out.println(tempFile.getName()+tempFile.getAbsolutePath()+ output);
                     userImageRecognitionService.insert(user.getId(),tempFile.getName(),tempFile.getAbsolutePath(),output.toString());
                 }
                 System.out.println("[RecognizeService] 读取Python进程的标准输出");
@@ -107,14 +108,6 @@ public class RecognizeController {
                 process.destroy();
                 System.out.println("[RecognizeService] 已销毁Python进程");
             }
-//            if (tempFile != null && tempFile.exists()) {
-//                boolean deleted = tempFile.delete();
-//                if (deleted) {
-//                    System.out.println("[RecognizeService] 已删除临时文件: " + tempFile.getAbsolutePath());
-//                } else {
-//                    System.out.println("[RecognizeService] 无法删除临时文件: " + tempFile.getAbsolutePath());
-//                }
-//            }
         }
         return output.toString();
     }

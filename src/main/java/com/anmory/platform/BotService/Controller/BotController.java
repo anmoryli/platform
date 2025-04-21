@@ -121,4 +121,88 @@ public class BotController {
             return "";
         }
     }
+
+    @RequestMapping("/xunfei")
+    public String chat_2(String userInput) {
+        if (userInput.isEmpty()) {
+            return "请输入内容";
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(API_URL);
+            httpPost.setHeader("Content-Type", "application/json");
+            httpPost.setHeader("Authorization", AUTH_TOKEN);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // 构建请求体
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "4.0Ultra"); // 根据需求选择模型版本
+            List<Map<String, String>> messages = new ArrayList<>();
+
+            // 系统角色消息
+            messages.add(new HashMap<>() {{
+                put("role", "system");
+                put("content", "你是一个藏药植物药方面的专家，你只能回答该方面的问题，其他任何问题你都不能回答");
+            }});
+
+            // 用户消息
+            messages.add(new HashMap<>() {{
+                put("role", "user");
+                put("content", userInput);
+            }});
+
+            requestBody.put("messages", messages);
+            requestBody.put("temperature", 0.5);
+            requestBody.put("top_k", 4);
+            requestBody.put("max_tokens", 8000);
+            requestBody.put("presence_penalty", 1.0);
+            requestBody.put("frequency_penalty", 1.0);
+            requestBody.put("stream", true); // 流式响应
+
+            // 将请求体转换为 JSON 字符串
+            String jsonRequest = objectMapper.writeValueAsString(requestBody);
+            StringEntity entity = new StringEntity(jsonRequest, StandardCharsets.UTF_8);
+            httpPost.setEntity(entity);
+
+            // 发送请求并处理响应
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+
+                // 处理流式响应
+                StringBuilder botResponse = new StringBuilder();
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity.getContent(), StandardCharsets.UTF_8))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            if (line.startsWith("data:")) {
+                                line = line.substring(5).trim(); // 去除"data:"前缀
+                                if (line.equals("[DONE]")) {
+                                    break; // 流式响应结束
+                                }
+                                try {
+                                    JsonNode jsonResponse = objectMapper.readTree(line);
+                                    JsonNode choicesNode = jsonResponse.path("choices");
+                                    if (choicesNode.isArray() && choicesNode.size() > 0) {
+                                        JsonNode deltaNode = choicesNode.get(0).path("delta");
+                                        String deltaContent = deltaNode.path("content").asText();
+                                        if (deltaContent != null && !deltaContent.isEmpty()) {
+                                            botResponse.append(deltaContent);
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    log.error("Error parsing JSON: ", e);
+                                }
+                            }
+                        }
+                    }
+                }
+                return botResponse.toString();
+            }
+
+        } catch (IOException e) {
+            log.error("Error: ", e);
+            return "";
+        }
+    }
 }
