@@ -1,4 +1,4 @@
-package com.anmory.platform.DelService.Controller;
+package com.anmory.platform.DatabaseService.Controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
