@@ -1,7 +1,6 @@
 package com.anmory.platform.BotService.Controller;
 
 import com.anmory.platform.BotService.Service.GetEntityService;
-import com.anmory.platform.RecordService.service.UserAiConversationService;
 import com.anmory.platform.UserService.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -36,8 +35,6 @@ public class QAController {
     Neo4jService neo4jService;
     @Autowired
     GetEntityService getEntityService;
-    @Autowired
-    UserAiConversationService userAiConversationService;
     @RequestMapping("/qa")
     public String qa(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
@@ -104,7 +101,6 @@ public class QAController {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
-            userAiConversationService.insert(user.getId(),userInput,replyContent);
             return replyContent;
 
         } else {

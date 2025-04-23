@@ -1,0 +1,3722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>藏药植物药知识平台 - 管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6a1b9a;
+            --primary-light: #9c4dcc;
+            --primary-dark: #38006b;
+            --secondary-color: #00bcd4;
+            --secondary-light: #62efff;
+            --secondary-dark: #008ba3;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --info-color: #2196f3;
+            --dark-color: #212121;
+            --light-color: #f5f5f5;
+            --gray-color: #9e9e9e;
+            --white-color: #ffffff;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            color: white;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed+.main-content {
+            margin-left: 60px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .user-menu-btn img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            width: 200px;
+            z-index: 100;
+            display: none;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 10px 15px;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .user-dropdown a:hover {
+            background-color: var(--light-color);
+        }
+
+        /* Sidebar */
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-label {
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar.collapsed .menu-label {
+            display: none;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-text {
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .toggle-sidebar:hover {
+            color: white;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Dashboard */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .view-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: #1976d2;
+        }
+
+        .edit-btn {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #f57c00;
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .approve-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .approve-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .reject-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(106, 27, 154, 0.2);
+        }
+
+        .form-control.invalid {
+            border-color: var(--danger-color);
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #388e3c;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #f57c00;
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #1976d2;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            color: var(--dark-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Search */
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        .search-btn {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-item {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .pagination-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px 20px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .toast-success .toast-icon {
+            color: var(--success-color);
+        }
+
+        .toast-error .toast-icon {
+            color: var(--danger-color);
+        }
+
+        .toast-info .toast-icon {
+            color: var(--info-color);
+        }
+
+        .toast-warning .toast-icon {
+            color: var(--warning-color);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            color: var(--danger-color);
+        }
+
+        /* Login */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            padding: 30px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .login-body {
+            padding: 30px;
+        }
+
+        /* Graph Visualization */
+        .graph-container {
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        /* File Upload */
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+        }
+
+        .file-upload i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .file-upload p {
+            color: #666;
+            text-align: center;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger-color);
+        }
+
+        .badge-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: var(--info-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar .logo-text,
+            .sidebar .menu-label,
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header h1 {
+                margin-bottom: 10px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 10px 15px;
+            }
+
+            .card-header {
+                padding: 10px 15px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="login-container view active">
+            <div class="login-card">
+                <div class="login-header">
+                    <h2>藏药植物药知识平台</h2>
+                    <p>管理系统</p>
+                </div>
+                <div class="login-body">
+                    <div class="form-group">
+                        <label for="username" class="form-label required">用户名</label>
+                        <input type="text" id="username" class="form-control" placeholder="请输入用户名">
+                        <div class="error-message" id="username-error">请输入用户名</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label required">密码</label>
+                        <input type="password" id="password" class="form-control" placeholder="请输入密码">
+                        <div class="error-message" id="password-error">请输入密码</div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="login-btn" class="btn btn-primary" style="width: 100%;">登录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application View -->
+        <div id="main-view" class="view">
+            <div class="container">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <div class="logo">
+                        <i class="fas fa-leaf" style="color: white; font-size: 24px;"></i>
+                        <span class="logo-text">藏药植物药平台</span>
+                    </div>
+                    <div class="sidebar-menu">
+                        <div class="menu-label">数据管理</div>
+                        <a class="menu-item active" data-view="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="menu-text">仪表盘</span>
+                        </a>
+                        <a class="menu-item" data-view="plant-management">
+                            <i class="fas fa-seedling"></i>
+                            <span class="menu-text">植物管理</span>
+                        </a>
+                        <a class="menu-item" data-view="herb-management">
+                            <i class="fas fa-mortar-pestle"></i>
+                            <span class="menu-text">药材管理</span>
+                        </a>
+                        <a class="menu-item" data-view="prescription-management">
+                            <i class="fas fa-prescription-bottle"></i>
+                            <span class="menu-text">药方管理</span>
+                        </a>
+                        <a class="menu-item" data-view="literature-management">
+                            <i class="fas fa-book"></i>
+                            <span class="menu-text">文献管理</span>
+                        </a>
+                        <a class="menu-item" data-view="graph-database">
+                            <i class="fas fa-project-diagram"></i>
+                            <span class="menu-text">图数据库</span>
+                        </a>
+                        <div class="menu-label">用户管理</div>
+                        <a class="menu-item" data-view="user-approval">
+                            <i class="fas fa-user-check"></i>
+                            <span class="menu-text">用户审批</span>
+                        </a>
+                        <a class="menu-item" data-view="upload-approval">
+                            <i class="fas fa-upload"></i>
+                            <span class="menu-text">上传审批</span>
+                        </a>
+                        <div class="menu-label">数据分析</div>
+                        <a class="menu-item" data-view="user-growth">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="menu-text">用户增长</span>
+                        </a>
+                        <a class="menu-item" data-view="recognition-stats">
+                            <i class="fas fa-camera"></i>
+                            <span class="menu-text">识别统计</span>
+                        </a>
+                        <a class="menu-item" data-view="search-stats">
+                            <i class="fas fa-search"></i>
+                            <span class="menu-text">搜索统计</span>
+                        </a>
+                        <a class="menu-item" data-view="conversation-stats">
+                            <i class="fas fa-comments"></i>
+                            <span class="menu-text">对话统计</span>
+                        </a>
+                    </div>
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1 id="page-title">仪表盘</h1>
+                        <div class="user-menu">
+                            <button class="user-menu-btn">
+                                <img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='32' height='32'%3E%3Ccircle cx='32' cy='32' r='30' fill='%236a1b9a'/%3E%3Ctext x='32' y='40' font-family='Arial' font-size='24' fill='white' text-anchor='middle'%3E管%3C/text%3E%3C/svg%3E"
+                                    alt="User">
+                                <span>管理员</span>
+                            </button>
+                            <div class="user-dropdown">
+                                <a href="#" data-view="profile"><i class="fas fa-user"></i> 个人资料</a>
+                                <a href="#" data-view="settings"><i class="fas fa-cog"></i> 设置</a>
+                                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard View -->
+                    <div id="dashboard" class="view active">
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="stat-icon"
+                                    style="background-color: rgba(106, 27, 154, 0.1); color: var(--primary-color);">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>256</h3>
+                                    <p>植物数据</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"
+                                    style="background-color: rgba(0, 188, 212, 0.1); color: var(--secondary-color);">
+                                    <i class="fas fa-mortar-pestle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>189</h3>
+                                    <p>药材数据</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"
+                                    style="background-color: rgba(76, 175, 80, 0.1); color: var(--success-color);">
+                                    <i class="fas fa-prescription-bottle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>78</h3>
+                                    <p>药方数据</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"
+                                    style="background-color: rgba(33, 150, 243, 0.1); color: var(--info-color);">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>124</h3>
+                                    <p>文献数据</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>用户增长趋势</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" id="user-growth-chart"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>数据集审核状态</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" id="approval-status-chart"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>图像识别统计</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" id="recognition-stats-chart"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>待处理事项</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>类型</th>
+                                                <th>内容</th>
+                                                <th>提交时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>用户申请</td>
+                                                <td>李明申请成为管理员</td>
+                                                <td>2023-06-10 14:30</td>
+                                                <td><span class="badge badge-warning">待审核</span></td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn approve-btn" title="批准"><i
+                                                                class="fas fa-check"></i></button>
+                                                        <button class="action-btn reject-btn" title="拒绝"><i
+                                                                class="fas fa-times"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>数据上传</td>
+                                                <td>张华上传了新的植物数据集</td>
+                                                <td>2023-06-09 10:15</td>
+                                                <td><span class="badge badge-warning">待审核</span></td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn approve-btn" title="批准"><i
+                                                                class="fas fa-check"></i></button>
+                                                        <button class="action-btn reject-btn" title="拒绝"><i
+                                                                class="fas fa-times"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>数据修改</td>
+                                                <td>王强提交了药材数据修改请求</td>
+                                                <td>2023-06-08 16:45</td>
+                                                <td><span class="badge badge-warning">待审核</span></td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn approve-btn" title="批准"><i
+                                                                class="fas fa-check"></i></button>
+                                                        <button class="action-btn reject-btn" title="拒绝"><i
+                                                                class="fas fa-times"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plant Management View -->
+                    <div id="plant-management" class="view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>植物管理</h2>
+                                <button class="btn btn-primary" id="add-plant-btn"><i class="fas fa-plus"></i>
+                                    添加植物</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="search-container">
+                                    <input type="text" class="search-input" placeholder="搜索植物...">
+                                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                                </div>
+                                <div class="filters">
+                                    <button class="filter-btn active">全部</button>
+                                    <button class="filter-btn">药用植物</button>
+                                    <button class="filter-btn">保护植物</button>
+                                    <button class="filter-btn">特有植物</button>
+                                </div>
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>植物名</th>
+                                                <th>拉丁学名</th>
+                                                <th>科名</th>
+                                                <th>属名</th>
+                                                <th>保护等级</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>冬虫夏草</td>
+                                                <td>Ophiocordyceps sinensis</td>
+                                                <td>麦角菌科</td>
+                                                <td>冬虫夏草属</td>
+                                                <td>国家二级保护</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>藏红花</td>
+                                                <td>Crocus sativus</td>
+                                                <td>鸢尾科</td>
+                                                <td>番红花属</td>
+                                                <td>-</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>雪莲花</td>
+                                                <td>Saussurea involucrata</td>
+                                                <td>菊科</td>
+                                                <td>风毛菊属</td>
+                                                <td>国家二级保护</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination">
+                                    <div class="pagination-item active">1</div>
+                                    <div class="pagination-item">2</div>
+                                    <div class="pagination-item">3</div>
+                                    <div class="pagination-item">...</div>
+                                    <div class="pagination-item">10</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Herb Management View -->
+                    <div id="herb-management" class="view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>药材管理</h2>
+                                <button class="btn btn-primary" id="add-herb-btn"><i class="fas fa-plus"></i>
+                                    添加药材</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="search-container">
+                                    <input type="text" class="search-input" placeholder="搜索药材...">
+                                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                                </div>
+                                <div class="filters">
+                                    <button class="filter-btn active">全部</button>
+                                    <button class="filter-btn">根类</button>
+                                    <button class="filter-btn">叶类</button>
+                                    <button class="filter-btn">花类</button>
+                                    <button class="filter-btn">果实类</button>
+                                </div>
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>药材名</th>
+                                                <th>藏文名</th>
+                                                <th>别名</th>
+                                                <th>药用部位</th>
+                                                <th>性味归经</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>冬虫夏草</td>
+                                                <td>དབྱར་རྩྭ་དགུན་འབུ།</td>
+                                                <td>虫草、冬虫草</td>
+                                                <td>子座与幼虫尸体</td>
+                                                <td>甘、温；入肺、肾经</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>藏红花</td>
+                                                <td>ཀུར་ཀུམ།</td>
+                                                <td>番红花、西红花</td>
+                                                <td>花柱和柱头</td>
+                                                <td>甘、微苦、温；入心、肝经</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>雪莲花</td>
+                                                <td>གངས་ལྷུན།</td>
+                                                <td>天山雪莲</td>
+                                                <td>全草</td>
+                                                <td>苦、温；入肝、肾经</td>
+                                                <td>
+                                                    <div class="table-actions">
+                                                        <button class="action-btn view-btn" title="查看详情"><i
+                                                                class="fas fa-eye"></i></button>
+                                                        <button class="action-btn edit-btn" title="编辑"><i
+                                                                class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" title="删除"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination">
+                                    <div class="pagination-item active">1</div>
+                                    <div class="pagination-item">2</div>
+                                    <div class="pagination-item">3</div>
+                                    <div class="pagination-item">...</div>
+                                    <div class="pagination-item">8</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Management View -->
+                    <div id="prescription-management" class="view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>药方管理</h2>
+                                <button class="btn btn-primary" id="add-prescription-btn"><i class="fas fa-plus"></i>
+                                    添加药方</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="search-container">
+                                    <input type="text" class="search-input" placeholder="搜索药方...">
+                                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                                </div>
+                                <!-- <div class="filters">
+                                        <button class="filter-btn active">全部</button>
+                                        <button class="filter-btn">根类</button>
+                                        <button class="filter-btn">叶类</button>
+                                        <button class="filter-btn">花类</button>
+                                        <button class="filter-btn">果实类</button>
+                                    </div> -->
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>处方药名</th>
+                                                <th>成分</th>
+                                                <th>用量</th>
+                                                <th>用途</th>
+                                                <th>药方来源</th>
+                                                <th>使用人群</th>
+                                                <th>注意事项</th>
+                                                <th>药方分类</th>
+                                                <th>制备方法/使用说明</th>
+                                                <th>推荐医生或专家</th>
+                                                <th>药方状态</th>
+                                                <th>药方图片</th>
+                                                <th>用户评分</th>
+                                                <th>用户评价数</th>
+                                                <th>药方版本号</th>
+                                                <th>所含药材</th>
+                                                <th>是否公开</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>冬虫夏草补肺汤</td>
+                                                <td>冬虫夏草、黄芪、党参</td>
+                                                <td>每日2次，每次10克</td>
+                                                <td>用于补肺益肾，增强免疫力</td>
+                                                <td>《藏医经典》</td>
+                                                <td>成年人</td>
+                                                <td>孕妇慎用，避免过量服用</td>
+                                                <td>补益类</td>
+                                                <td>将药材煮沸后文火煎煮30分钟，去渣取汁</td>
+                                                <td>扎西医生</td>
+                                                <td>启用</td>
+                                                <td><img src="images/冬虫夏草.jpg" alt="冬虫夏草" width="50"></td>
+                                                <td>4.8</td>
+                                                <td>120</td>
+                                                <td>v1.0</td>
+                                                <td>冬虫夏草、黄芪、党参</td>
+                                                <td>是</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>藏红花安神茶</td>
+                                                <td>藏红花、枸杞、甘草</td>
+                                                <td>每日1次，每次5克</td>
+                                                <td>用于安神助眠，缓解焦虑</td>
+                                                <td>《藏药养生秘方》</td>
+                                                <td>失眠患者</td>
+                                                <td>不宜长期大量使用，孕妇禁用</td>
+                                                <td>安神类</td>
+                                                <td>将药材用热水冲泡，静置10分钟后饮用</td>
+                                                <td>卓玛专家</td>
+                                                <td>启用</td>
+                                                <td><img src="images/藏红花.jpg" alt="藏红花" width="50"></td>
+                                                <td>4.6</td>
+                                                <td>95</td>
+                                                <td>v1.2</td>
+                                                <td>藏红花、枸杞、甘草</td>
+                                                <td>否</td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>雪莲花祛风散</td>
+                                                <td>雪莲花、独活、防风</td>
+                                                <td>每日3次，每次8克</td>
+                                                <td>用于祛风除湿，缓解关节疼痛</td>
+                                                <td>《高原藏药方》</td>
+                                                <td>风湿病患者</td>
+                                                <td>过敏体质者慎用</td>
+                                                <td>祛风类</td>
+                                                <td>将药材研磨成粉，用温水送服</td>
+                                                <td>多吉医生</td>
+                                                <td>停用</td>
+                                                <td><img src="images/雪莲花.jpg" alt="雪莲花" width="50"></td>
+                                                <td>4.3</td>
+                                                <td>80</td>
+                                                <td>v2.0</td>
+                                                <td>雪莲花、独活、防风</td>
+                                                <td>是</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination">
+                                    <div class="pagination-item active">1</div>
+                                    <div class="pagination-item">2</div>
+                                    <div class="pagination-item">3</div>
+                                    <div class="pagination-item">...</div>
+                                    <div class="pagination-item">8</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Literature Management View -->
+                        <div id="literature-management" class="view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>文献管理</h2>
+                                    <button class="btn btn-primary" id="add-literature-btn"><i class="fas fa-plus"></i>
+                                        添加文献</button>
+                                </div>
+                                <div class="card-body">
+                                    <!-- 搜索框 -->
+                                    <div class="search-container">
+                                        <input type="text" class="search-input" placeholder="搜索文献...">
+                                        <button class="search-btn"><i class="fas fa-search"></i></button>
+                                    </div>
+
+                                    <!-- 文献列表 -->
+                                    <div class="table-container">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>文献标题</th>
+                                                    <th>藏文标题</th>
+                                                    <th>作者</th>
+                                                    <th>出版年份</th>
+                                                    <th>期刊/出版社</th>
+                                                    <th>卷号/期号</th>
+                                                    <th>页码范围</th>
+                                                    <th>摘要</th>
+                                                    <th>下载链接</th>
+                                                    <th>本地存储路径</th>
+                                                    <th>主要涉及植物</th>
+                                                    <th>研究领域</th>
+                                                    <th>关键词</th>
+                                                    <th>创建时间</th>
+                                                    <th>更新时间</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>藏药植物化学成分分析</td>
+                                                    <td>བོད་སྨན་ལུས་རྩའི་རྒྱུ་ཆའི་རྩིས་རྟགས།</td>
+                                                    <td>张三, 李四</td>
+                                                    <td>2023</td>
+                                                    <td>《中草药》</td>
+                                                    <td>Vol. 45, Issue 6</td>
+                                                    <td>123-130</td>
+                                                    <td>本文对藏药植物的化学成分进行了系统分析...</td>
+                                                    <td><a href="http://example.com/download/1.pdf"
+                                                            target="_blank">下载</a></td>
+                                                    <td>/storage/documents/1.pdf</td>
+                                                    <td>冬虫夏草</td>
+                                                    <td>化学成分</td>
+                                                    <td>藏药, 化学成分, 冬虫夏草</td>
+                                                    <td>2023-01-15 10:30:00</td>
+                                                    <td>2023-04-20 15:45:00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>藏红花的药理作用研究</td>
+                                                    <td>གཞུང་མཚོ་ལྗང་པའི་སྨན་རྩིས་ཀྱི་རྩིས་རྟགས།</td>
+                                                    <td>王五, 赵六</td>
+                                                    <td>2022</td>
+                                                    <td>《药学学报》</td>
+                                                    <td>Vol. 38, Issue 4</td>
+                                                    <td>89-95</td>
+                                                    <td>本文探讨了藏红花在抗焦虑方面的药理作用...</td>
+                                                    <td><a href="http://example.com/download/2.pdf"
+                                                            target="_blank">下载</a></td>
+                                                    <td>/storage/documents/2.pdf</td>
+                                                    <td>藏红花</td>
+                                                    <td>药理作用</td>
+                                                    <td>藏红花, 药理作用, 抗焦虑</td>
+                                                    <td>2022-06-10 14:20:00</td>
+                                                    <td>2023-03-12 09:15:00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>雪莲花的祛风湿作用研究</td>
+                                                    <td>གངས་ལྗང་མེ་ཏོག་གི་ཕྱི་ལུས་རྩིས་རྟགས།</td>
+                                                    <td>李华, 王明</td>
+                                                    <td>2021</td>
+                                                    <td>《高原医学杂志》</td>
+                                                    <td>Vol. 30, Issue 2</td>
+                                                    <td>45-52</td>
+                                                    <td>本文研究了雪莲花在祛风湿方面的作用机制...</td>
+                                                    <td><a href="http://example.com/download/3.pdf"
+                                                            target="_blank">下载</a></td>
+                                                    <td>/storage/documents/3.pdf</td>
+                                                    <td>雪莲花</td>
+                                                    <td>祛风湿</td>
+                                                    <td>雪莲花, 祛风湿, 高原医学</td>
+                                                    <td>2021-08-25 08:45:00</td>
+                                                    <td>2023-01-10 11:30:00</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- 分页 -->
+                                    <div class="pagination">
+                                        <div class="pagination-item active">1</div>
+                                        <div class="pagination-item">2</div>
+                                        <div class="pagination-item">3</div>
+                                        <div class="pagination-item">...</div>
+                                        <div class="pagination-item">8</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graph Database View -->
+                        <div id="graph-database" class="view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>图数据库管理</h2>
+                                    <button class="btn btn-primary" id="add-relation-btn"><i class="fas fa-plus"></i>
+                                        添加关系</button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tabs">
+                                        <div class="tab active" data-tab="graph-view">图形视图</div>
+                                        <div class="tab" data-tab="relation-list">关系列表</div>
+                                        <div class="tab" data-tab="query-builder">查询构建器</div>
+                                    </div>
+                                    <div id="graph-view" class="tab-content active">
+                                        <div class="filters">
+                                            <button class="filter-btn active">全部关系</button>
+                                            <button class="filter-btn">植物-药材</button>
+                                            <button class="filter-btn">药材-药方</button>
+                                            <button class="filter-btn">药材-功效</button>
+                                            <button class="filter-btn">植物-产地</button>
+                                        </div>
+                                        <div class="graph-container" id="graph-visualization"></div>
+                                    </div>
+                                    <div id="relation-list" class="tab-content">
+                                        <div class="search-container">
+                                            <input type="text" class="search-input" placeholder="搜索关系...">
+                                            <button class="search-btn"><i class="fas fa-search"></i></button>
+                                        </div>
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>源节点</th>
+                                                        <th>关系类型</th>
+                                                        <th>目标节点</th>
+                                                        <th>属性</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>冬虫夏草(植物)</td>
+                                                        <td>提供</td>
+                                                        <td>冬虫夏草(药材)</td>
+                                                        <td>药用部位: 子座与幼虫尸体</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn edit-btn" title="编辑"><i
+                                                                        class="fas fa-edit"></i></button>
+                                                                <button class="action-btn delete-btn" title="删除"><i
+                                                                        class="fas fa-trash"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>冬虫夏草(药材)</td>
+                                                        <td>具有</td>
+                                                        <td>补肺益肾</td>
+                                                        <td>强度: 高</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn edit-btn" title="编辑"><i
+                                                                        class="fas fa-edit"></i></button>
+                                                                <button class="action-btn delete-btn" title="删除"><i
+                                                                        class="fas fa-trash"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>冬虫夏草(药材)</td>
+                                                        <td>用于</td>
+                                                        <td>强身健体方</td>
+                                                        <td>用量: 3-6g</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn edit-btn" title="编辑"><i
+                                                                        class="fas fa-edit"></i></button>
+                                                                <button class="action-btn delete-btn" title="删除"><i
+                                                                        class="fas fa-trash"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="query-builder" class="tab-content">
+                                        <div class="form-group">
+                                            <label for="query-type" class="form-label">查询类型</label>
+                                            <select id="query-type" class="form-control">
+                                                <option value="path">路径查询</option>
+                                                <option value="neighbors">邻居查询</option>
+                                                <option value="pattern">模式匹配</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="start-node" class="form-label">起始节点</label>
+                                            <input type="text" id="start-node" class="form-control"
+                                                placeholder="输入起始节点名称">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="relation-type" class="form-label">关系类型</label>
+                                            <select id="relation-type" class="form-control">
+                                                <option value="all">所有关系</option>
+                                                <option value="provides">提供</option>
+                                                <option value="has">具有</option>
+                                                <option value="used_in">用于</option>
+                                                <option value="grows_in">生长于</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="end-node" class="form-label">目标节点</label>
+                                            <input type="text" id="end-node" class="form-control"
+                                                placeholder="输入目标节点名称（可选）">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="depth" class="form-label">深度</label>
+                                            <input type="number" id="depth" class="form-control" value="2" min="1"
+                                                max="5">
+                                        </div>
+                                        <div class="form-actions">
+                                            <button class="btn btn-primary" id="run-query-btn">执行查询</button>
+                                            <button class="btn btn-outline" id="clear-query-btn">清除</button>
+                                        </div>
+                                        <div class="graph-container" id="query-result-graph" style="margin-top: 20px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Approval View -->
+                        <div id="user-approval" class="view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>用户管理员申请审批</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tabs">
+                                        <div class="tab active" data-tab="pending-approvals">待审批</div>
+                                        <div class="tab" data-tab="approved-users">已批准</div>
+                                        <div class="tab" data-tab="rejected-users">已拒绝</div>
+                                    </div>
+                                    <div id="pending-approvals" class="tab-content active">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>申请类型</th>
+                                                        <th>申请理由</th>
+                                                        <th>申请时间</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>李明</td>
+                                                        <td>管理员申请</td>
+                                                        <td>我是藏药研究专家，希望能够参与平台的数据管理和审核工作。</td>
+                                                        <td>2023-06-10 14:30</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>张华</td>
+                                                        <td>管理员申请</td>
+                                                        <td>我是西藏大学的植物学教授，希望能够为平台贡献专业知识。</td>
+                                                        <td>2023-06-09 10:15</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>王强</td>
+                                                        <td>管理员申请</td>
+                                                        <td>我是中医药大学的研究生，专注于藏药研究，希望能够参与平台建设。</td>
+                                                        <td>2023-06-08 16:45</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="approved-users" class="tab-content">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>申请类型</th>
+                                                        <th>批准时间</th>
+                                                        <th>批准人</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>4</td>
+                                                        <td>赵敏</td>
+                                                        <td>管理员申请</td>
+                                                        <td>2023-06-05 09:20</td>
+                                                        <td>系统管理员</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn delete-btn" title="撤销权限"><i
+                                                                        class="fas fa-user-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>5</td>
+                                                        <td>钱伟</td>
+                                                        <td>管理员申请</td>
+                                                        <td>2023-06-03 14:10</td>
+                                                        <td>系统管理员</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn delete-btn" title="撤销权限"><i
+                                                                        class="fas fa-user-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="rejected-users" class="tab-content">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>申请类型</th>
+                                                        <th>拒绝原因</th>
+                                                        <th>拒绝时间</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>6</td>
+                                                        <td>孙亮</td>
+                                                        <td>管理员申请</td>
+                                                        <td>申请信息不完整</td>
+                                                        <td>2023-06-02 11:30</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="重新审核"><i
+                                                                        class="fas fa-redo"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Approval View -->
+                        <div id="upload-approval" class="view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>用户上传数据审批</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tabs">
+                                        <div class="tab active" data-tab="pending-uploads">待审批</div>
+                                        <div class="tab" data-tab="approved-uploads">已批准</div>
+                                        <div class="tab" data-tab="rejected-uploads">已拒绝</div>
+                                    </div>
+                                    <div id="pending-uploads" class="tab-content active">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>上传类型</th>
+                                                        <th>文件名</th>
+                                                        <th>上传时间</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>张华</td>
+                                                        <td>植物数据集</td>
+                                                        <td>西藏高原植物数据.xlsx</td>
+                                                        <td>2023-06-09 10:15</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>王强</td>
+                                                        <td>药材数据</td>
+                                                        <td>藏药材性味归经整理.docx</td>
+                                                        <td>2023-06-08 16:45</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3</td>
+                                                        <td>李明</td>
+                                                        <td>文献资料</td>
+                                                        <td>藏药研究最新进展.pdf</td>
+                                                        <td>2023-06-07 09:30</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="批准"><i
+                                                                        class="fas fa-check"></i></button>
+                                                                <button class="action-btn reject-btn" title="拒绝"><i
+                                                                        class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="approved-uploads" class="tab-content">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>上传类型</th>
+                                                        <th>文件名</th>
+                                                        <th>批准时间</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>4</td>
+                                                        <td>赵敏</td>
+                                                        <td>药方数据</td>
+                                                        <td>传统藏药方剂汇编.xlsx</td>
+                                                        <td>2023-06-05 09:20</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn delete-btn" title="删除"><i
+                                                                        class="fas fa-trash"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="rejected-uploads" class="tab-content">
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>用户名</th>
+                                                        <th>上传类型</th>
+                                                        <th>文件名</th>
+                                                        <th>拒绝原因</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>5</td>
+                                                        <td>钱伟</td>
+                                                        <td>图片数据</td>
+                                                        <td>藏药植物图集.zip</td>
+                                                        <td>图片分辨率不足，请提供高清图片</td>
+                                                        <td>
+                                                            <div class="table-actions">
+                                                                <button class="action-btn view-btn" title="查看详情"><i
+                                                                        class="fas fa-eye"></i></button>
+                                                                <button class="action-btn approve-btn" title="重新审核"><i
+                                                                        class="fas fa-redo"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recognition Stats View -->
+                        <div id="recognition-stats" class="view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>图像识别统计</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="stats-container">
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background-color: rgba(106, 27, 154, 0.1); color: var(--primary-color);">
+                                                <i class="fas fa-camera"></i>
+                                            </div>
+                                            <div class="stat-info">
+                                                <h3>1,245</h3>
+                                                <p>识别总次数</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background-color: rgba(76, 175, 80, 0.1); color: var(--success-color);">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <div class="stat-info">
+                                                <h3>92.5%</h3>
+                                                <p>平均准确率</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background-color: rgba(33, 150, 243, 0.1); color: var(--info-color);">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="stat-info">
+                                                <h3>1.2s</h3>
+                                                <p>平均响应时间</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon"
+                                                style="background-color: rgba(255, 152, 0, 0.1); color: var(--warning-color);">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="stat-info">
+                                                <h3>45</h3>
+                                                <p>识别失败次数</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container" id="accuracy-chart"></div>
+                                    <div class="chart-container" id="response-time-chart"></div>
+                                    <div class="table-container">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>用户</th>
+                                                    <th>图片名称</th>
+                                                    <th>识别结果</th>
+                                                    <th>准确率</th>
+                                                    <th>响应时间</th>
+                                                    <th>状态</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>张华</td>
+                                                    <td>plant_001.jpg</td>
+                                                    <td>冬虫夏草</td>
+                                                    <td>98.5%</td>
+                                                    <td>0.8s</td>
+                                                    <td><span class="badge badge-success">成功</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>李明</td>
+                                                    <td>herb_002.jpg</td>
+                                                    <td>藏红花</td>
+                                                    <td>95.2%</td>
+                                                    <td>1.2s</td>
+                                                    <td><span class="badge badge-success">成功</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>王强</td>
+                                                    <td>unknown_003.jpg</td>
+                                                    <td>无法识别</td>
+                                                    <td>-</td>
+                                                    <td>2.5s</td>
+                                                    <td><span class="badge badge-danger">失败</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <!-- Add Plant Modal -->
+        <div class="modal-overlay" id="add-plant-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>添加植物</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-plant-form">
+                        <div class="form-group">
+                            <label for="plant-name" class="form-label required">植物名</label>
+                            <input type="text" id="plant-name" class="form-control" placeholder="请输入植物名称">
+                            <div class="error-message" id="plant-name-error">植物名称不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-latin" class="form-label required">拉丁学名</label>
+                            <input type="text" id="plant-latin" class="form-control" placeholder="请输入拉丁学名">
+                            <div class="error-message" id="plant-latin-error">拉丁学名不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-alias" class="form-label">别称</label>
+                            <input type="text" id="plant-alias" class="form-control" placeholder="请输入别称，多个别称用逗号分隔">
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-tibetan" class="form-label">藏文名</label>
+                            <input type="text" id="plant-tibetan" class="form-control" placeholder="请输入藏文名">
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-family" class="form-label required">科名</label>
+                            <input type="text" id="plant-family" class="form-control" placeholder="请输入科名">
+                            <div class="error-message" id="plant-family-error">科名不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-genus" class="form-label required">属名</label>
+                            <input type="text" id="plant-genus" class="form-control" placeholder="请输入属名">
+                            <div class="error-message" id="plant-genus-error">属名不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-image" class="form-label">图像</label>
+                            <div class="file-upload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>点击或拖拽文件到此处上传</p>
+                                <input type="file" id="plant-image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-features" class="form-label">特征</label>
+                            <textarea id="plant-features" class="form-control" placeholder="请输入植物特征描述"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-origin" class="form-label">采集地点</label>
+                            <input type="text" id="plant-origin" class="form-control" placeholder="请输入采集地点">
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-protect" class="form-label">保护等级</label>
+                            <select id="plant-protect" class="form-control">
+                                <option value="">无</option>
+                                <option value="国家一级保护">国家一级保护</option>
+                                <option value="国家二级保护">国家二级保护</option>
+                                <option value="国家三级保护">国家三级保护</option>
+                                <option value="地方保护">地方保护</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-notes" class="form-label">附注</label>
+                            <textarea id="plant-notes" class="form-control" placeholder="请输入附注信息"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline modal-close-btn">取消</button>
+                    <button class="btn btn-primary" id="save-plant-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Herb Modal -->
+        <div class="modal-overlay" id="add-herb-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>添加药材</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-herb-form">
+                        <div class="form-group">
+                            <label for="herb-plant" class="form-label required">关联植物</label>
+                            <select id="herb-plant" class="form-control">
+                                <option value="">请选择关联植物</option>
+                                <option value="1">冬虫夏草</option>
+                                <option value="2">藏红花</option>
+                                <option value="3">雪莲花</option>
+                            </select>
+                            <div class="error-message" id="herb-plant-error">请选择关联植物</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-name" class="form-label required">药材名</label>
+                            <input type="text" id="herb-name" class="form-control" placeholder="请输入药材名称">
+                            <div class="error-message" id="herb-name-error">药材名称不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-tibetan" class="form-label">藏文名</label>
+                            <input type="text" id="herb-tibetan" class="form-control" placeholder="请输入藏文名">
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-alias" class="form-label">别名</label>
+                            <input type="text" id="herb-alias" class="form-control" placeholder="请输入别名，多个别名用逗号分隔">
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-description" class="form-label">描述</label>
+                            <textarea id="herb-description" class="form-control" placeholder="请输入药材描述"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-part" class="form-label required">药用部位</label>
+                            <input type="text" id="herb-part" class="form-control" placeholder="请输入药用部位">
+                            <div class="error-message" id="herb-part-error">药用部位不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-features" class="form-label">特征</label>
+                            <textarea id="herb-features" class="form-control" placeholder="请输入药材特征"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-flavor" class="form-label">性味与归经</label>
+                            <textarea id="herb-flavor" class="form-control" placeholder="请输入性味与归经"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-function" class="form-label">功能与主治</label>
+                            <textarea id="herb-function" class="form-control" placeholder="请输入功能与主治"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-application" class="form-label">临床应用</label>
+                            <textarea id="herb-application" class="form-control" placeholder="请输入临床应用"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-effect" class="form-label">药理作用</label>
+                            <textarea id="herb-effect" class="form-control" placeholder="请输入药理作用"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="herb-notes" class="form-label">附注</label>
+                            <textarea id="herb-notes" class="form-control" placeholder="请输入附注信息"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline modal-close-btn">取消</button>
+                    <button class="btn btn-primary" id="save-herb-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Prescription Modal -->
+        <div class="modal-overlay" id="add-prescription-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>添加药方</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-prescription-form">
+                        <div class="form-group">
+                            <label for="prescription-name" class="form-label required">处方药名</label>
+                            <input type="text" id="prescription-name" class="form-control" placeholder="请输入处方药名"
+                                required>
+                            <div class="error-message" id="prescription-name-error">处方药名不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="composition" class="form-label">成分</label>
+                            <input type="text" id="composition" class="form-control" placeholder="请输入成分，多个成分用逗号分隔">
+                        </div>
+                        <div class="form-group">
+                            <label for="dosage" class="form-label">成分具体用量</label>
+                            <input type="text" id="dosage" class="form-control"
+                                placeholder='请输入成分具体用量，JSON格式：{"成分1": "用量1", "成分2": "用量2"}'>
+                        </div>
+                        <div class="form-group">
+                            <label for="treatment" class="form-label">用途</label>
+                            <textarea id="treatment" class="form-control" placeholder="请输入用途"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="source" class="form-label required">药方来源</label>
+                            <input type="text" id="source" class="form-control" placeholder="请输入药方来源，如《本草纲目》、医生推荐等"
+                                required>
+                            <div class="error-message" id="source-error">药方来源不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="suitable-population" class="form-label">适用人群</label>
+                            <textarea id="suitable-population" class="form-control"
+                                placeholder="请输入适用人群，如成人、儿童、孕妇等"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="precautions" class="form-label">注意事项</label>
+                            <textarea id="precautions" class="form-control" placeholder="请输入注意事项，如禁忌症、副作用等"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="category" class="form-label">药方分类</label>
+                            <input type="text" id="category" class="form-control" placeholder="请输入药方分类，如补益、清热、解毒等">
+                        </div>
+                        <div class="form-group">
+                            <label for="preparation-method" class="form-label">制备方法或使用说明</label>
+                            <textarea id="preparation-method" class="form-control"
+                                placeholder="请输入药方的制备方法或使用说明"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="doctor-or-expert" class="form-label">推荐医生或专家</label>
+                            <input type="text" id="doctor-or-expert" class="form-control" placeholder="请输入推荐医生或专家名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="status" class="form-label">药方状态</label>
+                            <select id="status" class="form-control">
+                                <option value="启用">启用</option>
+                                <option value="禁用">禁用</option>
+                                <option value="审核中">审核中</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="image-url" class="form-label">药方相关图片路径</label>
+                            <input type="text" id="image-url" class="form-control" placeholder="请输入药方相关图片路径">
+                        </div>
+                        <div class="form-group">
+                            <label for="file-path" class="form-label">药方相关文件存储路径</label>
+                            <input type="text" id="file-path" class="form-control" placeholder="请输入药方相关文件存储路径">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating" class="form-label">用户评分</label>
+                            <input type="number" step="0.1" id="rating" class="form-control" placeholder="请输入用户评分，默认为0">
+                        </div>
+                        <div class="form-group">
+                            <label for="reviews-count" class="form-label">用户评价总数</label>
+                            <input type="number" id="reviews-count" class="form-control" placeholder="请输入用户评价总数，默认为0">
+                        </div>
+                        <div class="form-group">
+                            <label for="version" class="form-label">药方版本号</label>
+                            <input type="text" id="version" class="form-control" placeholder="请输入药方版本号，默认为1.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="medicine-ids" class="form-label">药方所含药材的ID列表</label>
+                            <input type="text" id="medicine-ids" class="form-control"
+                                placeholder='请输入药方所含药材的ID列表，JSON格式：[1, 2, 3]'>
+                        </div>
+                        <div class="form-group">
+                            <label for="is-public" class="form-label">是否公开</label>
+                            <select id="is-public" class="form-control">
+                                <option value="1">公开</option>
+                                <option value="0">私有</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline modal-close-btn">取消</button>
+                    <button class="btn btn-primary" id="save-prescription-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Add Literature Modal -->
+        <div class="modal-overlay" id="add-literature-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>添加文献</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-literature-form">
+                        <div class="form-group">
+                            <label for="title" class="form-label required">文献标题</label>
+                            <input type="text" id="title" class="form-control" placeholder="请输入文献标题" required>
+                            <div class="error-message" id="title-error">文献标题不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tibetan-title" class="form-label required">藏文标题</label>
+                            <input type="text" id="tibetan-title" class="form-control" placeholder="请输入藏文标题" required>
+                            <div class="error-message" id="tibetan-title-error">藏文标题不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="authors" class="form-label required">作者列表</label>
+                            <input type="text" id="authors" class="form-control" placeholder="请输入作者列表，多个作者用逗号分隔"
+                                required>
+                            <div class="error-message" id="authors-error">作者列表不能为空</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="publication-year" class="form-label">出版年份</label>
+                            <input type="number" id="publication-year" class="form-control"
+                                placeholder="请输入出版年份（如2023）">
+                        </div>
+                        <div class="form-group">
+                            <label for="journal-or-publisher" class="form-label">期刊名称或出版社</label>
+                            <input type="text" id="journal-or-publisher" class="form-control" placeholder="请输入期刊名称或出版社">
+                        </div>
+                        <div class="form-group">
+                            <label for="volume-issue" class="form-label">卷号和期号</label>
+                            <input type="text" id="volume-issue" class="form-control"
+                                placeholder="请输入卷号和期号（如Vol. 1, Issue 2）">
+                        </div>
+                        <div class="form-group">
+                            <label for="pages" class="form-label">页码范围</label>
+                            <input type="text" id="pages" class="form-control" placeholder="请输入页码范围（如10-15）">
+                        </div>
+                        <div class="form-group">
+                            <label for="abstract" class="form-label">文献摘要</label>
+                            <textarea id="abstract" class="form-control" placeholder="请输入文献摘要"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="download-link" class="form-label">文献下载链接</label>
+                            <input type="url" id="download-link" class="form-control" placeholder="请输入文献下载链接（如果可以在线获取）">
+                        </div>
+                        <div class="form-group">
+                            <label for="file-path" class="form-label">本地存储路径</label>
+                            <input type="text" id="file-path" class="form-control" placeholder="请输入本地存储路径（如果文献已下载到服务器）">
+                        </div>
+                        <div class="form-group">
+                            <label for="main-plant" class="form-label">主要涉及的植物名称</label>
+                            <input type="text" id="main-plant" class="form-control" placeholder="请输入主要涉及的植物名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="research-field" class="form-label">研究领域</label>
+                            <input type="text" id="research-field" class="form-control"
+                                placeholder="请输入研究领域，例如化学成分、药理作用等">
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords" class="form-label">关键词</label>
+                            <input type="text" id="keywords" class="form-control"
+                                placeholder="请输入关键词，用于快速检索，多个关键词用逗号分隔">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline modal-close-btn">取消</button>
+                    <button class="btn btn-primary" id="save-literature-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script>
+            // =====================================================
+            // 【核心变量】- 系统核心状态变量
+            // =====================================================
+            const app = document.getElementById('app');
+            const loginView = document.getElementById('login-view');
+            const mainView = document.getElementById('main-view');
+            const sidebar = document.querySelector('.sidebar');
+            const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const views = document.querySelectorAll('.view');
+            const pageTitle = document.getElementById('page-title');
+            const userMenuBtn = document.querySelector('.user-menu-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginBtn = document.getElementById('login-btn');
+            const addPlantBtn = document.getElementById('add-plant-btn');
+            const addHerbBtn = document.getElementById('add-herb-btn');
+            const addPrescriptionBtn = document.getElementById('add-prescription-btn');
+            const addLiteratureBtn = document.getElementById('add-literature-btn');
+            const addRelationBtn = document.getElementById('add-relation-btn');
+            const addPlantModal = document.getElementById('add-plant-modal');
+            const addHerbModal = document.getElementById('add-herb-modal');
+            const addPrescriptionModal = document.getElementById('add-prescription-modal');
+            const addLiteratureModal = document.getElementById('add-literature-modal');
+            const addRelationModal = document.getElementById('add-relation-modal');
+            const modalCloseBtns = document.querySelectorAll('.modal-close, .modal-close-btn');
+            const savePlantBtn = document.getElementById('save-plant-btn');
+            const saveHerbBtn = document.getElementById('save-herb-btn');
+            const savePrescriptionBtn = document.getElementById('save-prescription-btn');
+            const saveLiteratureBtn = document.getElementById('save-literature-btn');
+            const saveRelationBtn = document.getElementById('save-relation-btn');
+            const tabs = document.querySelectorAll('.tab');
+            const toastContainer = document.getElementById('toast-container');
+
+            // 初始状态
+            let isAuthenticated = false;
+            let currentUser = null;
+            let currentView = 'dashboard';
+
+            // =====================================================
+            // 【UI交互模块】- 处理界面交互
+            // =====================================================
+
+            // 侧边栏切换功能
+            function toggleSidebar() {
+                console.log('切换侧边栏状态');
+                sidebar.classList.toggle('collapsed');
+            }
+
+            // 视图切换功能
+            function showView(viewId) {
+                console.log('切换到视图:', viewId);
+                views.forEach(view => {
+                    view.classList.remove('active');
+                });
+                const view = document.getElementById(viewId);
+                if (view) {
+                    view.classList.add('active');
+                    currentView = viewId;
+                    updatePageTitle(viewId);
+                }
+            }
+
+            // 更新页面标题
+            function updatePageTitle(viewId) {
+                const titles = {
+                    'dashboard': '仪表盘',
+                    'plant-management': '植物管理',
+                    'herb-management': '药材管理',
+                    'prescription-management': '药方管理',
+                    'literature-management': '文献管理',
+                    'graph-database': '图数据库',
+                    'user-approval': '用户审批',
+                    'upload-approval': '上传审批',
+                    'user-growth': '用户增长',
+                    'recognition-stats': '识别统计',
+                    'search-stats': '搜索统计',
+                    'conversation-stats': '对话统计',
+                    'profile': '个人资料',
+                    'settings': '设置'
+                };
+                pageTitle.textContent = titles[viewId] || '仪表盘';
+            }
+
+            // 用户下拉菜单切换
+            function toggleUserDropdown() {
+                userDropdown.classList.toggle('active');
+            }
+
+            // =====================================================
+            // 【认证模块】- 处理登录和登出
+            // =====================================================
+
+            // 登录功能
+            function login() {
+                console.log('登录功能被调用');
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                console.log('用户名:', username, '密码:', password);
+
+                let isValid = true;
+
+                // 表单验证
+                if (!username) {
+                    document.getElementById('username-error').classList.add('visible');
+                    document.getElementById('username').classList.add('invalid');
+                    isValid = false;
+                    console.log('用户名验证失败');
+                } else {
+                    document.getElementById('username-error').classList.remove('visible');
+                    document.getElementById('username').classList.remove('invalid');
+                }
+
+                if (!password) {
+                    document.getElementById('password-error').classList.add('visible');
+                    document.getElementById('password').classList.add('invalid');
+                    isValid = false;
+                    console.log('密码验证失败');
+                } else {
+                    document.getElementById('password-error').classList.remove('visible');
+                    document.getElementById('password').classList.remove('invalid');
+                }
+
+                console.log('表单验证结果:', isValid);
+
+                if (isValid) {
+                    // 模拟登录 - 实际应用中应该调用API
+                    isAuthenticated = true;
+                    currentUser = {
+                        id: 1,
+                        username: username,
+                        role: 'admin'
+                    };
+
+                    console.log('认证成功，显示主视图');
+                    showToast('成功', '登录成功，欢迎回来 ' + username, 'success');
+
+                    // 直接切换视图
+                    loginView.style.display = 'none';
+                    mainView.style.display = 'flex';
+                    mainView.classList.add('active');
+
+                    try {
+                        showView('dashboard');
+                        console.log('仪表盘视图已显示');
+                    } catch (error) {
+                        console.error('显示仪表盘视图时出错:', error);
+                    }
+
+                    try {
+                        initCharts();
+                        console.log('图表已初始化');
+                    } catch (error) {
+                        console.error('初始化图表时出错:', error);
+                    }
+                }
+            }
+
+            // 登出功能
+            function logout() {
+                isAuthenticated = false;
+                currentUser = null;
+                showToast('信息', '您已成功登出系统', 'info');
+                showLoginView();
+            }
+
+            // 显示登录视图
+            function showLoginView() {
+                loginView.style.display = 'flex';
+                loginView.classList.add('active');
+                mainView.classList.remove('active');
+                mainView.style.display = 'none';
+            }
+
+            // 显示主视图
+            function showMainView() {
+                console.log('showMainView函数被调用');
+
+                if (!loginView) {
+                    console.error('登录视图元素未找到');
+                    return;
+                }
+
+                if (!mainView) {
+                    console.error('主视图元素未找到');
+                    return;
+                }
+
+                // 直接使用样式设置
+                loginView.style.display = 'none';
+                loginView.classList.remove('active');
+
+                mainView.style.display = 'flex';
+                mainView.classList.add('active');
+
+                console.log('移除登录视图active类');
+                console.log('添加主视图active类');
+
+                try {
+                    showView('dashboard');
+                    console.log('仪表盘视图已显示');
+                } catch (error) {
+                    console.error('显示仪表盘视图时出错:', error);
+                }
+
+                try {
+                    initCharts();
+                    console.log('图表已初始化');
+                } catch (error) {
+                    console.error('初始化图表时出错:', error);
+                }
+            }
+
+            // =====================================================
+            // 【模态框模块】- 处理模态框显示和隐藏
+            // =====================================================
+
+            // 切换模态框显示状态
+            function toggleModal(modal) {
+                modal.classList.toggle('active');
+            }
+
+            // =====================================================
+            // 【通知模块】- 处理系统通知
+            // =====================================================
+
+            // 显示通知消息
+            function showToast(title, message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+            <div class="toast-icon">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close">&times;</button>
+        `;
+                toastContainer.appendChild(toast);
+
+                // 3秒后自动移除
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+
+                // 关闭按钮
+                toast.querySelector('.toast-close').addEventListener('click', () => {
+                    toast.remove();
+                });
+            }
+
+            // =====================================================
+            // 【表单验证模块】- 处理表单验证
+            // =====================================================
+
+            // 表单验证
+            function validateForm(formId, requiredFields) {
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    const input = document.getElementById(field);
+                    const error = document.getElementById(`${field}-error`);
+
+                    if (!input.value) {
+                        error.classList.add('visible');
+                        input.classList.add('invalid');
+                        isValid = false;
+                    } else {
+                        error.classList.remove('visible');
+                        input.classList.remove('invalid');
+                    }
+                });
+
+                return isValid;
+            }
+
+            // =====================================================
+            // 【图表模块】- 初始化和管理图表
+            // =====================================================
+
+            // 初始化所有图表
+            function initCharts() {
+                // 用户增长图表
+                const userGrowthChart = echarts.init(document.getElementById('user-growth-chart'));
+                const userGrowthOption = {
+                    title: {
+                        text: '用户增长趋势',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['总用户数', '新增用户', '活跃用户'],
+                        bottom: 10
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '总用户数',
+                            type: 'line',
+                            data: [500, 650, 800, 1000, 1200, 1500],
+                            smooth: true,
+                            lineStyle: {
+                                width: 3,
+                                color: '#6a1b9a'
+                            },
+                            itemStyle: {
+                                color: '#6a1b9a'
+                            }
+                        },
+                        {
+                            name: '新增用户',
+                            type: 'bar',
+                            data: [150, 150, 200, 200, 300, 300],
+                            itemStyle: {
+                                color: '#00bcd4'
+                            }
+                        },
+                        {
+                            name: '活跃用户',
+                            type: 'line',
+                            data: [300, 400, 500, 600, 700, 900],
+                            smooth: true,
+                            lineStyle: {
+                                width: 3,
+                                color: '#4caf50'
+                            },
+                            itemStyle: {
+                                color: '#4caf50'
+                            }
+                        }
+                    ]
+                };
+                userGrowthChart.setOption(userGrowthOption);
+
+                // 审核状态图表
+                const approvalStatusChart = echarts.init(document.getElementById('approval-status-chart'));
+                const approvalStatusOption = {
+                    title: {
+                        text: '数据集审核状态',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left'
+                    },
+                    series: [
+                        {
+                            name: '审核状态',
+                            type: 'pie',
+                            radius: '50%',
+                            data: [
+                                { value: 15, name: '待审核', itemStyle: { color: '#ff9800' } },
+                                { value: 45, name: '已批准', itemStyle: { color: '#4caf50' } },
+                                { value: 10, name: '已拒绝', itemStyle: { color: '#f44336' } }
+                            ],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                approvalStatusChart.setOption(approvalStatusOption);
+
+                // 识别统计图表
+                const recognitionStatsChart = echarts.init(document.getElementById('recognition-stats-chart'));
+                const recognitionStatsOption = {
+                    title: {
+                        text: '图像识别统计',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['识别次数', '平均准确率', '平均响应时间'],
+                        bottom: 10
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '次数',
+                            min: 0,
+                            max: 300,
+                            interval: 50
+                        },
+                        {
+                            type: 'value',
+                            name: '百分比/秒',
+                            min: 0,
+                            max: 100,
+                            interval: 20,
+                            axisLabel: {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '识别次数',
+                            type: 'bar',
+                            data: [120, 150, 180, 200, 250, 280]
+                        },
+                        {
+                            name: '平均准确率',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: [85, 87, 90, 92, 93, 95],
+                            smooth: true,
+                            lineStyle: {
+                                width: 3,
+                                color: '#4caf50'
+                            },
+                            itemStyle: {
+                                color: '#4caf50'
+                            }
+                        },
+                        {
+                            name: '平均响应时间',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: [2.5, 2.2, 1.8, 1.5, 1.3, 1.2],
+                            smooth: true,
+                            lineStyle: {
+                                width: 3,
+                                color: '#f44336'
+                            },
+                            itemStyle: {
+                                color: '#f44336'
+                            }
+                        }
+                    ]
+                };
+                recognitionStatsChart.setOption(recognitionStatsOption);
+
+                // 准确率图表
+                const accuracyChart = echarts.init(document.getElementById('accuracy-chart'));
+                const accuracyOption = {
+                    title: {
+                        text: '识别准确率趋势',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                    },
+                    yAxis: {
+                        type: 'value',
+                        min: 80,
+                        max: 100
+                    },
+                    series: [
+                        {
+                            name: '准确率',
+                            type: 'line',
+                            data: [85, 87, 90, 92, 93, 95],
+                            smooth: true,
+                            markPoint: {
+                                data: [
+                                    { type: 'max', name: '最大值' },
+                                    { type: 'min', name: '最小值' }
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    { type: 'average', name: '平均值' }
+                                ]
+                            },
+                            lineStyle: {
+                                width: 3,
+                                color: '#6a1b9a'
+                            },
+                            itemStyle: {
+                                color: '#6a1b9a'
+                            },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(106, 27, 154, 0.5)' },
+                                    { offset: 1, color: 'rgba(106, 27, 154, 0.1)' }
+                                ])
+                            }
+                        }
+                    ]
+                };
+                accuracyChart.setOption(accuracyOption);
+
+                // 响应时间图表
+                const responseTimeChart = echarts.init(document.getElementById('response-time-chart'));
+                const responseTimeOption = {
+                    title: {
+                        text: '识别响应时间趋势',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '秒'
+                    },
+                    series: [
+                        {
+                            name: '响应时间',
+                            type: 'line',
+                            data: [2.5, 2.2, 1.8, 1.5, 1.3, 1.2],
+                            smooth: true,
+                            markPoint: {
+                                data: [
+                                    { type: 'max', name: '最大值' },
+                                    { type: 'min', name: '最小值' }
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    { type: 'average', name: '平均值' }
+                                ]
+                            },
+                            lineStyle: {
+                                width: 3,
+                                color: '#00bcd4'
+                            },
+                            itemStyle: {
+                                color: '#00bcd4'
+                            },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(0, 188, 212, 0.5)' },
+                                    { offset: 1, color: 'rgba(0, 188, 212, 0.1)' }
+                                ])
+                            }
+                        }
+                    ]
+                };
+                responseTimeChart.setOption(responseTimeOption);
+
+                // 图数据库可视化
+                const graphVisualization = echarts.init(document.getElementById('graph-visualization'));
+                const graphOption = {
+                    title: {
+                        text: '藏药植物关系图',
+                        left: 'center'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['植物', '药材', '功效', '药方', '产地'],
+                        bottom: 10
+                    },
+                    series: [
+                        {
+                            name: '关系图',
+                            type: 'graph',
+                            layout: 'force',
+                            data: [
+                                { name: '冬虫夏草(植物)', category: 0, symbolSize: 50 },
+                                { name: '冬虫夏草(药材)', category: 1, symbolSize: 40 },
+                                { name: '补肺益肾', category: 2, symbolSize: 30 },
+                                { name: '止血化痰', category: 2, symbolSize: 30 },
+                                { name: '强身健体方', category: 3, symbolSize: 35 },
+                                { name: '青海玉树', category: 4, symbolSize: 25 },
+                                { name: '藏红花(植物)', category: 0, symbolSize: 50 },
+                                { name: '藏红花(药材)', category: 1, symbolSize: 40 },
+                                { name: '活血化瘀', category: 2, symbolSize: 30 },
+                                { name: '理气解郁', category: 2, symbolSize: 30 },
+                                { name: '妇科调理方', category: 3, symbolSize: 35 },
+                                { name: '西藏', category: 4, symbolSize: 25 }
+                            ],
+                            links: [
+                                { source: '冬虫夏草(植物)', target: '冬虫夏草(药材)', value: '提供' },
+                                { source: '冬虫夏草(药材)', target: '补肺益肾', value: '具有' },
+                                { source: '冬虫夏草(药材)', target: '止血化痰', value: '具有' },
+                                { source: '冬虫夏草(药材)', target: '强身健体方', value: '用于' },
+                                { source: '冬虫夏草(植物)', target: '青海玉树', value: '生长于' },
+                                { source: '藏红花(植物)', target: '藏红花(药材)', value: '提供' },
+                                { source: '藏红花(药材)', target: '活血化瘀', value: '具有' },
+                                { source: '藏红花(药材)', target: '理气解郁', value: '具有' },
+                                { source: '藏红花(药材)', target: '妇科调理方', value: '用于' },
+                                { source: '藏红花(植物)', target: '西藏', value: '生长于' },
+                                { source: '冬虫夏草(药材)', target: '藏红花(药材)', value: '相关' }
+                            ],
+                            categories: [
+                                { name: '植物' },
+                                { name: '药材' },
+                                { name: '功效' },
+                                { name: '药方' },
+                                { name: '产地' }
+                            ],
+                            roam: true,
+                            label: {
+                                show: true,
+                                position: 'right',
+                                formatter: '{b}'
+                            },
+                            lineStyle: {
+                                color: 'source',
+                                curveness: 0.3
+                            },
+                            emphasis: {
+                                focus: 'adjacency',
+                                lineStyle: {
+                                    width: 5
+                                }
+                            },
+                            force: {
+                                repulsion: 100,
+                                edgeLength: [50, 100]
+                            }
+                        }
+                    ]
+                };
+                graphVisualization.setOption(graphOption);
+
+                // 查询结果图
+                const queryResultGraph = echarts.init(document.getElementById('query-result-graph'));
+                queryResultGraph.setOption({
+                    title: {
+                        text: '查询结果将显示在这里',
+                        left: 'center'
+                    }
+                });
+
+                // 窗口大小变化时重新调整图表大小
+                window.addEventListener('resize', function () {
+                    userGrowthChart.resize();
+                    approvalStatusChart.resize();
+                    recognitionStatsChart.resize();
+                    accuracyChart.resize();
+                    responseTimeChart.resize();
+                    graphVisualization.resize();
+                    queryResultGraph.resize();
+                });
+            }
+
+            // =====================================================
+            // 【数据管理模块】- 处理数据的增删改查
+            // =====================================================
+
+            // 添加植物数据（人性化处理）
+            function addPlant(plantData) {
+                // 在实际应用中，这里应该调用API将数据发送到服务器
+                console.log('添加植物数据:', plantData);
+
+                // 模拟数据验证和处理
+                if (!plantData.name) {
+                    showToast('错误', '植物名称不能为空', 'error');
+                    return false;
+                }
+
+                // 模拟成功添加
+                showToast('成功', `植物"${plantData.name}"已成功添加到数据库`, 'success');
+                return true;
+            }
+
+            // 添加药材数据（人性化处理）
+            function addHerb(herbData) {
+                // 在实际应用中，这里应该调用API将数据发送到服务器
+                console.log('添加药材数据:', herbData);
+
+                // 模拟数据验证和处理
+                if (!herbData.name) {
+                    showToast('错误', '药材名称不能为空', 'error');
+                    return false;
+                }
+
+                // 模拟成功添加
+                showToast('成功', `药材"${herbData.name}"已成功添加到数据库`, 'success');
+                return true;
+            }
+
+            // 添加药方数据（人性化处理）
+            function addPrescription(prescriptionData) {
+                // 在实际应用中，这里应该调用API将数据发送到服务器
+                console.log('添加药方数据:', prescriptionData);
+
+                // 模拟数据验证和处理
+                if (!prescriptionData.name) {
+                    showToast('错误', '药方名称不能为空', 'error');
+                    return false;
+                }
+
+                // 模拟成功添加
+                showToast('成功', `药方"${prescriptionData.name}"已成功添加到数据库`, 'success');
+                return true;
+            }
+
+            // 添加文献数据（人性化处理）
+            function addLiterature(literatureData) {
+                // 在实际应用中，这里应该调用API将数据发送到服务器
+                console.log('添加文献数据:', literatureData);
+
+                // 模拟数据验证和处理
+                if (!literatureData.title) {
+                    showToast('错误', '文献标题不能为空', 'error');
+                    return false;
+                }
+
+                // 模拟成功添加
+                showToast('成功', `文献"${literatureData.title}"已成功添加到数据库`, 'success');
+                return true;
+            }
+
+            // 添加关系数据（人性化处理）
+            function addRelation(relationData) {
+                // 在实际应用中，这里应该调用API将数据发送到服务器
+                console.log('添加关系数据:', relationData);
+
+                // 模拟数据验证和处理
+                if (!relationData.sourceNode || !relationData.targetNode) {
+                    showToast('错误', '源节点和目标节点不能为空', 'error');
+                    return false;
+                }
+
+                // 模拟成功添加
+                showToast('成功', `关系"${relationData.sourceNode} ${relationData.relationType} ${relationData.targetNode}"已成功添加到数据库`, 'success');
+                return true;
+            }
+
+            // =====================================================
+            // 【事件监听模块】- 设置所有事件监听器
+            // =====================================================
+
+            // 侧边栏切换按钮
+            toggleSidebarBtn.addEventListener('click', toggleSidebar);
+
+            // 菜单项点击
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    const viewId = item.dataset.view;
+                    showView(viewId);
+                });
+            });
+
+            // 用户菜单按钮
+            userMenuBtn.addEventListener('click', toggleUserDropdown);
+
+            // 点击页面其他地方关闭用户下拉菜单
+            document.addEventListener('click', (e) => {
+                if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            });
+
+            // 登出按钮
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+
+            // 登录按钮
+            if (loginBtn) {
+                console.log('找到登录按钮');
+                // 移除所有现有的事件监听器
+                loginBtn.replaceWith(loginBtn.cloneNode(true));
+                // 重新获取按钮并添加事件监听器
+                const newLoginBtn = document.getElementById('login-btn');
+                newLoginBtn.addEventListener('click', function (e) {
+                    console.log('登录按钮被点击');
+                    e.preventDefault(); // 防止表单提交
+                    login();
+                });
+            } else {
+                console.error('未找到登录按钮');
+            }
+
+            // 添加植物按钮
+            addPlantBtn && addPlantBtn.addEventListener('click', () => {
+                toggleModal(addPlantModal);
+            });
+
+            // 添加药材按钮
+            addHerbBtn && addHerbBtn.addEventListener('click', () => {
+                toggleModal(addHerbModal);
+            });
+
+            // 添加药方按钮
+            addPrescriptionBtn && addPrescriptionBtn.addEventListener('click', () => {
+                toggleModal(addPrescriptionModal);
+            });
+
+            // 添加文献按钮
+            addLiteratureBtn && addLiteratureBtn.addEventListener('click', () => {
+                toggleModal(addLiteratureModal);
+            });
+
+            // 添加关系按钮
+            addRelationBtn && addRelationBtn.addEventListener('click', () => {
+                toggleModal(addRelationModal);
+            });
+
+            // 模态框关闭按钮
+            modalCloseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.modal-overlay');
+                    toggleModal(modal);
+                });
+            });
+
+            // 保存植物按钮 - 人性化数据处理
+            savePlantBtn && savePlantBtn.addEventListener('click', () => {
+                const requiredFields = ['plant-name', 'plant-latin', 'plant-family', 'plant-genus'];
+                if (validateForm('add-plant-form', requiredFields)) {
+                    // 收集表单数据
+                    const plantData = {
+                        name: document.getElementById('plant-name').value,
+                        latinName: document.getElementById('plant-latin').value,
+                        family: document.getElementById('plant-family').value,
+                        genus: document.getElementById('plant-genus').value,
+                        alias: document.getElementById('plant-alias').value,
+                        tibetanName: document.getElementById('plant-tibetan').value,
+                        features: document.getElementById('plant-features').value,
+                        origin: document.getElementById('plant-origin').value,
+                        protectionLevel: document.getElementById('plant-protect').value,
+                        notes: document.getElementById('plant-notes').value
+                    };
+
+                    // 调用添加植物函数
+                    if (addPlant(plantData)) {
+                        toggleModal(addPlantModal);
+                        // 清空表单
+                        document.getElementById('add-plant-form').reset();
+                    }
+                }
+            });
+
+            // 保存药材按钮 - 人性化数据处理
+            saveHerbBtn && saveHerbBtn.addEventListener('click', () => {
+                const requiredFields = ['herb-plant', 'herb-name', 'herb-part'];
+                if (validateForm('add-herb-form', requiredFields)) {
+                    // 收集表单数据
+                    const herbData = {
+                        plantId: document.getElementById('herb-plant').value,
+                        name: document.getElementById('herb-name').value,
+                        tibetanName: document.getElementById('herb-tibetan').value,
+                        alias: document.getElementById('herb-alias').value,
+                        part: document.getElementById('herb-part').value,
+                        description: document.getElementById('herb-description').value,
+                        features: document.getElementById('herb-features').value,
+                        flavor: document.getElementById('herb-flavor').value,
+                        function: document.getElementById('herb-function').value,
+                        application: document.getElementById('herb-application').value,
+                        effect: document.getElementById('herb-effect').value,
+                        notes: document.getElementById('herb-notes').value
+                    };
+
+                    // 调用添加药材函数
+                    if (addHerb(herbData)) {
+                        toggleModal(addHerbModal);
+                        // 清空表单
+                        document.getElementById('add-herb-form').reset();
+                    }
+                }
+            });
+
+            // 保存药方按钮 - 人性化数据处理
+            savePrescriptionBtn && savePrescriptionBtn.addEventListener('click', () => {
+                // 定义必填字段
+                const requiredFields = ['prescription-name', 'composition', 'dosage', 'treatment'];
+
+                // 验证表单是否填写完整
+                if (validateForm('add-prescription-form', requiredFields)) {
+                    // 收集表单数据
+                    const prescriptionData = {
+                        prescriptionName: document.getElementById('prescription-name').value, // 处方药名
+                        composition: document.getElementById('composition').value, // 成分
+                        dosage: document.getElementById('dosage').value, // 成分用量（JSON格式）
+                        treatment: document.getElementById('treatment').value, // 用途
+                        source: document.getElementById('source').value || '未知来源', // 药方来源
+                        suitablePopulation: document.getElementById('suitable-population').value || '通用', // 使用人群
+                        precautions: document.getElementById('precautions').value || '无特殊注意事项', // 注意事项
+                        category: document.getElementById('category').value, // 药方分类
+                        preparationMethod: document.getElementById('preparation-method').value, // 制备方法/使用说明
+                        doctorOrExpert: document.getElementById('doctor-or-expert').value || '未指定医生或专家', // 推荐医生或专家
+                        status: document.getElementById('status').value || '启用', // 药方状态
+                        imageUrl: document.getElementById('image-url').value || '', // 药方图片路径
+                        filePath: document.getElementById('file-path').value || '', // 药方文件存储路径
+                        rating: parseFloat(document.getElementById('rating').value) || 0, // 用户评分
+                        reviewsCount: parseInt(document.getElementById('reviews-count').value) || 0, // 用户评价数
+                        version: document.getElementById('version').value || '1.0', // 药方版本号
+                        medicineIds: document.getElementById('medicineIds').value, // 所含药材ID列表
+                        isPublic: document.getElementById('is-public').checked // 是否公开
+                    };
+
+                    // 调用添加药方函数
+                    if (addPrescription(prescriptionData)) {
+                        toggleModal(addPrescriptionModal); // 关闭模态框
+                        // 清空表单
+                        document.getElementById('add-prescription-form').reset();
+                    }
+                }
+            });
+
+            // 保存文献按钮 - 人性化数据处理
+            saveLiteratureBtn && saveLiteratureBtn.addEventListener('click', () => {
+                const requiredFields = ['literature-title', 'literature-author', 'literature-year', 'literature-publisher'];
+                if (validateForm('add-literature-form', requiredFields)) {
+                    // 收集表单数据
+                    const literatureData = {
+                        title: document.getElementById('literature-title').value,
+                        author: document.getElementById('literature-author').value,
+                        year: document.getElementById('literature-year').value,
+                        publisher: document.getElementById('literature-publisher').value,
+                        abstract: document.getElementById('literature-abstract').value,
+                        doi: document.getElementById('literature-doi').value,
+                        url: document.getElementById('literature-url').value,
+                        citationCount: parseInt(document.getElementById('literature-citation-count').value) || 0,
+                        keywords: document.getElementById('literature-keywords').value,
+                        tags: document.getElementById('literature-tags').value,
+                        status: document.getElementById('literature-status').value || '未标注',
+                    } 
+                } 
+                // 调用添加文献函数
+                if (addLiterature(literatureData)) {
+                    toggleModal(addLiteratureModal);
+                    // 清空表单
+                    document.getElementById('add-literature-form').reset();
+                }
+                
+            });
+
+            // 保存关系按钮 - 人性化数据处理
+            saveRelationBtn && saveRelationBtn.addEventListener('click', () => {
+                const requiredFields = ['source-node-type', 'source-node', 'relation-type', 'target-node-type', 'target-node'];
+                if (validateForm('add-relation-form', requiredFields)) {
+                    // 收集表单数据
+                    const relationData = {
+                        sourceNodeType: document.getElementById('source-node-type').value,
+                        sourceNode: document.getElementById('source-node').value,
+                        relationType: document.getElementById('relation-type').value,
+                        targetNodeType: document.getElementById('target-node-type').value,
+                        targetNode: document.getElementById('target-node').value,
+                        properties: document.getElementById('relation-properties').value
+                    };
+
+                    // 调用添加关系函数
+                    if (addRelation(relationData)) {
+                        toggleModal(addRelationModal);
+                        // 清空表单
+                        document.getElementById('add-relation-form').reset();
+                    }
+                }
+            });
+
+            // 标签切换
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabContainer = tab.closest('.tabs');
+                    const tabContents = tabContainer.parentElement.querySelectorAll('.tab-content');
+                    const tabId = tab.dataset.tab;
+
+                    // 更新标签状态
+                    tabContainer.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    tab.classList.add('active');
+
+                    // 更新内容
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // =====================================================
+            // 【表格操作模块】- 处理表格操作
+            // =====================================================
+
+            // 查看详情按钮
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 获取当前行数据
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    let itemName = '';
+
+                    // 尝试获取名称（通常在第二列）
+                    if (cells.length > 1) {
+                        itemName = cells[1].textContent;
+                    }
+
+                    showToast('信息', `正在查看"${itemName}"的详细信息`, 'info');
+                    // 这里应该打开详情模态框或页面
+                });
+            });
+
+            // 编辑按钮
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 获取当前行数据
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    let itemName = '';
+
+                    // 尝试获取名称（通常在第二列）
+                    if (cells.length > 1) {
+                        itemName = cells[1].textContent;
+                    }
+
+                    showToast('信息', `正在编辑"${itemName}"`, 'info');
+                    // 这里应该打开编辑模态框
+                });
+            });
+
+            // 删除按钮
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 获取当前行数据
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    let itemName = '';
+
+                    // 尝试获取名称（通常在第二列）
+                    if (cells.length > 1) {
+                        itemName = cells[1].textContent;
+                    }
+
+                    if (confirm(`确定要删除"${itemName}"吗？此操作不可恢复。`)) {
+                        showToast('成功', `"${itemName}"已成功删除`, 'success');
+                        // 这里应该调用API删除数据
+                        // 然后从DOM中移除行
+                        row.remove();
+                    }
+                });
+            });
+
+            // 批准按钮
+            document.querySelectorAll('.approve-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 获取当前行数据
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    let itemName = '';
+                    let itemType = '';
+
+                    // 尝试获取类型和名称
+                    if (cells.length > 1) {
+                        itemType = cells[0].textContent;
+                        itemName = cells[1].textContent;
+                    }
+
+                    if (confirm(`确定要批准"${itemName}"的${itemType}吗？`)) {
+                        showToast('成功', `已批准"${itemName}"的${itemType}`, 'success');
+                        // 这里应该调用API更新数据
+                        // 然后更新行状态或移动到已批准标签页
+                        const statusCell = row.querySelector('td:nth-child(4)');
+                        if (statusCell) {
+                            const badge = statusCell.querySelector('.badge');
+                            if (badge) {
+                                badge.className = 'badge badge-success';
+                                badge.textContent = '已批准';
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 拒绝按钮
+            document.querySelectorAll('.reject-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 获取当前行数据
+                    const row = this.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    let itemName = '';
+                    let itemType = '';
+
+                    // 尝试获取类型和名称
+                    if (cells.length > 1) {
+                        itemType = cells[0].textContent;
+                        itemName = cells[1].textContent;
+                    }
+
+                    const reason = prompt(`请输入拒绝"${itemName}"的${itemType}的原因：`);
+                    if (reason) {
+                        showToast('成功', `已拒绝"${itemName}"的${itemType}`, 'success');
+                        // 这里应该调用API更新数据
+                        // 然后更新行状态或移动到已拒绝标签页
+                        const statusCell = row.querySelector('td:nth-child(4)');
+                        if (statusCell) {
+                            const badge = statusCell.querySelector('.badge');
+                            if (badge) {
+                                badge.className = 'badge badge-danger';
+                                badge.textContent = '已拒绝';
+                            }
+                        }
+                    }
+                });
+            });
+
+            // =====================================================
+            // 【初始化模块】- 系统初始化
+            // =====================================================
+
+            // 初始化系统
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('DOM完全加载');
+                // 重新获取所有DOM元素
+                const loginViewCheck = document.getElementById('login-view');
+                const mainViewCheck = document.getElementById('main-view');
+                const loginBtnCheck = document.getElementById('login-btn');
+
+                console.log('登录视图存在:', !!loginViewCheck);
+                console.log('主视图存在:', !!mainViewCheck);
+                console.log('登录按钮存在:', !!loginBtnCheck);
+
+                // 默认显示登录视图
+                showLoginView();
+
+                // 添加调试按钮 - 仅用于开发测试
+                const debugBtn = document.createElement('button');
+                debugBtn.textContent = '直接进入主页面（调试用）';
+                debugBtn.style.position = 'fixed';
+                debugBtn.style.bottom = '10px';
+                debugBtn.style.right = '10px';
+                debugBtn.style.zIndex = '9999';
+                debugBtn.style.padding = '5px 10px';
+                debugBtn.style.backgroundColor = '#f44336';
+                debugBtn.style.color = 'white';
+                debugBtn.style.border = 'none';
+                debugBtn.style.borderRadius = '4px';
+                debugBtn.style.cursor = 'pointer';
+
+                debugBtn.addEventListener('click', function () {
+                    // 直接切换到主视图
+                    loginView.style.display = 'none';
+                    mainView.style.display = 'flex';
+                    mainView.classList.add('active');
+                    showView('dashboard');
+                    initCharts();
+                    console.log('通过调试按钮直接进入主页面');
+                });
+
+                document.body.appendChild(debugBtn);
+            });
+        </script>
+
+</body>
+
+</html>

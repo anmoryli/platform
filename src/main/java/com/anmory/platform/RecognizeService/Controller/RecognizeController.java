@@ -1,6 +1,5 @@
 package com.anmory.platform.RecognizeService.Controller;
 
-import com.anmory.platform.RecordService.service.UserImageRecognitionService;
 import com.anmory.platform.UserService.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -14,8 +13,6 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1", maxAge = 3600)
 public class RecognizeController {
-    @Autowired
-    UserImageRecognitionService userImageRecognitionService;
     @PostMapping("/recognize")
     public String recognize(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -83,7 +80,6 @@ public class RecognizeController {
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append(System.lineSeparator());
                     System.out.println(tempFile.getName()+tempFile.getAbsolutePath()+ output);
-                    userImageRecognitionService.insert(user.getId(),tempFile.getName(),tempFile.getAbsolutePath(),output.toString());
                 }
                 System.out.println("[RecognizeService] 读取Python进程的标准输出");
             }

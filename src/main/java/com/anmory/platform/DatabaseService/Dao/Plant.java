@@ -15,6 +15,11 @@ public class Plant {
     private String plantTibetanName;
     private String plantFamilyName;
     private String plantGenusName;
+    private String imgPath;
+    private String plantFeatures;
+    private String plantOrigin;
+    private String plantProtectLevel;
+    private String notes;
 
     @Override
     public String toString() {
@@ -26,11 +31,20 @@ public class Plant {
                 ", plantTibetanName='" + plantTibetanName + '\'' +
                 ", plantFamilyName='" + plantFamilyName + '\'' +
                 ", plantGenusName='" + plantGenusName + '\'' +
+                ", imgPath='" + imgPath + '\'' +
                 ", plantFeatures='" + plantFeatures + '\'' +
                 ", plantOrigin='" + plantOrigin + '\'' +
                 ", plantProtectLevel='" + plantProtectLevel + '\'' +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
     }
 
     public int getPlantId() {
@@ -134,9 +148,4 @@ public class Plant {
         this.plantProtectLevel = plantProtectLevel;
         this.notes = notes;
     }
-
-    private String plantFeatures;
-    private String plantOrigin;
-    private String plantProtectLevel;
-    private String notes;
 }

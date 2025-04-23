@@ -1,6 +1,5 @@
 package com.anmory.platform.GraphService.Controller;
 import com.anmory.platform.GraphService.Service.GetAllService;
-import com.anmory.platform.RecordService.service.UserKnowledgeSearchService;
 import com.anmory.platform.UserService.User;
 import jakarta.annotation.PreDestroy;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +24,6 @@ public class GetAllController {
     @Autowired
     private GetAllService getAllService;
 
-    @Autowired
-    UserKnowledgeSearchService userKnowledgeSearchService;
-
     @GetMapping("/getAllNodes")
     public List<Map<String, Object>> getAllNodes() {
         return getAllService.getAllNodes();
@@ -44,7 +40,6 @@ public class GetAllController {
         HttpSession session = request.getSession();
         Object ret = getAllService.query(name);
         User user = (User) session.getAttribute("session_user_key");
-        userKnowledgeSearchService.insert(user.getId(),name,ret.toString());
         log.info("[queryByName]获取结点成功");
         return getAllService.query(name);
     }

@@ -1,6 +1,5 @@
 package com.anmory.platform.BotService.DeepSeekController;
 import com.anmory.platform.BotService.Controller.BotController;
-import com.anmory.platform.RecordService.service.UserAiConversationService;
 import com.anmory.platform.UserService.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +30,6 @@ import java.util.Map;
 
 @RestController
 public class DSController {
-    @Autowired
-    UserAiConversationService userAiConversationService;
     private static final Logger log = LoggerFactory.getLogger(BotController.class);
     private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
     private static final String API_KEY = "sk-c1de8d51734546a8ba435dd905c3b02b";
@@ -104,7 +100,6 @@ public class DSController {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
-            userAiConversationService.insert(user.getId(),userInput,replyContent);
             return replyContent;
 
         } else {

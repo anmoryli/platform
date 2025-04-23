@@ -78,7 +78,7 @@ public class UserController {
         HttpSession session = request.getSession();
         System.out.println("session:" + session);
         User user = (User) session.getAttribute("session_user_key");
-        String username = user.getUserName();
+        String username = user.getUsername();
         if(!StringUtils.hasLength(username)) {
             return false;
         }
@@ -100,6 +100,6 @@ public class UserController {
     public int changePassword(String password, HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
-        return userService.changePassword(user.getUserName(),password);
+        return userService.changePassword(user.getUsername(),password);
     }
 }

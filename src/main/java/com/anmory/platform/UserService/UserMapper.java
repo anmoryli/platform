@@ -22,7 +22,7 @@ public interface UserMapper {
     @Insert("insert into medicine.user_info (medicine.user_info.username, medicine.user_info.password) values (#{username},#{password})")
     int addUser(String username, String password);
 
-    @Select("select email from medicine.user_info where username = #{username}")
+    @Select("select email from medicine.user_info where user_name = #{username}")
     String getEmailByName(String username);
 
     @Update("update medicine.user_info set email = #{email} where medicine.user_info.username = #{username}")

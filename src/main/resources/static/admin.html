@@ -1,47 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理员页面</title>
-    <link rel="stylesheet" href="/css/recognize.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/login.css">
-    <link rel="stylesheet" href="/css/graph.css">
-    <link rel="stylesheet" href="/css/board.css">
+    <title>管理员页面 - 藏药植物药知识平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="/css/inter.css" />
+    <!-- 引入 ECharts -->
+    <script src="/css/echarts.min.js"></script>
     <script src="/js/jquery.min.js"></script>
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
     <style>
+        :root {
+            --primary-color: #1a4f8a;
+            --primary-dark: #0e325a;
+            --primary-light: #2d6ebd;
+            --secondary-color: #5a6268;
+            --accent-color: #d9534f;
+            --success-color: #2d8a3e;
+            --warning-color: #f39c12;
+            --text-color: #222222;
+            /* 更深的文本颜色 */
+            --text-light: #4a4a4a;
+            /* 更深的浅色文本 */
+            --text-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --bg-gray: #e9ecef;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
         /* 管理员页面的特定样式 */
         .admin-section {
             margin-top: 20px;
             padding: 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(6px);
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 130%;
+            border-radius: 8px;
+            background-color: var(--text-white);
+            box-shadow: 0 1px 3px var(--shadow-color);
+            width: 100%;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
+            border: 1px solid var(--border-color);
         }
 
         .admin-section h3 {
-            color: white;
-            font-size: 24px;
-            font-family: "Microsoft YaHei";
+            color: var(--primary-dark);
+            /* 更深的标题颜色 */
+            font-size: 20px;
+            font-family: 'Inter', sans-serif;
             text-align: left;
             font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
         }
 
         .admin-section p {
-            color: white;
-            font-size: 18px;
-            font-family: "Microsoft YaHei";
+            color: var(--text-color);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
             text-align: left;
             margin-top: 10px;
         }
@@ -53,26 +82,38 @@
 
         #suggestions-list li {
             margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            background-color: var(--bg-light);
+            box-shadow: 0 1px 2px var(--shadow-color);
+            border: 1px solid var(--border-color);
         }
 
         #suggestions-list li strong {
-            color: #B01ECA;
+            color: var(--primary-dark);
+            /* 更深的强调文本颜色 */
+            font-weight: 600;
         }
 
         .content-container {
-            margin-top: 150px; /* 增加上边距，确保内容不会被导航栏遮挡 */
+            margin-top: 100px;
+            /* 增加上边距，确保内容不会被导航栏遮挡 */
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .error-message {
-            color: red;
-            font-size: 18px;
-            font-family: "Microsoft YaHei";
+            color: var(--accent-color);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
             text-align: center;
             margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(217, 83, 79, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(217, 83, 79, 0.2);
         }
 
         /* 数据库操作样式 */
@@ -81,71 +122,82 @@
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 20px;
-            color: white;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        .data-table th, .data-table td {
+        .data-table th,
+        .data-table td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .data-table th {
-            background-color: rgba(176, 30, 202, 0.2);
+            background-color: var(--primary-color);
+            color: var(--text-white);
             font-weight: 600;
         }
 
+        .data-table tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
         .data-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(26, 79, 138, 0.05);
         }
 
         .action-btn {
             padding: 6px 12px;
-            border-radius: 6px;
+            border-radius: 4px;
             border: none;
             cursor: pointer;
             margin-right: 5px;
-            font-family: "Microsoft YaHei";
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
         .edit-btn {
-            background-color: rgba(52, 152, 219, 0.7);
-            color: white;
+            background-color: var(--primary-light);
+            color: var(--text-white);
         }
 
         .edit-btn:hover {
-            background-color: rgba(52, 152, 219, 0.9);
+            background-color: var(--primary-color);
         }
 
         .delete-btn {
-            background-color: rgba(231, 76, 60, 0.7);
-            color: white;
+            background-color: var(--accent-color);
+            color: var(--text-white);
         }
 
         .delete-btn:hover {
-            background-color: rgba(231, 76, 60, 0.9);
+            background-color: #c9302c;
         }
 
         .add-btn {
-            background-color: rgba(46, 204, 113, 0.7);
-            color: white;
+            background-color: var(--success-color);
+            color: var(--text-white);
             padding: 8px 16px;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 20px;
+            border-radius: 4px;
         }
 
         .add-btn:hover {
-            background-color: rgba(46, 204, 113, 0.9);
+            background-color: #25732e;
         }
 
         /* 表单样式 */
         .form-container {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--bg-light);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 6px;
             margin-top: 20px;
-            backdrop-filter: blur(6px);
+            border: 1px solid var(--border-color);
         }
 
         .form-group {
@@ -155,46 +207,46 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: white;
+            color: var(--text-color);
             font-weight: 500;
         }
 
         .form-control {
             width: 100%;
             padding: 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--text-white);
+            color: var(--text-color);
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #B01ECA;
-            box-shadow: 0 0 0 2px rgba(176, 30, 202, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 79, 138, 0.2);
         }
 
         .submit-btn {
-            background-color: #B01ECA;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--text-white);
             padding: 10px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
         }
 
         .submit-btn:hover {
-            background-color: #9b18b3;
+            background-color: var(--primary-dark);
         }
 
         .cancel-btn {
-            background-color: rgba(149, 165, 166, 0.7);
-            color: white;
+            background-color: var(--secondary-color);
+            color: var(--text-white);
             padding: 10px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
             margin-left: 10px;
@@ -202,7 +254,7 @@
         }
 
         .cancel-btn:hover {
-            background-color: rgba(149, 165, 166, 0.9);
+            background-color: #4a545b;
         }
 
         /* 消息板样式 */
@@ -211,31 +263,35 @@
         }
 
         .message-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background-color: var(--text-white);
+            border-radius: 6px;
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .message-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
         }
 
         .message-author {
             font-weight: 600;
-            color: #B01ECA;
+            color: var(--primary-dark);
+            /* 更深的作者名称颜色 */
         }
 
         .message-time {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-light);
             font-size: 14px;
         }
 
         .message-content {
-            color: white;
+            color: var(--text-color);
             line-height: 1.5;
         }
 
@@ -245,8 +301,8 @@
         }
 
         .reply-btn {
-            background-color: rgba(52, 152, 219, 0.7);
-            color: white;
+            background-color: var(--primary-light);
+            color: var(--text-white);
             padding: 5px 10px;
             border: none;
             border-radius: 4px;
@@ -256,12 +312,12 @@
         }
 
         .reply-btn:hover {
-            background-color: rgba(52, 152, 219, 0.9);
+            background-color: var(--primary-color);
         }
 
         .delete-message-btn {
-            background-color: rgba(231, 76, 60, 0.7);
-            color: white;
+            background-color: var(--accent-color);
+            color: var(--text-white);
             padding: 5px 10px;
             border: none;
             border-radius: 4px;
@@ -272,7 +328,7 @@
         }
 
         .delete-message-btn:hover {
-            background-color: rgba(231, 76, 60, 0.9);
+            background-color: #c9302c;
         }
 
         .new-message-form {
@@ -283,18 +339,55 @@
             width: 100%;
             height: 100px;
             padding: 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--text-white);
+            color: var(--text-color);
             resize: vertical;
             margin-bottom: 10px;
         }
 
         .new-message-form textarea:focus {
             outline: none;
-            border-color: #B01ECA;
-            box-shadow: 0 0 0 2px rgba(176, 30, 202, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 79, 138, 0.2);
+        }
+
+        .custom-file {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .custom-file-input {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .custom-file-label:hover {
+            background-color: #0056b3;
+        }
+
+        .image-preview img {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            background-color: #f8f9fa;
         }
 
         /* 统计卡片样式 */
@@ -308,22 +401,24 @@
         .stat-card {
             flex: 1;
             min-width: 200px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background-color: var(--text-white);
+            border-radius: 6px;
             padding: 20px;
             text-align: center;
-            backdrop-filter: blur(6px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
         }
 
         .stat-value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
-            color: #B01ECA;
+            color: var(--primary-dark);
+            /* 更深的统计数值颜色 */
             margin-bottom: 5px;
         }
 
         .stat-label {
-            color: white;
+            color: var(--text-light);
             font-size: 16px;
         }
 
@@ -331,10 +426,11 @@
         .chart-container {
             height: 400px;
             margin-top: 30px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            background-color: var(--text-white);
+            border-radius: 6px;
             padding: 20px;
-            backdrop-filter: blur(6px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
         }
 
         /* 响应式调整 */
@@ -356,29 +452,41 @@
         .tabs {
             display: flex;
             margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--text-white);
+            border-radius: 6px 6px 0 0;
+            overflow: hidden;
         }
 
         .tab {
-            padding: 10px 20px;
-            color: white;
+            padding: 12px 20px;
+            color: var(--text-color);
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
+            font-weight: 500;
+            background-color: var(--text-white);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .tab:last-child {
+            border-right: none;
         }
 
         .tab.active {
-            color: #B01ECA;
+            color: var(--primary-dark);
+            /* 更深的活动标签颜色 */
+            background-color: var(--bg-light);
         }
 
         .tab.active::after {
             content: '';
             position: absolute;
-            bottom: -1px;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background-color: #B01ECA;
+            height: 3px;
+            background-color: var(--primary-color);
         }
 
         .tab-content {
@@ -397,17 +505,17 @@
         .search-input {
             width: 100%;
             padding: 10px 15px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--text-white);
+            color: var(--text-color);
             font-size: 16px;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #B01ECA;
-            box-shadow: 0 0 0 2px rgba(176, 30, 202, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 79, 138, 0.2);
         }
 
         /* 分页样式 */
@@ -420,26 +528,29 @@
         .pagination-btn {
             padding: 8px 12px;
             margin: 0 5px;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            border-radius: 4px;
+            background-color: var(--bg-light);
+            color: var(--text-color);
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
         }
 
         .pagination-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--bg-gray);
         }
 
         .pagination-btn.active {
-            background-color: #B01ECA;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border-color: var(--primary-color);
         }
 
         /* 加载动画 */
         .loader {
-            border: 4px solid rgba(255, 255, 255, 0.3);
+            border: 4px solid rgba(26, 79, 138, 0.1);
             border-radius: 50%;
-            border-top: 4px solid #B01ECA;
+            border-top: 4px solid var(--primary-color);
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
@@ -447,20 +558,376 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Header styling */
+        .blurry-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .navbar-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-content h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar-content nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-content nav ul li a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .navbar-content nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Override any conflicting styles from imported CSS */
+        .violet-glow {
+            display: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* 审批界面样式 */
+        .approval-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .approval-item {
+            background-color: var(--text-white);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
+            transition: transform 0.2s ease;
+        }
+
+        .approval-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .approval-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .approval-content {
+            padding: 15px;
+        }
+
+        .approval-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .approval-info {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .approval-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .approve-btn {
+            background-color: var(--success-color);
+            color: var(--text-white);
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .approve-btn:hover {
+            background-color: #25732e;
+        }
+
+        .reject-btn {
+            background-color: var(--accent-color);
+            color: var(--text-white);
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .reject-btn:hover {
+            background-color: #c9302c;
+        }
+
+        .view-btn {
+            background-color: var(--primary-light);
+            color: var(--text-white);
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .approval-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background-color: var(--bg-gray);
+        }
+
+        /* 详细视图模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1100;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--text-white);
+            margin: 50px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--text-color);
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-info {
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            width: 120px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .info-value {
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* 用户数据可视化样式 */
+        .visualization-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .visualization-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .visualization-card {
+            background-color: var(--text-white);
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
+        }
+
+        .visualization-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chart-wrapper {
+            height: 300px;
+            width: 100%;
+        }
+
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tag-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .tag-approved {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .tag-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .tag-training {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .tag-graph {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
         }
     </style>
 </head>
 
 <body>
-    <div class="violet-glow"></div>
     <header class="blurry-navbar">
         <div class="navbar-content">
             <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
             <nav>
                 <ul>
-                    <li><a href="recognize.html">退出</a></li>
+                    <li><a href="#" onclick="loadContent('admin_home')">首页</a></li>
+                    <li><a href="#" onclick="loadContent('admin_approvals')">审批管理</a></li>
+                    <li><a href="#" onclick="loadContent('admin_database')">数据管理</a></li>
+                    <li><a href="#" onclick="loadContent('admin_users')">用户分析</a></li>
+                    <li><a href="recognize_v.html">退出</a></li>
                 </ul>
             </nav>
         </div>
@@ -469,215 +936,1176 @@
     <div class="container">
         <div class="content-container" id="content-container">
             <!-- 内容将在这里动态加载 -->
+            <div class="loader"></div>
         </div>
     </div>
+
+    <!-- 详细视图模态框 -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title" id="modal-title">详细信息</h2>
+            <img id="modal-image" class="modal-image" src="/placeholder.svg" alt="详细图片">
+            <div class="modal-info" id="modal-info">
+                <!-- 详细信息将在这里动态加载 -->
+            </div>
+            <div class="modal-actions">
+                <button class="approve-btn" onclick="approveItem()">批准</button>
+                <button class="reject-btn" onclick="rejectItem()">拒绝</button>
+                <button class="cancel-btn" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function () {
             // 默认加载首页内容
             loadContent('admin_home');
         });
 
+        // Add this code after the document.ready function to ensure all images use placeholders
+        $(document).ready(function () {
+            // Replace all external image references with placeholders
+            function replaceImagesWithPlaceholders() {
+                // Replace sample images in the approval grid
+                $('.approval-image').each(function () {
+                    $(this).attr('src', '/placeholder.svg?height=180&width=300');
+                });
+
+                // Replace sample images in the modal preview
+                $('#modal-image').attr('src', '/placeholder.svg?height=400&width=600');
+
+                // Replace thumbnail images in the modal detail view
+                $('#modal-info img').each(function () {
+                    $(this).attr('src', '/placeholder.svg?height=80&width=100');
+                });
+            }
+
+            // Call this function after the content is loaded
+            $(document).on('DOMNodeInserted', function (e) {
+                if ($(e.target).find('.approval-image').length > 0) {
+                    replaceImagesWithPlaceholders();
+                }
+            });
+
+            // Modify the viewApprovalDetail function to use placeholders
+            window.viewApprovalDetailOriginal = window.viewApprovalDetail;
+            window.viewApprovalDetail = function (id, type) {
+                window.viewApprovalDetailOriginal(id, type);
+
+                // Replace any images in the modal with placeholders
+                $('#modal-image').attr('src', '/placeholder.svg?height=400&width=600');
+                $('#modal-info img').each(function () {
+                    $(this).attr('src', '/placeholder.svg?height=80&width=100');
+                });
+            };
+        });
+
         function loadContent(page) {
             // 显示加载动画
             $('#content-container').html('<div class="loader"></div>');
-            
-            $.ajax({
-                type: "GET",
-                url: `/${page}.html`,
-                success: function (data) {
-                    $('#content-container').html(data);
+
+            // 根据页面ID加载不同内容
+            switch (page) {
+                case 'admin_home':
+                    loadHomePage();
+                    break;
+                case 'admin_approvals':
+                    loadApprovalsPage();
+                    break;
+                case 'admin_database':
+                    loadDatabasePage();
+                    break;
+                case 'admin_users':
+                    loadUsersPage();
+                    break;
+                default:
+                    loadHomePage();
+            }
+        }
+
+        // 加载首页
+        function loadHomePage() {
+            let html = `
+                <div class="admin-section">
+                    <h3>管理员控制面板</h3>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-value">143</div>
+                            <div class="stat-label">植物数据总量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">28</div>
+                            <div class="stat-label">待审批项目</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">1324</div>
+                            <div class="stat-label">用户访问量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">今日识别次数</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" style="margin-top: 20px;">
+                        <h3>最近活动</h3>
+                        <ul id="activity-list" style="list-style: none; padding: 0;">
+                            <li class="message-item">
+                                <div class="message-header">
+                                    <span class="message-author">用户上传</span>
+                                    <span class="message-time">2025-04-05 14:32</span>
+                                </div>
+                                <div class="message-content">用户 user123 上传了一组训练图片集，共 15 张图片，等待审核</div>
+                            </li>
+                            <li class="message-item">
+                                <div class="message-header">
+                                    <span class="message-author">知识图谱更新</span>
+                                    <span class="message-time">2025-04-05 11:15</span>
+                                </div>
+                                <div class="message-content">管理员 admin02 更新了"白术"的知识图谱关联数据</div>
+                            </li>
+                            <li class="message-item">
+                                <div class="message-header">
+                                    <span class="message-author">系统通知</span>
+                                    <span class="message-time">2025-04-05 09:23</span>
+                                </div>
+                                <div class="message-content">系统完成了每日数据备份，共备份 1.2GB 数据</div>
+                            </li>
+                            <li class="message-item">
+                                <div class="message-header">
+                                    <span class="message-author">用户反馈</span>
+                                    <span class="message-time">2025-04-04 18:45</span>
+                                </div>
+                                <div class="message-content">收到用户 user456 关于图片识别准确率的反馈建议</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="chart-container">
+                        <div id="data-chart" style="width: 100%; height: 100%;"></div>
+                    </div>
+                </div>
+            `;
+
+            $('#content-container').html(html);
+            initDashboard();
+        }
+
+        // 加载审批页面
+        function loadApprovalsPage() {
+            let html = `
+                <div class="admin-section">
+                    <h3>审批管理</h3>
+                    <div class="approval-filters">
+                        <button class="filter-btn active" data-filter="all">全部 (28)</button>
+                        <button class="filter-btn" data-filter="training">训练图片集 (18)</button>
+                        <button class="filter-btn" data-filter="graph">知识图谱内容 (10)</button>
+                        <button class="filter-btn" data-filter="pending">待审批 (28)</button>
+                        <button class="filter-btn" data-filter="approved">已批准 (42)</button>
+                        <button class="filter-btn" data-filter="rejected">已拒绝 (7)</button>
+                    </div>
+
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="approval-search" placeholder="搜索上传者、内容类型或描述...">
+                    </div>
+
+                    <div class="approval-grid" id="approval-grid">
+                        <!-- 训练图片集项目 -->
+                        <div class="approval-item" data-type="training" data-status="pending">
+                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">藏药植物训练图片集</div>
+                                <div class="approval-info">
+                                    <p><strong>上传者:</strong> user123</p>
+                                    <p><strong>上传时间:</strong> 2025-04-05 14:32</p>
+                                    <p><strong>图片数量:</strong> 15张</p>
+                                    <span class="tag tag-pending">待审批</span>
+                                    <span class="tag tag-training">训练集</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(1, 'training')">查看详情</button>
+                                    <button class="approve-btn" onclick="approveItemDirect(1)">批准</button>
+                                    <button class="reject-btn" onclick="rejectItemDirect(1)">拒绝</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="approval-item" data-type="training" data-status="pending">
+                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">高原药材识别训练集</div>
+                                <div class="approval-info">
+                                    <p><strong>上传者:</strong> user456</p>
+                                    <p><strong>上传时间:</strong> 2025-04-04 10:15</p>
+                                    <p><strong>图片数量:</strong> 23张</p>
+                                    <span class="tag tag-pending">待审批</span>
+                                    <span class="tag tag-training">训练集</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(2, 'training')">查看详情</button>
+                                    <button class="approve-btn" onclick="approveItemDirect(2)">批准</button>
+                                    <button class="reject-btn" onclick="rejectItemDirect(2)">拒绝</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 知识图谱内容项目 -->
+                        <div class="approval-item" data-type="graph" data-status="pending">
+                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">白术知识图谱更新</div>
+                                <div class="approval-info">
+                                    <p><strong>提交者:</strong> researcher789</p>
+                                    <p><strong>提交时间:</strong> 2025-04-03 16:45</p>
+                                    <p><strong>修改内容:</strong> 药效关联</p>
+                                    <span class="tag tag-pending">待审批</span>
+                                    <span class="tag tag-graph">知识图谱</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(3, 'graph')">查看详情</button>
+                                    <button class="approve-btn" onclick="approveItemDirect(3)">批准</button>
+                                    <button class="reject-btn" onclick="rejectItemDirect(3)">拒绝</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="approval-item" data-type="graph" data-status="pending">
+                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">藏红花知识图谱补充</div>
+                                <div class="approval-info">
+                                    <p><strong>提交者:</strong> expert321</p>
+                                    <p><strong>提交时间:</strong> 2025-04-02 09:30</p>
+                                    <p><strong>修改内容:</strong> 新增配伍关系</p>
+                                    <span class="tag tag-pending">待审批</span>
+                                    <span class="tag tag-graph">知识图谱</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(4, 'graph')">查看详情</button>
+                                    <button class="approve-btn" onclick="approveItemDirect(4)">批准</button>
+                                    <button class="reject-btn" onclick="rejectItemDirect(4)">拒绝</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 已批准项目示例 -->
+                        <div class="approval-item" data-type="training" data-status="approved">
+                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">冬虫夏草训练图片集</div>
+                                <div class="approval-info">
+                                    <p><strong>上传者:</strong> user789</p>
+                                    <p><strong>上传时间:</strong> 2025-04-01 11:20</p>
+                                    <p><strong>图片数量:</strong> 18张</p>
+                                    <span class="tag tag-approved">已批准</span>
+                                    <span class="tag tag-training">训练集</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(5, 'training')">查看详情</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 已拒绝项目示例 -->
+                        <div class="approval-item" data-type="graph" data-status="rejected">
+                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
+                            <div class="approval-content">
+                                <div class="approval-title">人参知识图谱修改</div>
+                                <div class="approval-info">
+                                    <p><strong>提交者:</strong> user567</p>
+                                    <p><strong>提交时间:</strong> 2025-03-30 14:15</p>
+                                    <p><strong>修改内容:</strong> 药效描述</p>
+                                    <span class="tag tag-rejected">已拒绝</span>
+                                    <span class="tag tag-graph">知识图谱</span>
+                                </div>
+                                <div class="approval-actions">
+                                    <button class="view-btn" onclick="viewApprovalDetail(6, 'graph')">查看详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <div class="pagination-btn active">1</div>
+                        <div class="pagination-btn">2</div>
+                        <div class="pagination-btn">3</div>
+                        <div class="pagination-btn">下一页 &raquo;</div>
+                    </div>
+                </div>
+            `;
+
+            $('#content-container').html(html);
+            initApprovalPage();
+        }
+
+        // 加载数据库管理页面
+        function loadDatabasePage() {
+            let html = `
+                <div class="admin-section">
+    <h3>数据库管理</h3>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="plants-tab">植物数据</div>
+        <div class="tab" data-tab="herb-tab">药材数据</div>
+        <div class="tab" data-tab="prescription-tab">药方数据</div>
+        <div class="tab" data-tab="literature-tab">文献数据</div>
+        <div class="tab" data-tab="users-tab">用户数据</div>
+    </div>
+    
+    <!-- 植物数据管理 -->
+    <div class="tab-content active" id="plants-tab">
+        <div class="search-container">
+            <input type="text" class="search-input" id="plants-search" placeholder="搜索植物名称、拉丁学名或别名...">
+        </div>
+        
+        <button class="add-btn" id="show-add-plant-form">添加新植物</button>
+        
+        <div class="form-container" id="add-plant-form-container" style="display: none;">
+            <h3>添加新植物</h3>
+            <form id="add-plant-form" action="/add/addPlant" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="plant-name">植物名称(必填)</label>
+                    <input type="text" class="form-control" id="plant-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="plant-latin">拉丁学名</label>
+                    <input type="text" class="form-control" id="plant-latin">
+                </div>
+                <div class="form-group">
+                    <label for="plant-alias">别名</label>
+                    <input type="text" class="form-control" id="plant-alias">
+                </div>
+                <div class="form-group">
+                    <label for="plant-tibetan-name">藏文名称(必填)</label>
+                    <input type="text" class="form-control" id="plant-tibetan-name">
+                </div>
+                <div class="form-group">
+                    <label for="plant-family-name">科名(必填)</label>
+                    <input type="text" class="form-control" id="plant-family-name">
+                </div>
+                <div class="form-group">
+                    <label for="plant-genus-name">属名(必填)</label>
+                    <input type="text" class="form-control" id="plant-genus-name">
+                </div>
+                <div class="form-group">
+    <label for="image-upload">上传图片(上传前请把图片名称改成中文名，严禁带空格!!)</label>
+    <div class="custom-file">
+        <input type="file" class="custom-file-input" id="image-upload" accept="image/*" onchange="handleImageUpload(event)">
+        <label class="custom-file-label" for="image-upload">选择图片文件</label>
+    </div>
+    <!-- 图片预览 -->
+    <div id="image-preview" class="image-preview mt-2" style="display: none;">
+        <img id="preview-img" src="#" alt="图片预览" style="max-width: 200px; max-height: 200px;">
+    </div>
+</div>
+                <div class="form-group">
+                    <label for="plant-features">特征</label>
+                    <textarea class="form-control" id="plant-features" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="plant-origin">采集地点</label>
+                    <input type="text" class="form-control" id="plant-origin">
+                </div>
+                <div class="form-group">
+                    <label for="plant-protect-level">保护等级</label>
+                    <textarea class="form-control" id="plant-protect-level" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notes">附注</label>
+                    <textarea class="form-control" id="notes" rows="2"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">添加</button>
+                <button type="button" class="cancel-btn">取消</button>
+            </form>
+        </div>
+        
+        <div class="form-container" id="edit-plant-form-container" style="display: none;">
+            <h3>编辑植物</h3>
+            <form id="edit-plant-form">
+                <input type="hidden" id="edit-plant-id">
+                <div class="form-group">
+                    <label for="edit-plant-name">植物名称</label>
+                    <input type="text" class="form-control" id="edit-plant-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-latin">拉丁学名</label>
+                    <input type="text" class="form-control" id="edit-plant-latin">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-alias">别名</label>
+                    <input type="text" class="form-control" id="edit-plant-alias">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-tibetan-name">藏文名称</label>
+                    <input type="text" class="form-control" id="edit-plant-tibetan-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-family-name">科名</label>
+                    <input type="text" class="form-control" id="edit-plant-family-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-genus-name">属名</label>
+                    <input type="text" class="form-control" id="edit-plant-genus-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-img-path">图像名称</label>
+                    <input type="text" class="form-control" id="edit-img-path">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-features">特征</label>
+                    <textarea class="form-control" id="edit-plant-features" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-origin">采集地点</label>
+                    <input type="text" class="form-control" id="edit-plant-origin">
+                </div>
+                <div class="form-group">
+                    <label for="edit-plant-protect-level">保护等级</label>
+                    <textarea class="form-control" id="edit-plant-protect-level" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-notes">附注</label>
+                    <textarea class="form-control" id="edit-notes" rows="2"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">更新</button>
+                <button type="button" class="cancel-btn">取消</button>
+            </form>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>植物ID</th>
+                    <th>植物名称</th>
+                    <th>拉丁学名</th>
+                    <th>藏文名称</th>
+                    <th>别名</th>
+                    <th>科名</th>
+                    <th>属名</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>白术</td>
+                    <td>Atractylodes macrocephala</td>
+                    <td>བོད་ཡིག5</td>
+                    <td>于术</td>
+                    <td>菊科</td>
+                    <td>白术属</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="1">编辑</button>
+                        <button class="action-btn delete-btn" data-id="1">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>藏红花</td>
+                    <td>Crocus sativus</td>
+                    <td>བོད་ཡིག8</td>
+                    <td>番红花</td>
+                    <td>鸢尾科</td>
+                    <td>番红花属</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="2">编辑</button>
+                        <button class="action-btn delete-btn" data-id="2">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>冬虫夏草</td>
+                    <td>Cordyceps sinensis</td>
+                    <td>བོད་ཡིག12</td>
+                    <td>虫草</td>
+                    <td>麦角菌科</td>
+                    <td>虫草属</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="3">编辑</button>
+                        <button class="action-btn delete-btn" data-id="3">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>人参</td>
+                    <td>Panax ginseng</td>
+                    <td>བོད་ཡིག15</td>
+                    <td>圆参、黄参</td>
+                    <td>五加科</td>
+                    <td>人参属</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="4">编辑</button>
+                        <button class="action-btn delete-btn" data-id="4">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>黄芪</td>
+                    <td>Astragalus membranaceus</td>
+                    <td>བོད་ཡིག18</td>
+                    <td>北芪</td>
+                    <td>豆科</td>
+                    <td>黄芪属</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="5">编辑</button>
+                        <button class="action-btn delete-btn" data-id="5">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="pagination">
+            <div class="pagination-btn active">1</div>
+            <div class="pagination-btn">2</div>
+            <div class="pagination-btn">3</div>
+            <div class="pagination-btn">下一页 »</div>
+        </div>
+    </div>
+    
+    <!-- 药材数据管理 -->
+    <div class="tab-content" id="herb-tab">
+        <div class="search-container">
+            <input type="text" class="search-input" id="herb-search" placeholder="搜索药材名称、藏文名或别名...">
+        </div>
+        
+        <button class="add-btn" id="show-add-herb-form">添加新药材</button>
+        
+        <div class="form-container" id="add-herb-form-container" style="display: none;">
+            <h3>添加新药材</h3>
+            <form id="add-herb-form">
+                <div class="form-group">
+                    <label for="herb-plant-name">关联植物名称(必填)</label>
+                    <input type="text" class="form-control" id="herb-plant-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="herb-name">药材名称(必填)</label>
+                    <input type="text" class="form-control" id="herb-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="herb-tibetan-name">藏文名称(必填)</label>
+                    <input type="text" class="form-control" id="herb-tibetan-name">
+                </div>
+                <div class="form-group">
+                    <label for="herb-alias">别名</label>
+                    <input type="text" class="form-control" id="herb-alias">
+                </div>
+                <div class="form-group">
+                    <label for="herb-description">描述</label>
+                    <textarea class="form-control" id="herb-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="part-used">药用部位</label>
+                    <input type="text" class="form-control" id="part-used">
+                </div>
+                <div class="form-group">
+                    <label for="herb-features">特征</label>
+                    <textarea class="form-control" id="herb-features" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="flavor-tropism">性味与归经</label>
+                    <textarea class="form-control" id="flavor-tropism" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="function-indication">功能与主治</label>
+                    <textarea class="form-control" id="function-indication" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="clinical-application">临床应用</label>
+                    <textarea class="form-control" id="clinical-application" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="pharmacological-effect">药理作用</label>
+                    <textarea class="form-control" id="pharmacological-effect" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="herb-notes">附注</label>
+                    <textarea class="form-control" id="herb-notes" rows="2"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">添加</button>
+                <button type="button" class="cancel-btn">取消</button>
+            </form>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>药材ID</th>
+                    <th>药材名称</th>
+                    <th>藏文名称</th>
+                    <th>别名</th>
+                    <th>药用部位</th>
+                    <th>功能与主治</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 示例数据 -->
+                <tr>
+                    <td>1</td>
+                    <td>白术</td>
+                    <td>བོད་ཡིག5</td>
+                    <td>于术</td>
+                    <td>根茎</td>
+                    <td>健脾益气，燥湿利水</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="1">编辑</button>
+                        <button class="action-btn delete-btn" data-id="1">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 药方数据管理 -->
+    <div class="tab-content" id="prescription-tab">
+        <div class="search-container">
+            <input type="text" class="search-input" id="prescription-search" placeholder="搜索药方名称或用途...">
+        </div>
+        
+        <button class="add-btn" id="show-add-prescription-form">添加新药方</button>
+        
+        <div class="form-container" id="add-prescription-form-container" style="display: none;">
+            <h3>添加新药方</h3>
+            <form id="add-prescription-form">
+                <div class="form-group">
+                    <label for="prescription-name">药方名称</label>
+                    <input type="text" class="form-control" id="prescription-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="composition">成分</label>
+                    <input type="text" class="form-control" id="composition" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="dosage">成分用量</label>
+                    <input type="text" class="form-control" id="dosage" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="treatment">用途</label>
+                    <input type="text" class="form-control" id="treatment">
+                </div>
+                <div class="form-group">
+                    <label for="source">来源</label>
+                    <input type="text" class="form-control" id="source">
+                </div>
+                <div class="form-group">
+                    <label for="suitable-population">适用人群</label>
+                    <input type="text" class="form-control" id="suitable-population">
+                </div>
+                <div class="form-group">
+                    <label for="precautions">注意事项</label>
+                    <textarea class="form-control" id="precautions" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">分类</label>
+                    <input type="text" class="form-control" id="category">
+                </div>
+                <div class="form-group">
+                    <label for="preparation-method">制备方法</label>
+                    <textarea class="form-control" id="preparation-method" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="doctor-or-expert">推荐医生/专家</label>
+                    <input type="text" class="form-control" id="doctor-or-expert">
+                </div>
+                <div class="form-group">
+                    <label for="status">状态</label>
+                    <select class="form-control" id="status">
+                        <option value="启用">启用</option>
+                        <option value="禁用">禁用</option>
+                        <option value="审核中">审核中</option>
+                    </select>
+                </div>
+<div class="form-group">
+    <label for="prescription-image-upload">上传图片(必填,上传前请把图片名称改成中文名，严禁带空格!!)</label>
+    <div class="custom-file">
+        <input type="file" class="custom-file-input" id="prescription-image-upload" accept="image/*" onchange="handlePrescriptionImageUpload(event)">
+        <label class="custom-file-label" for="prescription-image-upload">选择图片文件</label>
+    </div>
+    <!-- 图片预览 -->
+    <div id="prescription-image-preview" class="image-preview mt-2" style="display: none;">
+        <img id="prescription-preview-img" src="#" alt="图片预览" style="max-width: 200px; max-height: 200px;">
+    </div>
+</div>
+                <button type="submit" class="submit-btn">添加</button>
+                <button type="button" class="cancel-btn">取消</button>
+            </form>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>药方ID</th>
+                    <th>药方名称</th>
+                    <th>用途</th>
+                    <th>分类</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 示例数据 -->
+                <tr>
+                    <td>1</td>
+                    <td>四物汤</td>
+                    <td>补血调经</td>
+                    <td>补益</td>
+                    <td>启用</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="1">编辑</button>
+                        <button class="action-btn delete-btn" data-id="1">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 文献数据管理 -->
+    <div class="tab-content" id="literature-tab">
+        <div class="search-container">
+            <input type="text" class="search-input" id="literature-search" placeholder="搜索文献标题、作者或关键词...">
+        </div>
+        
+        <button class="add-btn" id="show-add-literature-form">添加新文献</button>
+        
+        <div class="form-container" id="add-literature-form-container" style="display: none;">
+            <h3>添加新文献</h3>
+            <form id="add-literature-form">
+                <div class="form-group">
+                    <label for="title">文献标题</label>
+                    <input type="text" class="form-control" id="title" required>
+                </div>
+oxygen
+                <div class="form-group">
+                    <label for="tibetan-title">藏文标题</label>
+                    <input type="text" class="form-control" id="tibetan-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="authors">作者</label>
+                    <input type="text" class="form-control" id="authors" required>
+                </div>
+                <div class="form-group">
+                    <label for="publication-year">出版年份</label>
+                    <input type="number" class="form-control" id="publication-year">
+                </div>
+                <div class="form-group">
+                    <label for="journal-or-publisher">期刊/出版社</label>
+                    <input type="text" class="form-control" id="journal-or-publisher">
+                </div>
+                <div class="form-group">
+                    <label for="volume-issue">卷号/期号</label>
+                    <input type="text" class="form-control" id="volume-issue">
+                </div>
+                <div class="form-group">
+                    <label for="pages">页码范围</label>
+                    <input type="text" class="form-control" id="pages">
+                </div>
+                <div class="form-group">
+                    <label for="abstract">摘要</label>
+                    <textarea class="form-control" id="abstract" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="download-link">下载链接</label>
+                    <input type="text" class="form-control" id="download-link">
+                </div>
+                <div class="form-group">
+                    <label for="file-path">本地存储路径</label>
+                    <input type="text" class="form-control" id="file-path">
+                </div>
+                <div class="form-group">
+                    <label for="main-plant">主要植物</label>
+                    <input type="text" class="form-control" id="main-plant">
+                </div>
+                <div class="form-group">
+                    <label for="research-field">研究领域</label>
+                    <input type="text" class="form-control" id="research-field">
+                </div>
+                <div class="form-group">
+                    <label for="keywords">关键词</label>
+                    <input type="text" class="form-control" id="keywords">
+                </div>
+                <button type="submit" class="submit-btn">添加</button>
+                <button type="button" class="cancel-btn">取消</button>
+            </form>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>文献ID</th>
+                    <th>标题</th>
+                    <th>作者</th>
+                    <th>出版年份</th>
+                    <th>主要植物</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 示例数据 -->
+                <tr>
+                    <td>1</td>
+                    <td>藏药植物药理研究</td>
+                    <td>张三,李四</td>
+                    <td>2020</td>
+                    <td>藏红花</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="1">编辑</button>
+                        <button class="action-btn delete-btn" data-id="1">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
                     
-                    // 根据加载的页面初始化特定功能
-                    if (page === 'admin_database') {
-                        initDatabasePage();
-                    } else if (page === 'admin_message_board') {
-                        initMessageBoard();
-                    } else if (page === 'admin_home') {
-                        initDashboard();
+                    <div class="tab-content" id="users-tab">
+                        <h3>用户数据管理</h3>
+                        <p>此部分用于管理用户账户、权限和活动记录。</p>
+                        <!-- 用户数据管理内容 -->
+                    </div>
+                </div>
+            `;
+
+            $('#content-container').html(html);
+            initDatabasePage();
+
+            // 在表单插入后再绑定事件监听器
+            const addPlantForm = document.getElementById('add-plant-form');
+            if (addPlantForm) {
+                addPlantForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(this);
+                    formData.append('plantName', document.getElementById('plant-name').value);
+                    formData.append('plantLatin', document.getElementById('plant-latin').value);
+                    formData.append('plantAlias', document.getElementById('plant-alias').value);
+                    formData.append('plantTibetanName', document.getElementById('plant-tibetan-name').value);
+                    formData.append('plantFamilyName', document.getElementById('plant-family-name').value);
+                    formData.append('plantGenusName', document.getElementById('plant-genus-name').value);
+                    formData.append('plantFeatures', document.getElementById('plant-features').value);
+                    formData.append('plantOrigin', document.getElementById('plant-origin').value);
+                    formData.append('plantProtectLevel', document.getElementById('plant-protect-level').value);
+                    formData.append('notes', document.getElementById('notes').value);
+
+                    const fileInput = document.getElementById('image-upload');
+                    if (fileInput && fileInput.files.length > 0) {
+                        formData.append('file', fileInput.files[0]);
+                    } else {
+                        console.warn('未选择图片文件');
                     }
+
+                    $.ajax({
+                        url: '/add/addPlant',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            alert('植物数据添加成功！');
+                            // 展示植物添加页面
+                            loadDatabasePage();
+                            $('#add-plant-form-container').slideToggle();
+                        },
+                        error: function (error) {
+                            console.error('请求失败:', error);
+                            alert('植物数据添加失败！');
+                        }
+                    });
+                });
+            } else {
+                console.error('表单 add-plant-form 未找到！');
+            }
+            // 在表单插入后再绑定事件监听器
+            const addHerbForm = document.getElementById('add-herb-form');
+            if (addHerbForm) {
+                addHerbForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(this);
+                    formData.append('herbName', document.getElementById('herb-name').value);
+                    formData.append('plantName', document.getElementById('herb-plant-name').value); // 关联植物ID
+                    formData.append('herbTibetanName', document.getElementById('herb-tibetan-name').value);
+                    formData.append('herbAlias', document.getElementById('herb-alias').value);
+                    formData.append('herbDescription', document.getElementById('herb-description').value);
+                    formData.append('partUsed', document.getElementById('part-used').value);
+                    formData.append('herbFeatures', document.getElementById('herb-features').value);
+                    formData.append('flavorTropism', document.getElementById('flavor-tropism').value);
+                    formData.append('functionIndication', document.getElementById('function-indication').value);
+                    formData.append('clinicalApplication', document.getElementById('clinical-application').value);
+                    formData.append('pharmacologicalEffect', document.getElementById('pharmacological-effect').value);
+                    formData.append('herbNotes', document.getElementById('herb-notes').value);
+
+                    console.log(formData); // 调试输出
+                    $.ajax({
+                        url: '/add/addHerb',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            alert('药材数据添加成功！');
+                            // 重置表单
+                            // addHerbForm.reset();
+                            // 刷新药材列表
+                            // refreshHerbTable();
+                            // 保持表单可见
+                            $('#add-herb-form-container').slideToggle();
+                        },
+                        error: function (error) {
+                            console.error('请求失败:', error);
+                            showErrorMessage('药材添加失败');
+                        }
+                    });
+                });
+            } else {
+                console.error('表单 add-herb-form 未找到！');
+            }
+
+            // 在表单插入后再绑定事件监听器
+            const addPrescriptionForm = document.getElementById('add-prescription-form');
+            if (addPrescriptionForm) {
+                addPrescriptionForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(this);
+                    formData.append('prescriptionName', document.getElementById('prescription-name').value);
+                    formData.append('composition', document.getElementById('composition').value);
+                    formData.append('dosage', document.getElementById('dosage').value);
+                    formData.append('treatment', document.getElementById('treatment').value);
+                    formData.append('source', document.getElementById('source').value);
+                    formData.append('suitablePopulation', document.getElementById('suitable-population').value);
+                    formData.append('precautions', document.getElementById('precautions').value);
+                    formData.append('category', document.getElementById('category').value);
+                    formData.append('preparationMethod', document.getElementById('preparation-method').value);
+                    formData.append('doctorOrExpert', document.getElementById('doctor-or-expert').value);
+                    formData.append('status', document.getElementById('status').value);
+
+                    const fileInput = document.getElementById('prescription-image-upload');
+                    if (fileInput && fileInput.files.length > 0) {
+                        formData.append('file', fileInput.files[0]);
+                    } else {
+                        alert('请上传图片文件！');
+                        return; // 阻止表单提交
+                    }
+
+                    $.ajax({
+                        url: '/add/addPrescription',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            alert('药方数据添加成功！');
+                            $('#add-prescription-form-container').slideToggle();
+                        },
+                        error: function (error) {
+                            console.error('请求失败:', error);
+                            alert('药方数据添加失败！');
+                        }
+                    });
+                });
+            } else {
+                console.error('表单 add-prescription-form 未找到！');
+            }
+        }
+
+        // 刷新药材列表
+        function refreshHerbTable() {
+            // $.ajax({
+            //     url: '/getHerbs',
+            //     type: 'GET',
+            //     success: function (herbs) {
+            //         const tbody = $('#herbs-table tbody');
+            //         tbody.empty();
+            //         herbs.forEach(herb => {
+            //             tbody.append(`
+            //         <tr>
+            //             <td>${herb.herbId}</td>
+            //             <td>${herb.herbName}</td>
+            //             <td>${herb.herbTibetanName || ''}</td>
+            //             <td>${herb.herbAlias || ''}</td>
+            //             <td>${herb.partUsed || ''}</td>
+            //             <td>${herb.functionIndication || ''}</td>
+            //             <td>
+            //                 <button class="action-btn edit-btn" data-id="${herb.herbId}">编辑</button>
+            //                 <button class="action-btn delete-btn" data-id="${herb.herbId}">删除</button>
+            //             </td>
+            //         </tr>
+            //     `);
+            //         });
+            //     },
+            //     error: function (error) {
+            //         console.error('获取药材列表失败:', error);
+            //         showErrorMessage('无法刷新药材列表');
+            //     }
+            // });
+        }
+
+        // 处理植物图片上传和预览
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            const imagePreview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const fileLabel = event.target.nextElementSibling; // 获取 <label> 元素
+
+            if (file) {
+                // 验证文件名是否符合要求（中文名，无空格）
+                if (/[\s]/.test(file.name)) {
+                    alert('图片文件名不能包含空格！');
+                    event.target.value = ''; // 清空输入
+                    return;
+                }
+                if (!/^[\u4e00-\u9fa5]+$/.test(file.name.split('.')[0])) {
+                    alert('图片文件名必须是中文！');
+                    event.target.value = ''; // 清空输入
+                    return;
+                }
+
+                // 显示图片预览
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    fileLabel.textContent = file.name; // 更新标签显示文件名
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                previewImg.src = '#';
+                fileLabel.textContent = '选择图片文件';
+                alert('请选择图片文件');
+            }
+        }
+
+        // 处理药方图片上传和预览
+        function handlePrescriptionImageUpload(event) {
+            const file = event.target.files[0];
+            const imagePreview = document.getElementById('prescription-image-preview');
+            const previewImg = document.getElementById('prescription-preview-img');
+            const fileLabel = event.target.nextElementSibling; // 获取 <label> 元素
+
+            if (file) {
+                // 验证文件名是否符合要求（中文名，无空格）
+                if (/[\s]/.test(file.name)) {
+                    alert('图片文件名不能包含空格！');
+                    event.target.value = ''; // 清空输入
+                    return;
+                }
+                if (!/^[\u4e00-\u9fa5]+$/.test(file.name.split('.')[0])) {
+                    alert('图片文件名必须是中文！');
+                    event.target.value = ''; // 清空输入
+                    return;
+                }
+
+                // 显示图片预览
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    fileLabel.textContent = file.name; // 更新标签显示文件名
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                previewImg.src = '#';
+                fileLabel.textContent = '选择图片文件';
+                alert('请选择图片文件');
+            }
+        }
+
+        // 加载用户分析页面
+        function loadUsersPage() {
+            $.ajax({
+                url: 'getVisualData', // 后端接口地址
+                type: 'GET',
+                success: function (data) {
+                    console.log('Visual data:', data); // 调试输出
+
+                    // 计算活跃用户数
+                    var cntUsers = data.cntUsers;
+                    var cntLiveUser = Math.round(cntUsers * 0.7); // 假设活跃用户为总用户的 70%
+                    var cntImages = data.cntImages;
+                    var cntKnowledge = data.cntKnowledgeSearch;
+
+                    // 动态生成 HTML 内容
+                    let html = `
+                <div class="admin-section">
+                    <h3>用户数据分析</h3>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-value">${cntUsers}</div>
+                            <div class="stat-label">注册用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${cntLiveUser}</div>
+                            <div class="stat-label">本月活跃用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${cntImages}</div>
+                            <div class="stat-label">累计识别次数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${cntKnowledge}</div>
+                            <div class="stat-label">知识图谱查询</div>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization-container">
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">用户识别数据分析</h3>
+                            <div class="chart-wrapper" id="recognition-chart"></div>
+                        </div>
+                        
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">AI对话主题分布</h3>
+                            <div class="chart-wrapper" id="conversation-chart"></div>
+                        </div>
+                        
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">知识图谱使用情况</h3>
+                            <div class="chart-wrapper" id="graph-usage-chart"></div>
+                        </div>
+                        
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">用户地域分布</h3>
+                            <div class="chart-wrapper" id="user-location-chart"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-section" style="margin-top: 20px;">
+                        <h3>热门搜索词</h3>
+                        <div class="chart-wrapper" id="search-keywords-chart"></div>
+                    </div>
+                </div>
+            `;
+
+                    // 将 HTML 插入到页面中
+                    $('#content-container').html(html);
+
+                    // 初始化图表
+                    initUserAnalytics(data);
                 },
-                error: function () {
-                    $('#content-container').html('<p class="error-message">加载内容失败，请稍后再试。</p>');
+                error: function (error) {
+                    console.error("请求失败:", error);
                 }
             });
         }
 
-        function markAsRead(id) {
-            // 模拟标记为已读的操作
-            alert(`建议 ${id} 已标记为已读`);
-            // 可以在这里添加实际的后端请求逻辑
-        }
-
-        // 数据库管理页面初始化
-        function initDatabasePage() {
-            // 初始化标签页切换
-            $('.tab').click(function() {
-                $('.tab').removeClass('active');
-                $(this).addClass('active');
-                
-                const tabId = $(this).data('tab');
-                $('.tab-content').removeClass('active');
-                $(`#${tabId}`).addClass('active');
-            });
-
-            // 初始化添加表单显示/隐藏
-            $('#show-add-form').click(function() {
-                $('#add-form-container').slideToggle();
-            });
-
-            // 初始化编辑按钮事件
-            $('.edit-btn').click(function() {
-                const id = $(this).data('id');
-                // 这里可以添加获取数据并填充表单的逻辑
-                $('#edit-form-container').slideDown();
-                $('#edit-id').val(id);
-            });
-
-            // 初始化删除按钮事件
-            $('.delete-btn').click(function() {
-                const id = $(this).data('id');
-                if (confirm('确定要删除这条记录吗？')) {
-                    // 这里可以添加删除数据的逻辑
-                    alert(`记录 ${id} 已删除`);
-                }
-            });
-
-            // 初始化表单提交事件
-            $('#add-form').submit(function(e) {
-                e.preventDefault();
-                // 这里可以添加提交表单的逻辑
-                alert('数据添加成功！');
-                $('#add-form-container').slideUp();
-                $('#add-form')[0].reset();
-            });
-
-            $('#edit-form').submit(function(e) {
-                e.preventDefault();
-                // 这里可以添加更新数据的逻辑
-                const id = $('#edit-id').val();
-                alert(`记录 ${id} 已更新`);
-                $('#edit-form-container').slideUp();
-                $('#edit-form')[0].reset();
-            });
-
-            // 初始化取消按钮事件
-            $('.cancel-btn').click(function() {
-                $(this).closest('.form-container').slideUp();
-            });
-
-            // 初始化搜索功能
-            $('#search-input').on('keyup', function() {
-                const value = $(this).val().toLowerCase();
-                $('.data-table tbody tr').filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-            });
-
-            // 初始化分页功能
-            $('.pagination-btn').click(function() {
-                $('.pagination-btn').removeClass('active');
-                $(this).addClass('active');
-                // 这里可以添加分页逻辑
-            });
-        }
-
-        // 留言板页面初始化
-        function initMessageBoard() {
-            // 初始化回复按钮事件
-            $('.reply-btn').click(function() {
-                const messageId = $(this).data('id');
-                const replyForm = $(`#reply-form-${messageId}`);
-                replyForm.slideToggle();
-            });
-
-            // 初始化删除消息按钮事件
-            $('.delete-message-btn').click(function() {
-                const messageId = $(this).data('id');
-                if (confirm('确定要删除这条留言吗？')) {
-                    // 这里可以添加删除留言的逻辑
-                    $(`#message-${messageId}`).fadeOut();
-                }
-            });
-
-            // 初始化新留言表单提交事件
-            $('#new-message-form').submit(function(e) {
-                e.preventDefault();
-                const message = $('#new-message').val();
-                if (message.trim() === '') {
-                    alert('留言内容不能为空！');
-                    return;
-                }
-                
-                // 这里可以添加提交新留言的逻辑
-                alert('留言发布成功！');
-                $('#new-message').val('');
-                
-                // 模拟添加新留言到列表
-                const newMessage = `
-                    <div class="message-item" id="message-new">
-                        <div class="message-header">
-                            <span class="message-author">管理员</span>
-                            <span class="message-time">${new Date().toLocaleString()}</span>
-                        </div>
-                        <div class="message-content">${message}</div>
-                        <div class="message-actions">
-                            <button class="delete-message-btn" data-id="new">删除</button>
-                        </div>
-                    </div>
-                `;
-                $('#message-list').prepend(newMessage);
-                
-                // 重新绑定删除按钮事件
-                $('.delete-message-btn').last().click(function() {
-                    if (confirm('确定要删除这条留言吗？')) {
-                        $(this).closest('.message-item').fadeOut();
-                    }
-                });
-            });
-
-            // 初始化回复表单提交事件
-            $('.reply-form').submit(function(e) {
-                e.preventDefault();
-                const messageId = $(this).data('message-id');
-                const replyContent = $(this).find('textarea').val();
-                
-                if (replyContent.trim() === '') {
-                    alert('回复内容不能为空！');
-                    return;
-                }
-                
-                // 这里可以添加提交回复的逻辑
-                alert('回复发布成功！');
-                $(this).find('textarea').val('');
-                $(this).slideUp();
-                
-                // 模拟添加回复到留言下方
-                const replyHtml = `
-                    <div class="message-item" style="margin-left: 30px; background-color: rgba(255, 255, 255, 0.05);">
-                        <div class="message-header">
-                            <span class="message-author">管理员 (回复)</span>
-                            <span class="message-time">${new Date().toLocaleString()}</span>
-                        </div>
-                        <div class="message-content">${replyContent}</div>
-                    </div>
-                `;
-                $(`#message-${messageId}`).after(replyHtml);
-            });
-        }
-
-        // 仪表盘初始化
+        // 初始化仪表盘
         function initDashboard() {
             // 初始化统计图表
             const chartElement = document.getElementById('data-chart');
             if (chartElement) {
                 const chart = echarts.init(chartElement);
-                
+
                 const option = {
                     backgroundColor: 'transparent',
                     title: {
-                        text: '数据统计',
+                        text: '平台数据统计',
                         textStyle: {
-                            color: '#fff'
+                            color: '#222222',
+                            fontWeight: 600
                         }
                     },
                     tooltip: {
@@ -687,9 +2115,9 @@
                         }
                     },
                     legend: {
-                        data: ['植物数据', '用户访问量', '留言数量'],
+                        data: ['植物数据', '用户访问量', '识别次数', 'AI对话量'],
                         textStyle: {
-                            color: '#fff'
+                            color: '#222222'
                         }
                     },
                     grid: {
@@ -703,27 +2131,27 @@
                         data: ['1月', '2月', '3月', '4月', '5月', '6月'],
                         axisLine: {
                             lineStyle: {
-                                color: 'rgba(255, 255, 255, 0.3)'
+                                color: '#aaa'
                             }
                         },
                         axisLabel: {
-                            color: '#fff'
+                            color: '#222222'
                         }
                     },
                     yAxis: {
                         type: 'value',
                         axisLine: {
                             lineStyle: {
-                                color: 'rgba(255, 255, 255, 0.3)'
+                                color: '#aaa'
                             }
                         },
                         splitLine: {
                             lineStyle: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: '#eee'
                             }
                         },
                         axisLabel: {
-                            color: '#fff'
+                            color: '#222222'
                         }
                     },
                     series: [
@@ -733,8 +2161,8 @@
                             data: [120, 132, 101, 134, 90, 230],
                             itemStyle: {
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                    { offset: 0, color: '#B01ECA' },
-                                    { offset: 1, color: '#7B1FA2' }
+                                    { offset: 0, color: '#1a4f8a' },
+                                    { offset: 1, color: '#0e325a' }
                                 ])
                             }
                         },
@@ -744,52 +2172,985 @@
                             data: [220, 182, 191, 234, 290, 330],
                             itemStyle: {
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                    { offset: 0, color: '#3498DB' },
-                                    { offset: 1, color: '#2980B9' }
+                                    { offset: 0, color: '#2d6ebd' },
+                                    { offset: 1, color: '#1a4f8a' }
                                 ])
                             }
                         },
                         {
-                            name: '留言数量',
+                            name: '识别次数',
                             type: 'line',
                             data: [150, 232, 201, 154, 190, 330],
                             itemStyle: {
-                                color: '#2ECC71'
+                                color: '#2d8a3e'
                             },
                             lineStyle: {
-                                color: '#2ECC71'
+                                color: '#2d8a3e'
+                            }
+                        },
+                        {
+                            name: 'AI对话量',
+                            type: 'line',
+                            data: [98, 177, 155, 167, 210, 287],
+                            itemStyle: {
+                                color: '#d9534f'
+                            },
+                            lineStyle: {
+                                color: '#d9534f'
                             }
                         }
                     ]
                 };
-                
+
                 chart.setOption(option);
-                
+
                 // 响应窗口大小变化
-                window.addEventListener('resize', function() {
+                window.addEventListener('resize', function () {
                     chart.resize();
                 });
             }
+        }
 
-            // 初始化最近活动列表
-            $('.activity-item').hover(
-                function() {
-                    $(this).css('background-color', 'rgba(255, 255, 255, 0.1)');
-                },
-                function() {
-                    $(this).css('background-color', 'transparent');
+        // 初始化审批页面
+        function initApprovalPage() {
+            // 初始化筛选按钮
+            $('.filter-btn').click(function () {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                const filter = $(this).data('filter');
+
+                if (filter === 'all') {
+                    $('.approval-item').show();
+                } else {
+                    $('.approval-item').hide();
+                    $(`.approval-item[data-${filter === 'pending' || filter === 'approved' || filter === 'rejected' ? 'status' : 'type'}="${filter}"]`).show();
                 }
-            );
+            });
+
+            // 初始化搜索功能
+            $('#approval-search').on('keyup', function () {
+                const value = $(this).val().toLowerCase();
+                $('.approval-item').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // 初始化分页功能
+            $('.pagination-btn').click(function () {
+                $('.pagination-btn').removeClass('active');
+                $(this).addClass('active');
+                // 这里可以添加分页逻辑
+            });
+        }
+
+        // 初始化用户分析页面
+        function initUserAnalytics() {
+            // 用户识别数据分析图表
+            const recognitionChart = echarts.init(document.getElementById('recognition-chart'));
+            recognitionChart.setOption({
+                title: {
+                    text: '用户识别数据分析',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['识别次数', '识别成功率'],
+                    bottom: 10
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '次数',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '成功率',
+                        min: 0,
+                        max: 100,
+                        axisLabel: {
+                            formatter: '{value}%'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '识别次数',
+                        type: 'bar',
+                        data: [320, 332, 301, 334, 390, 430]
+                    },
+                    {
+                        name: '识别成功率',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [82, 85, 88, 87, 90, 93]
+                    }
+                ]
+            });
+
+            // AI对话主题分布图表
+            const conversationChart = echarts.init(document.getElementById('conversation-chart'));
+            conversationChart.setOption({
+                title: {
+                    text: 'AI对话主题分布',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                },
+                series: [
+                    {
+                        name: '对话主题',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [
+                            { value: 1048, name: '药效咨询' },
+                            { value: 735, name: '植物识别' },
+                            { value: 580, name: '用药指导' },
+                            { value: 484, name: '药材产地' },
+                            { value: 300, name: '其他问题' }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            });
+
+            // 知识图谱使用情况图表
+            const graphUsageChart = echarts.init(document.getElementById('graph-usage-chart'));
+            graphUsageChart.setOption({
+                title: {
+                    text: '知识图谱使用情况',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                legend: {
+                    data: ['查询次数', '平均查询时长'],
+                    bottom: 10
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '其他']
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '次数',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '时长(分钟)',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '查询次数',
+                        type: 'bar',
+                        data: [420, 332, 501, 634, 290, 130]
+                    },
+                    {
+                        name: '平均查询时长',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [3.2, 2.8, 4.5, 3.7, 2.5, 1.8]
+                    }
+                ]
+            });
+
+            // 用户地域分布图表
+            const userLocationChart = echarts.init(document.getElementById('user-location-chart'));
+            userLocationChart.setOption({
+                title: {
+                    text: '用户地域分布',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} (用户)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['用户数量']
+                },
+                series: [
+                    {
+                        name: '用户数量',
+                        type: 'pie',
+                        radius: ['30%', '70%'],
+                        center: ['50%', '50%'],
+                        roseType: 'area',
+                        itemStyle: {
+                            borderRadius: 5
+                        },
+                        label: {
+                            show: true,
+                            formatter: '{b}: {c}'
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        data: [
+                            { name: '西藏', value: 420 },
+                            { name: '青海', value: 280 },
+                            { name: '四川', value: 350 },
+                            { name: '云南', value: 310 },
+                            { name: '甘肃', value: 230 },
+                            { name: '北京', value: 180 },
+                            { name: '上海', value: 150 }
+                        ]
+                    }
+                ]
+            });
+
+            // 热门搜索词图表
+            const searchKeywordsChart = echarts.init(document.getElementById('search-keywords-chart'));
+            searchKeywordsChart.setOption({
+                title: {
+                    text: '热门搜索词',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                series: [
+                    {
+                        type: 'wordCloud',
+                        shape: 'circle',
+                        left: 'center',
+                        top: 'center',
+                        width: '80%',
+                        height: '80%',
+                        right: null,
+                        bottom: null,
+                        sizeRange: [12, 60],
+                        rotationRange: [-90, 90],
+                        rotationStep: 45,
+                        gridSize: 8,
+                        drawOutOfBound: false,
+                        textStyle: {
+                            fontFamily: 'sans-serif',
+                            fontWeight: 'bold',
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            focus: 'self',
+                            textStyle: {
+                                shadowBlur: 10,
+                                shadowColor: '#333'
+                            }
+                        },
+                        data: [
+                            { name: '白术', value: 10000 },
+                            { name: '藏红花', value: 8500 },
+                            { name: '冬虫夏草', value: 8000 },
+                            { name: '人参', value: 7800 },
+                            { name: '黄芪', value: 6500 },
+                            { name: '当归', value: 6000 },
+                            { name: '三七', value: 5800 },
+                            { name: '枸杞', value: 5500 },
+                            { name: '灵芝', value: 5000 },
+                            { name: '党参', value: 4500 },
+                            { name: '川芎', value: 4300 },
+                            { name: '红景天', value: 4000 },
+                            { name: '天麻', value: 3800 },
+                            { name: '黄连', value: 3500 },
+                            { name: '甘草', value: 3300 },
+                            { name: '金银花', value: 3000 },
+                            { name: '板蓝根', value: 2800 },
+                            { name: '西洋参', value: 2500 },
+                            { name: '丹参', value: 2300 },
+                            { name: '桂枝', value: 2000 }
+                        ]
+                    }
+                ]
+            });
+
+            function resizeAllCharts() {
+                if (recognitionChart) recognitionChart.resize();
+                if (conversationChart) conversationChart.resize();
+                if (graphUsageChart) graphUsageChart.resize();
+                if (userLocationChart) userLocationChart.resize();
+                if (searchKeywordsChart) searchKeywordsChart.resize();
+            }
+
+            // 响应窗口大小变化
+            window.addEventListener('resize', resizeAllCharts);
+        }
+
+        // 初始化数据库管理页面
+        function initDatabasePage() {
+            // 初始化标签页切换
+            $('.tab').click(function () {
+                $('.tab').removeClass('active');
+                $(this).addClass('active');
+
+                const tabId = $(this).data('tab');
+                $('.tab-content').removeClass('active');
+                $(`#${tabId}`).addClass('active');
+            });
+
+            // 初始化植物添加表单显示/隐藏
+            $('#show-add-plant-form').click(function () {
+                $('#add-plant-form-container').slideToggle();
+            });
+
+            // 初始化药材添加表单显示/隐藏
+            $('#show-add-herb-form').click(function () {
+                $('#add-herb-form-container').slideToggle();
+            });
+
+            // 初始化药方添加表单显示/隐藏
+            $('#show-add-prescription-form').click(function () {
+                $('#add-prescription-form-container').slideToggle();
+            });
+
+            // 初始化文献添加表单显示/隐藏
+            $('#show-add-literature-form').click(function () {
+                $('#add-literature-form-container').slideToggle();
+            });
+
+            // 初始化编辑按钮事件
+            $('.edit-btn').click(function () {
+                const id = $(this).data('id');
+                // 这里可以添加获取数据并填充表单的逻辑
+                $('#edit-form-container').slideDown();
+                $('#edit-id').val(id);
+
+                // 模拟填充表单数据
+                const row = $(this).closest('tr');
+                $('#edit-plant-name').val(row.find('td:eq(1)').text());
+                $('#edit-plant-tibetan-name').val(row.find('td:eq(2)').text());
+                $('#edit-plant-alias').val(row.find('td:eq(3)').text());
+                $('#edit-plant-function').val(row.find('td:eq(4)').text());
+            });
+
+            // 初始化删除按钮事件
+            $('.delete-btn').click(function () {
+                const id = $(this).data('id');
+                if (confirm('确定要删除这条记录吗')) {
+                    // 这里可以添加删除数据的逻辑
+                    $(this).closest('tr').fadeOut();
+                }
+            });
+
+            // 初始化表单提交事件
+            $('#add-form').submit(function (e) {
+                e.preventDefault();
+                // 这里可以添加提交表单的逻辑
+                alert('数据添加成功！');
+                $('#add-form-container').slideUp();
+                $('#add-form')[0].reset();
+
+                // 模拟添加新行
+                const newRow = `
+                    <tr>
+                        <td>6</td>
+                        <td>${$('#plant-name').val()}</td>
+                        <td>${$('#plant-tibetan-name').val()}</td>
+                        <td>${$('#plant-alias').val()}</td>
+                        <td>${$('#plant-function').val()}</td>
+                        <td>
+                            <button class="action-btn edit-btn" data-id="6">编辑</button>
+                            <button class="action-btn delete-btn" data-id="6">删除</button>
+                        </td>
+                    </tr>
+                `;
+                $('.data-table tbody').append(newRow);
+
+                // 重新绑定事件
+                $('.edit-btn').last().click(function () {
+                    const id = $(this).data('id');
+                    $('#edit-form-container').slideDown();
+                    $('#edit-id').val(id);
+
+                    const row = $(this).closest('tr');
+                    $('#edit-plant-name').val(row.find('td:eq(1)').text());
+                    $('#edit-plant-tibetan-name').val(row.find('td:eq(2)').text());
+                    $('#edit-plant-alias').val(row.find('td:eq(3)').text());
+                    $('#edit-plant-function').val(row.find('td:eq(4)').text());
+                });
+
+                $('.delete-btn').last().click(function () {
+                    const id = $(this).data('id');
+                    if (confirm('确定要删除这条记录吗？')) {
+                        $(this).closest('tr').fadeOut();
+                    }
+                });
+            });
+
+            $('#edit-form').submit(function (e) {
+                e.preventDefault();
+                // 这里可以添加更新数据的逻辑
+                const id = $('#edit-id').val();
+
+                // 模拟更新表格行
+                const row = $(`.delete-btn[data-id="${id}"]`).closest('tr');
+                row.find('td:eq(1)').text($('#edit-plant-name').val());
+                row.find('td:eq(2)').text($('#edit-plant-tibetan-name').val());
+                row.find('td:eq(3)').text($('#edit-plant-alias').val());
+                row.find('td:eq(4)').text($('#edit-plant-function').val());
+
+                alert(`记录 ${id} 已更新`);
+                $('#edit-form-container').slideUp();
+                $('#edit-form')[0].reset();
+            });
+
+            // 初始化取消按钮事件
+            $('.cancel-btn').click(function () {
+                $(this).closest('.form-container').slideUp();
+            });
+
+            // 初始化搜索功能
+            $('#plants-search').on('keyup', function () {
+                const value = $(this).val().toLowerCase();
+                $('.data-table tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // 初始化分页功能
+            $('.pagination-btn').click(function () {
+                $('.pagination-btn').removeClass('active');
+                $(this).addClass('active');
+                // 这里可以添加分页逻辑
+            });
+        }
+
+        // 查看审批详情
+        function viewApprovalDetail(id, type) {
+            const modal = document.getElementById('detail-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalImage = document.getElementById('modal-image');
+            const modalInfo = document.getElementById('modal-info');
+
+            const placeholderImage = '/placeholder.svg?height=400&width=600';
+            modalImage.src = placeholderImage;
+
+            // 设置当前项目ID，用于批准/拒绝操作
+            modal.dataset.itemId = id;
+            modal.dataset.itemType = type;
+
+            // 根据类型设置不同的内容
+            if (type === 'training') {
+                modalTitle.textContent = '训练图片集详情';
+                modalImage.src = '/placeholder.svg?height=400&width=600';
+
+                // 训练图片集详情
+                modalInfo.innerHTML = `
+                    <div class="info-row">
+                        <div class="info-label">上传者:</div>
+                        <div class="info-value">user123</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">上传时间:</div>
+                        <div class="info-value">2025-04-05 14:32</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">图片数量:</div>
+                        <div class="info-value">15张</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">描述:</div>
+                        <div class="info-value">这是一组藏药植物的高清图片，包含多个角度的拍摄，可用于提高识别准确率。</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">用途:</div>
+                        <div class="info-value">用于训练图像识别模型，提高识别准确率。</div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 10px; font-weight: 600;">图片预览</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                            <img src="/placeholder.svg?height=400&width=600" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px;">
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'graph') {
+                modalTitle.textContent = '知识图谱内容详情';
+                modalImage.src = '/placeholder.svg?height=400&width=600';
+
+                // 知识图谱内容详情
+                modalInfo.innerHTML = `
+                    <div class="info-row">
+                        <div class="info-label">提交者:</div>
+                        <div class="info-value">researcher789</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">提交时间:</div>
+                        <div class="info-value">2025-04-03 16:45</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">修改内容:</div>
+                        <div class="info-value">药效关联</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">描述:</div>
+                        <div class="info-value">根据最新研究，更新了白术的药效关联数据，增加了与其他药材的配伍关系。</div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 10px; font-weight: 600;">修改详情</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left; background-color: #f8f9fa;">字段</th>
+                                    <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left; background-color: #f8f9fa;">原值</th>
+                                    <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left; background-color: #f8f9fa;">新值</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">药效</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">健脾益气，燥湿利水，止汗</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">健脾益气，燥湿利水，止汗，安胎</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">配伍关系</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">茯苓、甘草</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">茯苓、甘草、黄芪、党参</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">研究文献</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">2篇</td>
+                                    <td style="border: 1px solid #dee2e6; padding: 8px;">5篇</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // 显示模态框
+            modal.style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+        }
+
+        // 批准项目
+        function approveItem() {
+            const modal = document.getElementById('detail-modal');
+            const id = modal.dataset.itemId;
+            const type = modal.dataset.itemType;
+
+            // 这里可以添加批准逻辑
+            alert(`已批准 ID: ${id}, 类型: ${type} 的项目`);
+
+            // 更新UI
+            $(`.approval-item[data-type="${type}"]`).filter(function () {
+                return $(this).find('.view-btn').attr('onclick').includes(`viewApprovalDetail(${id}`);
+            }).find('.tag-pending').removeClass('tag-pending').addClass('tag-approved').text('已批准');
+
+            // 关闭模态框
+            closeModal();
+        }
+
+        // 拒绝项目
+        function rejectItem() {
+            const modal = document.getElementById('detail-modal');
+            const id = modal.dataset.itemId;
+            const type = modal.dataset.itemType;
+
+            // 这里可以添加拒绝逻辑
+            const reason = prompt('请输入拒绝原因:');
+            if (reason) {
+                alert(`已拒绝 ID: ${id}, 类型: ${type} 的项目，原因: ${reason}`);
+
+                // 更新UI
+                $(`.approval-item[data-type="${type}"]`).filter(function () {
+                    return $(this).find('.view-btn').attr('onclick').includes(`viewApprovalDetail(${id}`);
+                }).find('.tag-pending').removeClass('tag-pending').addClass('tag-rejected').text('已拒绝');
+
+                // 关闭模态框
+                closeModal();
+            }
+        }
+
+        // 直接批准项目
+        function approveItemDirect(id) {
+            // 这里可以添加批准逻辑
+            alert(`已批准 ID: ${id} 的项目`);
+
+            // 更新UI
+            $(`.approval-item`).filter(function () {
+                return $(this).find('.view-btn').attr('onclick').includes(`viewApprovalDetail(${id}`);
+            }).find('.tag-pending').removeClass('tag-pending').addClass('tag-approved').text('已批准');
+        }
+
+        // 直接拒绝项目
+        function rejectItemDirect(id) {
+            // 这里可以添加拒绝逻辑
+            const reason = prompt('请输入拒绝原因:');
+            if (reason) {
+                alert(`已拒绝 ID: ${id} 的项目，原因: ${reason}`);
+
+                // 更新UI
+                $(`.approval-item`).filter(function () {
+                    return $(this).find('.view-btn').attr('onclick').includes(`viewApprovalDetail(${id}`);
+                }).find('.tag-pending').removeClass('tag-pending').addClass('tag-rejected').text('已拒绝');
+            }
         }
 
         function logout() {
             if (confirm('确定要退出系统吗？')) {
                 // 可以在这里添加清除会话的逻辑
-                window.location.href = 'recognize.html';
+                window.location.href = 'recognize_v.html';
             }
+        }
+
+        // 当点击窗口时，如果点击的是模态框外部，关闭模态框
+        window.onclick = function (event) {
+            const modal = document.getElementById('detail-modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        $('.approval-item img[src="/images/plant-sample.jpg"]').attr('src', '/placeholder.svg?height=180&width=300');
+        $('.approval-item img[src="/images/graph-sample.jpg"]').attr('src', '/placeholder.svg?height=180&width=300');
+
+        // Add this function to the global scope to properly initialize the wordCloud chart
+        // This is needed because wordCloud is a special chart type that requires specific initialization
+        function initializeWordCloudChart() {
+            // Create a wordCloud chart using canvas instead of requiring external ECharts extension
+            const searchKeywordsChartElement = document.getElementById('search-keywords-chart');
+            if (searchKeywordsChartElement) {
+                const searchKeywordsChart = echarts.init(searchKeywordsChartElement);
+
+                // Use a regular bar chart instead of wordCloud since wordCloud requires an extension
+                searchKeywordsChart.setOption({
+                    title: {
+                        text: '热门搜索词',
+                        left: 'center',
+                        textStyle: {
+                            color: '#222222'
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '当归', '三七', '枸杞', '灵芝', '党参'],
+                        axisLabel: {
+                            interval: 0,
+                            rotate: 45
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '搜索次数'
+                    },
+                    series: [
+                        {
+                            data: [10000, 8500, 8000, 7800, 6500, 6000, 5800, 5500, 5000, 4500],
+                            type: 'bar',
+                            itemStyle: {
+                                color: function (params) {
+                                    // Generate different colors for each bar
+                                    const colors = ['#1a4f8a', '#2d6ebd', '#2d8a3e', '#d9534f', '#f39c12',
+                                        '#5bc0de', '#428bca', '#5cb85c', '#d9534f', '#f0ad4e'];
+                                    return colors[params.dataIndex % colors.length];
+                                }
+                            }
+                        }
+                    ],
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '15%',
+                        containLabel: true
+                    }
+                });
+
+                // Resize handler
+                window.addEventListener('resize', function () {
+                    searchKeywordsChart.resize();
+                });
+
+                return searchKeywordsChart;
+            }
+            return null;
+        }
+
+        // Replace the wordCloud implementation in initUserAnalytics
+        // Change the initUserAnalytics function to use the new implementation for search keywords chart
+        function initUserAnalytics() {
+            // User recognition data analysis chart
+            const recognitionChart = echarts.init(document.getElementById('recognition-chart'));
+            recognitionChart.setOption({
+                title: {
+                    text: '用户识别数据分析',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['识别次数', '识别成功率'],
+                    bottom: 10
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月']
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '次数',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '成功率',
+                        min: 0,
+                        max: 100,
+                        axisLabel: {
+                            formatter: '{value}%'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '识别次数',
+                        type: 'bar',
+                        data: [320, 332, 301, 334, 390, 430]
+                    },
+                    {
+                        name: '识别成功率',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [82, 85, 88, 87, 90, 93]
+                    }
+                ]
+            });
+
+            // AI conversation topics chart
+            const conversationChart = echarts.init(document.getElementById('conversation-chart'));
+            conversationChart.setOption({
+                title: {
+                    text: 'AI对话主题分布',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                },
+                series: [
+                    {
+                        name: '对话主题',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [
+                            { value: 1048, name: '药效咨询' },
+                            { value: 735, name: '植物识别' },
+                            { value: 580, name: '用药指导' },
+                            { value: 484, name: '药材产地' },
+                            { value: 300, name: '其他问题' }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            });
+
+            // Knowledge graph usage chart
+            const graphUsageChart = echarts.init(document.getElementById('graph-usage-chart'));
+            graphUsageChart.setOption({
+                title: {
+                    text: '知识图谱使用情况',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                legend: {
+                    data: ['查询次数', '平均查询时长'],
+                    bottom: 10
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '其他']
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '次数',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '时长(分钟)',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '查询次数',
+                        type: 'bar',
+                        data: [420, 332, 501, 634, 290, 130]
+                    },
+                    {
+                        name: '平均查询时长',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [3.2, 2.8, 4.5, 3.7, 2.5, 1.8]
+                    }
+                ]
+            });
+
+            // User location chart - now using a pie chart instead of a map
+            const userLocationChart = echarts.init(document.getElementById('user-location-chart'));
+            userLocationChart.setOption({
+                title: {
+                    text: '用户地域分布',
+                    left: 'center',
+                    textStyle: {
+                        color: '#222222'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} (用户)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['用户数量']
+                },
+                series: [
+                    {
+                        name: '用户数量',
+                        type: 'pie',
+                        radius: ['30%', '70%'],
+                        center: ['50%', '50%'],
+                        roseType: 'area',
+                        itemStyle: {
+                            borderRadius: 5
+                        },
+                        label: {
+                            show: true,
+                            formatter: '{b}: {c}'
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        data: [
+                            { name: '西藏', value: 420 },
+                            { name: '青海', value: 280 },
+                            { name: '四川', value: 350 },
+                            { name: '云南', value: 310 },
+                            { name: '甘肃', value: 230 },
+                            { name: '北京', value: 180 },
+                            { name: '上海', value: 150 }
+                        ]
+                    }
+                ]
+            });
+
+            // Search keywords chart - initialize with the new function
+            const searchKeywordsChart = initializeWordCloudChart();
+
+            // Response to window size changes
+            window.addEventListener('resize', function () {
+                if (recognitionChart) recognitionChart.resize();
+                if (conversationChart) conversationChart.resize();
+                if (graphUsageChart) graphUsageChart.resize();
+                if (userLocationChart) userLocationChart.resize();
+                if (searchKeywordsChart) searchKeywordsChart.resize();
+            });
         }
     </script>
 </body>
 
 </html>
-

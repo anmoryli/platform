@@ -30,8 +30,7 @@ CREATE TABLE `MedicinalPlants` (
 
 -- ----------------------------
 -- Records of MedicinalPlants
--- ----------------------------
-INSERT INTO `MedicinalPlants` (`name`, `category`, `efficacyScore`, `distribution`, `description`, `usage`) VALUES
+-- ----------------------------INSERT INTO `MedicinalPlants` (`name`, `category`, `efficacyScore`, `distribution`, `description`, `usage`) VALUES
                                                                                                                 ('丹参', '根茎类', 120, '四川、云南', '活血化瘀', '用于心脑血管疾病'),
                                                                                                                 ('黄芪', '根茎类', 132, '内蒙古、甘肃', '补气固表', '用于体虚乏力'),
                                                                                                                 ('冬虫夏草', '补药', 9, '青藏高原', '一种珍贵的药材，具有极高的药用价值。', '增强免疫力，抗疲劳'),

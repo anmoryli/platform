@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
  * @author Anmory/李梦杰
  * @description TODO
@@ -15,8 +17,10 @@ import lombok.Setter;
 @Data
 public class User {
     private int id;
-    private String userName;
+    private String username;
     private String password;
     private int isAdmin;
     private String email;
+    private Date createTime;
+    private Date updateTime;
 }
