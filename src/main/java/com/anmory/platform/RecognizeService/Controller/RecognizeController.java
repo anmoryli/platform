@@ -34,7 +34,7 @@ public class RecognizeController {
             String pythonScript = "/root/predict.py"; // Python 脚本路径
 
             // 指定临时文件目录
-            String tempDirPath = "/etc/nginx/images/tmp";
+            String tempDirPath = "/usr/local/nginx/images/tmp";
             File tempDir = new File(tempDirPath);
 
             // 确保目录存在

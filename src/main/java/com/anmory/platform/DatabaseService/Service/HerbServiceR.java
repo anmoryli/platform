@@ -42,4 +42,8 @@ public class HerbServiceR {
     public int getPlantIdByPlantName(String plantName) {
         return herbMapper.getPlantIdByPlantName(plantName);
     }
+
+    public int deleteHerb(int id) {
+        return herbMapper.deleteHerb(id);
+    }
 }

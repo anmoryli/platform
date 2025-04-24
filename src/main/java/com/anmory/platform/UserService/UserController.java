@@ -34,6 +34,27 @@ public class UserController {
         return false;
     }
 
+    @RequestMapping("/confirmLogin")
+    public boolean confirmLogin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        System.out.println(user);
+        return user != null;
+    }
+
+    @RequestMapping("/adminLogin")
+    public User adminLogin(String username, String password, HttpSession session) {
+        if(!StringUtils.hasLength(username)) {
+            return null;
+        }
+        User user = userService.getByName(username);
+        if(user.getPassword().equals(password)) {
+            session.setAttribute("session_user_key",user);
+            return user;
+        }
+        return null;
+    }
+
     @RequestMapping("register")
     public int register(String username, String password) {
         if(!StringUtils.hasLength(username)) {

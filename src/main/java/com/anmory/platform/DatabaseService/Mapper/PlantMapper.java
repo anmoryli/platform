@@ -1,6 +1,7 @@
 package com.anmory.platform.DatabaseService.Mapper;
 
 import com.anmory.platform.DatabaseService.Dao.Plant;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -21,4 +22,7 @@ public interface PlantMapper {
 
     @Select("select * from medicine.plant")
     List<Plant> selectAll();
+
+    @Delete("delete from medicine.plant where medicine.plant.plant_id = #{id}")
+    int deletePlant(int id);
 }

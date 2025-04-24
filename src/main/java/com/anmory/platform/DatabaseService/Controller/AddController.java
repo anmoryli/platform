@@ -1,6 +1,7 @@
 package com.anmory.platform.DatabaseService.Controller;
 
 import com.anmory.platform.DatabaseService.Service.HerbServiceR;
+import com.anmory.platform.DatabaseService.Service.LiteratureService;
 import com.anmory.platform.DatabaseService.Service.PlantService;
 import com.anmory.platform.DatabaseService.Service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +28,23 @@ public class AddController {
     PlantService plantService;
     @Autowired
     HerbServiceR herbServiceR;
-
     @Autowired
     PrescriptionService prescriptionService;
+    @Autowired
+    LiteratureService literatureService;
 
     @RequestMapping("/addPlant")
     public int addPlant(String plantName,
-                           String plantLatin,
-                           String plantAlias,
-                           String plantTibetanName,
-                           String plantFamilyName,
-                           String plantGenusName,
-                           MultipartFile file,
-                           String plantFeatures,
-                           String plantOrigin,
-                           String plantProtectLevel,
-                           String notes
+                        String plantLatin,
+                        String plantAlias,
+                        String plantTibetanName,
+                        String plantFamilyName,
+                        String plantGenusName,
+                        MultipartFile file,
+                        String plantFeatures,
+                        String plantOrigin,
+                        String plantProtectLevel,
+                        String notes
     ) throws IOException {
         String imgPath = "/usr/local/nginx/images/plant/" + file.getOriginalFilename();
         File dir = new File("/usr/local/nginx/images/plant/");
@@ -89,22 +91,26 @@ public class AddController {
                        String clinicalApplication,
                        String pharmacologicalEffect,
                        String notes) {
-        int plantId = herbServiceR.getPlantIdByPlantName(plantName);
-        System.out.println(plantId);
-        return herbServiceR.insertHerb(
-                herbName,
-                plantId,
-                herbTibetanName,
-                herbAlias,
-                herbDescription,
-                partUsed,
-                herbFeatures,
-                flavorTropism,
-                functionIndication,
-                clinicalApplication,
-                pharmacologicalEffect,
-                notes
-        );
+        try {
+            int plantId = herbServiceR.getPlantIdByPlantName(plantName);
+            System.out.println(plantId);
+            return herbServiceR.insertHerb(
+                    herbName,
+                    plantId,
+                    herbTibetanName,
+                    herbAlias,
+                    herbDescription,
+                    partUsed,
+                    herbFeatures,
+                    flavorTropism,
+                    functionIndication,
+                    clinicalApplication,
+                    pharmacologicalEffect,
+                    notes
+            );
+        }catch (Exception e) {
+            return 0;
+        }
     }
 
     @RequestMapping("/addPrescription")
@@ -164,6 +170,39 @@ public class AddController {
                 version,
                 medicineIds,
                 isPublic
+        );
+    }
+
+    @RequestMapping("/addLiterature")
+    public int addLiterature(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String tibetanTitle,
+            @RequestParam(required = false) String authors,
+            @RequestParam(required = false) Integer publicationYear,
+            @RequestParam(required = false) String journalOrPublisher,
+            @RequestParam(required = false) String volumeIssue,
+            @RequestParam(required = false) String pages,
+            @RequestParam(required = false) String abstractText,
+            @RequestParam(required = false) String downloadLink,
+            @RequestParam(required = false) String filePath,
+            @RequestParam(required = false) String mainPlant,
+            @RequestParam(required = false) String researchField,
+            @RequestParam(required = false) String keywords
+    ) {
+        return literatureService.insertLiterature(
+                title,
+                tibetanTitle,
+                authors,
+                publicationYear,
+                journalOrPublisher,
+                volumeIssue,
+                pages,
+                abstractText,
+                downloadLink,
+                filePath,
+                mainPlant,
+                researchField,
+                keywords
         );
     }
 }

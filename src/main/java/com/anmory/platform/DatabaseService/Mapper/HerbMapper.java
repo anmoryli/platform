@@ -1,10 +1,7 @@
 package com.anmory.platform.DatabaseService.Mapper;
 
 import com.anmory.platform.DatabaseService.Dao.Herb;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.List;
@@ -46,4 +43,7 @@ public interface HerbMapper {
 
     @Select("select * from medicine.plant where medicine.plant.plant_name = #{plantName}")
     int getPlantIdByPlantName(String plantName);
+
+    @Delete("delete from medicine.herb where herb_id=#{id}")
+    int deleteHerb(int id);
 }

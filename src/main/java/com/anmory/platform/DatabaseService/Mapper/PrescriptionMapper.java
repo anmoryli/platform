@@ -1,10 +1,7 @@
 package com.anmory.platform.DatabaseService.Mapper;
 
 import com.anmory.platform.DatabaseService.Dao.Prescription;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -49,4 +46,7 @@ public interface PrescriptionMapper {
             @Param("medicineIds") String medicineIds,
             @Param("isPublic") Boolean isPublic
     );
+
+    @Delete("delete from medicine.prescription where prescription_id=#{id}")
+    int deletePre(int id);
 }

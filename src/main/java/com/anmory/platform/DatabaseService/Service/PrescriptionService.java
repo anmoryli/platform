@@ -25,4 +25,8 @@ public class PrescriptionService {
     public List<Prescription> selectAll() {
         return prescriptionMapper.selectAll();
     }
+
+    public int deletePre(int id) {
+        return prescriptionMapper.deletePre(id);
+    }
 }

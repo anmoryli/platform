@@ -45,4 +45,8 @@ public class PlantService {
     public List<Plant> selectAll() {
         return plantMapper.selectAll();
     }
+
+    public int deletePlant(int id) {
+        return plantMapper.deletePlant(id);
+    }
 }
