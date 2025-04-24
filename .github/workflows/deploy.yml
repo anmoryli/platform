@@ -12,7 +12,7 @@ jobs:
     steps:
       # 1. 检出代码
       - name: Checkout code
-        uses: actions/checkout@v4  # 更新到最新版本
+        uses: actions/checkout@v4
 
       # 2. 设置 JDK 17
       - name: Set up JDK 17
@@ -23,9 +23,18 @@ jobs:
 
       # 3. 使用 Maven 构建项目
       - name: Build with Maven
-        run: mvn clean install -DskipTests  # 跳过测试以加快构建，可根据需要调整
+        run: mvn clean install -DskipTests
 
-      # 4. 将构建的 JAR 文件传输到服务器
+      # 4. 验证 JAR 文件是否存在
+      - name: Check JAR file
+        run: |
+          ls -l target/
+          if [ ! -f "target/platform.jar" ]; then
+            echo "Error: target/platform.jar not found"
+            exit 1
+          fi
+
+      # 5. 将构建的 JAR 文件传输到服务器
       - name: Copy JAR to server
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -33,10 +42,10 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "target/platform.jar"  # Maven 构建生成的 JAR 文件
-          target: "/root/source/repo/target/"  # 服务器上的目标路径，与 deploy.sh 一致
+          source: "target/platform.jar"
+          target: "/root/source/repo/target/"
 
-      # 5. 执行服务器上的部署脚本
+      # 6. 执行服务器上的部署脚本
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -47,4 +56,4 @@ jobs:
           script: |
             cd /root/platform
             chmod +x deploy.sh
-            ./deploy.sh
+            ./deploy.sh || { cat platform.log; exit 1; }
