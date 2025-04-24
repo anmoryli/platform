@@ -52,6 +52,7 @@ public class BotController {
             ObjectMapper objectMapper = new ObjectMapper();
 
             // 构建请求体
+//
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("model", "4.0Ultra"); // 根据需求选择模型版本
             List<Map<String, String>> messages = new ArrayList<>();
