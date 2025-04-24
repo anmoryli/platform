@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
+          distribution: 'adopt'
 
       # 3. 使用 Maven 构建项目
       - name: Build with Maven
