@@ -23,7 +23,7 @@ create table user_info(
 
 insert into user_info(username,password,is_admin,email) values ('anmory','lmjnb666',1,'anmory@qq.com'),
                                                                 ('xyh','xyh',1,'user@163.com'),
-                                                                ('zxj','zxj',1,'user1@163.com'),
+                                                                ('zzw','zzw',1,'user1@163.com'),
                                                                 ('user2','123456',0,'user2@163.com'),
                                                                 ('user3','123456',0,'user3@163.com'),
                                                                 ('user4','123456',0,'user4@163.com'),

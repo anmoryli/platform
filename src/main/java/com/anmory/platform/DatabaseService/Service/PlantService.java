@@ -1,6 +1,7 @@
 package com.anmory.platform.DatabaseService.Service;
 
 import com.anmory.platform.DatabaseService.Dao.Plant;
+import com.anmory.platform.DatabaseService.Dao.Relation;
 import com.anmory.platform.DatabaseService.Mapper.PlantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,9 @@ public class PlantService {
 
     public int deletePlant(int id) {
         return plantMapper.deletePlant(id);
+    }
+
+    public List<Relation> selectRelation() {
+        return plantMapper.selectRelation();
     }
 }

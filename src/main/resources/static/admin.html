@@ -1406,10 +1406,10 @@
     <h3>数据库管理</h3>
     
     <div class="tabs">
-        <div class="tab active" data-tab="plants-tab">植物数据</div>
-        <div class="tab" data-tab="herb-tab">药材数据</div>
-        <div class="tab" data-tab="prescription-tab">药方数据</div>
-        <div class="tab" data-tab="literature-tab">文献数据</div>
+        <div class="tab active" data-tab="plants-tab" onclick=refreshPlantTable()>植物数据</div>
+        <div class="tab" data-tab="herb-tab" onclick=refreshHerbTable()>药材数据</div>
+        <div class="tab" data-tab="prescription-tab" onclick=refreshPrescriptionTable()>药方数据</div>
+        <div class="tab" data-tab="literature-tab" onclick=refreshLiteratureTable()>文献数据</div>
         <div class="tab" data-tab="users-tab">用户数据</div>
     </div>
     
@@ -1533,7 +1533,7 @@
             </form>
         </div>
 
-        <table class="data-table">
+        <table class="data-table plant-table">
             <thead>
                 <tr>
                     <th>植物ID</th>
@@ -1557,11 +1557,27 @@
 <!--                    <td>黄芪属</td>-->
 <!--                    <td>-->
 <!--                        <button class="action-btn edit-btn" data-id="5">编辑</button>-->
-<!--                        <button class="action-btn delete-btn" data-id="5">删除</button>-->
+<!--                        <button class="action-btn delete-btn plant-delete" data-id="5">删除</button>-->
 <!--                    </td>-->
 <!--                </tr>-->
             </tbody>
         </table>
+
+        <!-- 新增模块：植物与药材关联 -->
+    <div class="admin-section" style="margin-top: 20px;">
+        <h3>植物与药材关联</h3>
+        <table class="data-table plant-herb-table">
+            <thead>
+                <tr>
+                    <th>植物ID</th>
+                    <th>植物名称</th>
+                    <th>关联药材名称</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
         <div class="pagination">
             <div class="pagination-btn active">1</div>
@@ -1635,7 +1651,7 @@
             </form>
         </div>
 
-        <table class="data-table">
+        <table class="data-table herb-table">
             <thead>
                 <tr>
                     <th>药材ID</th>
@@ -1658,7 +1674,7 @@
 <!--                    <td>健脾益气，燥湿利水</td>-->
 <!--                    <td>-->
 <!--                        <button class="action-btn edit-btn" data-id="1">编辑</button>-->
-<!--                        <button class="action-btn delete-btn" data-id="1">删除</button>-->
+<!--                        <button class="action-btn delete-btn herb-delete" data-id="1">删除</button>-->
 <!--                    </td>-->
 <!--                </tr>-->
             </tbody>
@@ -1740,7 +1756,7 @@
             </form>
         </div>
 
-        <table class="data-table">
+        <table class="data-table prescription-table">
             <thead>
                 <tr>
                     <th>药方ID</th>
@@ -1761,7 +1777,7 @@
 <!--                    <td>启用</td>-->
 <!--                    <td>-->
 <!--                        <button class="action-btn edit-btn" data-id="1">编辑</button>-->
-<!--                        <button class="action-btn delete-btn" data-id="1">删除</button>-->
+<!--                        <button class="action-btn delete-btn prescription-delete" data-id="1">删除</button>-->
 <!--                    </td>-->
 <!--                </tr>-->
             </tbody>
@@ -1837,7 +1853,7 @@ oxygen
             </form>
         </div>
 
-        <table class="data-table">
+        <table class="data-table literature-table">
             <thead>
                 <tr>
                     <th>文献ID</th>
@@ -1858,7 +1874,7 @@ oxygen
 <!--                    <td>藏红花</td>-->
 <!--                    <td>-->
 <!--                        <button class="action-btn edit-btn" data-id="1">编辑</button>-->
-<!--                        <button class="action-btn delete-btn" data-id="1">删除</button>-->
+<!--                        <button class="action-btn delete-btn literature-delete" data-id="1">删除</button>-->
 <!--                    </td>-->
 <!--                </tr>-->
             </tbody>
@@ -1911,9 +1927,9 @@ oxygen
                         success: function (response) {
                             alert('植物数据添加成功！');
                             // 展示植物添加页面
+                            refreshPlantTable();
                             loadDatabasePage();
                             // 刷新植物列表
-                            refreshPlantTable();
                             $('#add-plant-form-container').slideToggle();
                         },
                         error: function (error) {
@@ -2017,9 +2033,9 @@ oxygen
                             // 展现药方数据
                             loadDatabasePage();
                             // 模拟点击药方数据管理标签
+                            refreshPrescriptionTable();
                             $('#prescription-tab').click();
                             // 刷新药方列表
-                            refreshPrescriptionTable();
                             document.getElementById('add-herb-form').reset();
                             $('#add-prescription-form-container').slideToggle();
                         },
@@ -2064,8 +2080,8 @@ oxygen
                         success: function (response) {
                             alert('文献数据添加成功！');
                             // 模拟点击文献数据管理标签
-                            $('#literature-tab').click();
                             refreshLiteratureTable();
+                            $('#literature-tab').click();
                             document.getElementById('add-herb-form').reset();
                             $('#add-literature-form-container').slideToggle();
                         },
@@ -2081,194 +2097,320 @@ oxygen
         }
 
         function bindDeleteEvents() {
-            const tbody = document.querySelector('.data-table tbody');
-            if (!tbody) {
-                console.error('Table body not found! Ensure .data-table tbody exists before binding events.');
+            const tbodies = document.querySelectorAll('.data-table tbody');
+            if (tbodies.length === 0) {
+                console.error('没有这个表的 tbody 元素');
                 return;
             }
-            console.log('Binding delete events to:', tbody);
-            tbody.addEventListener('click', function (event) {
-                const deleteBtn = event.target.closest('.delete-btn');
-                if (deleteBtn) {
-                    const id = deleteBtn.getAttribute('data-id');
-                    const type = deleteBtn.getAttribute('data-type');
-                    console.log('Delete button clicked:', { id, type });
-                    if (id && type) {
-                        deleteItem(id, type);
-                    } else {
-                        console.error('Missing data-id or data-type:', deleteBtn);
+            tbodies.forEach(tbody => {
+                console.log('Binding delete events to:', tbody);
+                const newTbody = tbody.cloneNode(true);
+                tbody.parentNode.replaceChild(newTbody, tbody);
+                newTbody.addEventListener('click', function (event) {
+                    const deleteBtn = event.target.closest('.delete-btn, .herb-delete'); // 支持新 class
+                    if (deleteBtn) {
+                        event.stopPropagation();
+                        const id = deleteBtn.getAttribute('data-id');
+                        const type = deleteBtn.getAttribute('data-type');
+                        console.log('Delete button clicked:', { id, type });
+                        if (id && type) {
+                            deleteItem(id, type);
+                        } else {
+                            console.error('Missing data-id or data-type:', deleteBtn);
+                        }
                     }
-                }
+                });
             });
         }
 
-        // 通用的删除函数
         function deleteItem(id, type) {
             console.log('Deleting item:', { id, type });
-            if (!confirm(`确定要删除此${type}记录吗？`)) return;
-
+            if (!id || !type) {
+                console.error('Invalid id or type:', { id, type });
+                alert('删除失败：ID 或类型无效！');
+                return;
+            }
+            if (!confirm('确定要删除吗？')) {
+                return;
+            }
+            const deleteButtons = document.querySelectorAll('.delete-btn, .herb-delete'); // 支持新 class
+            deleteButtons.forEach(btn => btn.disabled = true);
+            console.log('Sending delete request to:', `/del/${type}?id=${id}`);
             $.ajax({
-                url: `/${type}/${id}`,
-                type: 'DELETE',
+                url: `/del/${type}?id=${id}`,
+                type: 'GET',
                 success: function (response) {
-                    console.log('Delete successful:', response);
-                    alert('删除成功！');
-                    // 刷新对应表格
-                    switch (type) {
-                        case 'literature':
-                            refreshLiteratureTable();
-                            break;
-                        case 'prescription':
-                            refreshPrescriptionTable();
-                            break;
-                        case 'herb':
-                            refreshHerbTable();
-                            break;
-                        case 'plant':
-                            refreshPlantTable();
-                            break;
-                        default:
-                            console.error('未知的表类型:', type);
+                    console.log(`Delete response for ${type}:`, response);
+                    if (response === 1) {
+                        alert('删除成功！');
+                        switch (type) {
+                            case 'literature':
+                                refreshLiteratureTable();
+                                break;
+                            case 'prescription':
+                                refreshPrescriptionTable();
+                                break;
+                            case 'herb':
+                                refreshHerbTable();
+                                break;
+                            case 'plant':
+                                refreshPlantTable();
+                                break;
+                            default:
+                                console.error('未知的表类型:', type);
+                                alert('删除失败：未知的表类型！');
+                        }
                     }
+                    else if (response === 0) {
+                        alert('删除失败：该植物已经和药材绑定，请先删除相关药材再删除！');
+                    }
+                    else {
+                        console.error(`删除${type}失败，返回值:`, response);
+                        alert(`删除失败：可能不存在该记录或无法删除！（返回值：${response}）`);
+                    }
+                    deleteButtons.forEach(btn => btn.disabled = false);
                 },
                 error: function (xhr) {
-                    console.error(`删除${type}失败:`, xhr);
-                    alert(xhr.responseJSON?.message || '删除失败，请稍后重试！');
+                    console.error(`删除${type}失败:`, xhr.status, xhr.responseText);
+                    alert(`删除失败：${xhr.responseJSON?.message || '服务器错误，请稍后重试！'}`);
+                    deleteButtons.forEach(btn => btn.disabled = false);
                 }
             });
         }
 
-        // 刷新文献数据表格
-        function refreshLiteratureTable() {
-            console.log('Refreshing literature table');
+        function refreshPlantTable() {
+            console.log('Refreshing plant table');
+            const plantTbody = document.querySelector('.plant-table tbody');
+            const herbTbody = document.querySelector('.plant-herb-table tbody');
+            if (!plantTbody || !herbTbody) {
+                console.error('Table bodies not found');
+                return;
+            }
+            plantTbody.innerHTML = '<tr><td colspan="8">加载中...</td></tr>';
+            herbTbody.innerHTML = '<tr><td colspan="3">加载中...</td></tr>';
+
+            // 获取植物数据
             $.ajax({
-                url: '/db/literature',
+                url: '/db/plant?t=' + new Date().getTime(),
                 type: 'GET',
-                success: function (data) {
-                    console.log('Literature data:', data);
-                    const tbody = document.querySelector('.data-table tbody');
-                    tbody.innerHTML = '';
-                    data.forEach(literature => {
+                success: function (plantData) {
+                    console.log('Plant data:', plantData);
+                    if (!plantData || !Array.isArray(plantData)) {
+                        console.error('Invalid or empty plant data');
+                        plantTbody.innerHTML = '<tr><td colspan="8">数据为空或格式错误</td></tr>';
+                        herbTbody.innerHTML = '<tr><td colspan="3">数据为空或格式错误</td></tr>';
+                        return;
+                    }
+
+                    // 渲染植物表格
+                    plantTbody.innerHTML = '';
+                    plantData.forEach(plant => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${literature.literatureId}</td>
-                            <td>${literature.title}</td>
-                            <td>${literature.authors}</td>
-                            <td>${literature.publicationYear}</td>
-                            <td>${literature.mainPlant}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${literature.literatureId}" data-type="literature">编辑</button>
-                                <button class="action-btn delete-btn" data-id="${literature.literatureId}" data-type="literature">删除</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
+                    <td>${plant.plantId || ''}</td>
+                    <td>${plant.plantName || ''}</td>
+                    <td>${plant.plantLatin || ''}</td>
+                    <td>${plant.plantTibetanName || ''}</td>
+                    <td>${plant.plantAlias || ''}</td>
+                    <td>${plant.plantFamilyName || ''}</td>
+                    <td>${plant.plantGenusName || ''}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${plant.plantId}" data-type="plant">编辑</button>
+                        <button class="action-btn delete-btn" data-id="${plant.plantId}" data-type="plant">删除</button>
+                    </td>
+                `;
+                        plantTbody.appendChild(row);
                     });
-                    bindDeleteEvents(); // 数据加载后绑定事件
+
+                    // 获取植物与药材关联数据
+                    $.ajax({
+                        url: '/db/relation',
+                        type: 'GET',
+                        success: function (relationData) {
+                            console.log('Relation data:', relationData);
+                            if (!relationData || !Array.isArray(relationData)) {
+                                console.error('Invalid or empty relation data');
+                                herbTbody.innerHTML = '<tr><td colspan="3">关联数据为空或格式错误</td></tr>';
+                                return;
+                            }
+
+                            // 按 plantId 分组，合并 herbName
+                            const herbMap = {};
+                            relationData.forEach(relation => {
+                                if (!herbMap[relation.plantId]) {
+                                    herbMap[relation.plantId] = {
+                                        plantId: relation.plantId,
+                                        plantName: relation.plantName,
+                                        herbNames: []
+                                    };
+                                }
+                                herbMap[relation.plantId].herbNames.push(relation.herbName);
+                            });
+
+                            // 渲染植物与药材关联表格
+                            herbTbody.innerHTML = '';
+                            Object.values(herbMap).forEach(plant => {
+                                const herbNames = plant.herbNames.length > 0 ? plant.herbNames.join(', ') : '无';
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                            <td>${plant.plantId}</td>
+                            <td>${plant.plantName}</td>
+                            <td>${herbNames}</td>
+                        `;
+                                herbTbody.appendChild(row);
+                            });
+
+                            // 如果没有关联数据，显示提示
+                            if (Object.keys(herbMap).length === 0) {
+                                herbTbody.innerHTML = '<tr><td colspan="3">暂无植物与药材关联数据</td></tr>';
+                            }
+
+                            bindDeleteEvents();
+                            $('#plants-tab').click(); // 确保切换到植物选项卡
+                        },
+                        error: function (error) {
+                            console.error('请求关联数据失败:', error);
+                            herbTbody.innerHTML = '<tr><td colspan="3">加载关联数据失败，请重试</td></tr>';
+                        }
+                    });
                 },
                 error: function (error) {
-                    console.error('请求文献数据失败:', error);
+                    console.error('请求植物数据失败:', error);
+                    plantTbody.innerHTML = '<tr><td colspan="8">加载失败，请重试</td></tr>';
+                    herbTbody.innerHTML = '<tr><td colspan="3">加载失败，请重试</td></tr>';
                 }
             });
         }
-
-        // 刷新药方数据表格
-        function refreshPrescriptionTable() {
-            console.log('Refreshing prescription table');
-            $.ajax({
-                url: '/db/prescription',
-                type: 'GET',
-                success: function (data) {
-                    console.log('Prescription data:', data);
-                    const tbody = document.querySelector('.data-table tbody');
-                    tbody.innerHTML = '';
-                    data.forEach(prescription => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${prescription.prescriptionId}</td>
-                            <td>${prescription.prescriptionName}</td>
-                            <td>${prescription.treatment}</td>
-                            <td>${prescription.category}</td>
-                            <td>${prescription.status}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${prescription.prescriptionId}" data-type="prescription">编辑</button>
-                                <button class="action-btn delete-btn" data-id="${prescription.prescriptionId}" data-type="prescription">删除</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    bindDeleteEvents(); // 数据加载后绑定事件
-                },
-                error: function (error) {
-                    console.error('请求药方数据失败:', error);
-                }
-            });
-        }
-
-        // 刷新药材数据表格
+        
         function refreshHerbTable() {
             console.log('Refreshing herb table');
+            const tbody = document.querySelector('.herb-table tbody'); // 修改选择器
+            if (!tbody) {
+                console.error('Herb table body not found');
+                return;
+            }
+            tbody.innerHTML = '<tr><td colspan="8">加载中...</td></tr>';
             $.ajax({
-                url: '/db/herb',
+                url: '/db/herb?t=' + new Date().getTime(),
                 type: 'GET',
                 success: function (data) {
                     console.log('Herb data:', data);
-                    const tbody = document.querySelector('.data-table tbody');
+                    if (!data || !Array.isArray(data)) {
+                        console.error('Invalid or empty herb data');
+                        tbody.innerHTML = '<tr><td colspan="8">数据为空或格式错误</td></tr>';
+                        return;
+                    }
                     tbody.innerHTML = '';
                     data.forEach(herb => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${herb.herbId}</td>
-                            <td>${herb.herbName}</td>
-                            <td>${herb.herbTibetanName}</td>
-                            <td>${herb.herbAlias}</td>
-                            <td>${herb.partUsed}</td>
-                            <td>${herb.functionIndication}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${herb.herbId}" data-type="herb">编辑</button>
-                                <button class="action-btn delete-btn" data-id="${herb.herbId}" data-type="herb">删除</button>
-                            </td>
-                        `;
+                    <td>${herb.herbId || ''}</td>
+                    <td>${herb.herbName || ''}</td>
+                    <td>${herb.herbTibetanName || ''}</td>
+                    <td>${herb.herbAlias || ''}</td>
+                    <td>${herb.partUsed || ''}</td>
+                    <td>${herb.functionIndication || ''}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${herb.herbId}" data-type="herb">编辑</button>
+                        <button class="action-btn delete-btn" data-id="${herb.herbId}" data-type="herb">删除</button>
+                    </td>
+                `;
                         tbody.appendChild(row);
                     });
-                    bindDeleteEvents(); // 数据加载后绑定事件
+                    bindDeleteEvents();
+                    $('#herb-tab').click(); // 确保切换到药材选项卡
                 },
                 error: function (error) {
                     console.error('请求药材数据失败:', error);
+                    tbody.innerHTML = '<tr><td colspan="8">加载失败，请重试</td></tr>';
                 }
             });
         }
 
-        // 刷新植物数据表格
-        function refreshPlantTable() {
-            console.log('Refreshing plant table');
+        function refreshPrescriptionTable() {
+            console.log('Refreshing prescription table');
+            const tbody = document.querySelector('.prescription-table tbody'); // 修改选择器
+            if (!tbody) {
+                console.error('Prescription table body not found');
+                return;
+            }
+            tbody.innerHTML = '<tr><td colspan="8">加载中...</td></tr>';
             $.ajax({
-                url: '/db/plant',
+                url: '/db/prescription?t=' + new Date().getTime(),
                 type: 'GET',
                 success: function (data) {
-                    console.log('Plant data:', data);
-                    const tbody = document.querySelector('.data-table tbody');
+                    console.log('Prescription data:', data);
+                    if (!data || !Array.isArray(data)) {
+                        console.error('Invalid or empty prescription data');
+                        tbody.innerHTML = '<tr><td colspan="8">数据为空或格式错误</td></tr>';
+                        return;
+                    }
                     tbody.innerHTML = '';
-                    data.forEach(plant => {
+                    data.forEach(prescription => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${plant.plantId}</td>
-                            <td>${plant.plantName}</td>
-                            <td>${plant.plantLatin}</td>
-                            <td>${plant.plantTibetanName}</td>
-                            <td>${plant.plantAlias}</td>
-                            <td>${plant.plantFamilyName}</td>
-                            <td>${plant.plantGenusName}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${plant.plantId}" data-type="plant">编辑</button>
-                                <button class="action-btn delete-btn" data-id="${plant.plantId}" data-type="plant">删除</button>
-                            </td>
-                        `;
+                    <td>${prescription.prescriptionId || ''}</td>
+                    <td>${prescription.prescriptionName || ''}</td>
+                    <td>${prescription.treatment || ''}</td>
+                    <td>${prescription.category || ''}</td>
+                    <td>${prescription.status || ''}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${prescription.prescriptionId}" data-type="prescription">编辑</button>
+                        <button class="action-btn delete-btn" data-id="${prescription.prescriptionId}" data-type="prescription">删除</button>
+                    </td>
+                `;
                         tbody.appendChild(row);
                     });
-                    bindDeleteEvents(); // 数据加载后绑定事件
+                    bindDeleteEvents();
+                    $('#prescription-tab').click(); // 确保切换到药方选项卡
                 },
                 error: function (error) {
-                    console.error('请求植物数据失败:', error);
+                    console.error('请求药方数据失败:', error);
+                    tbody.innerHTML = '<tr><td colspan="8">加载失败，请重试</td></tr>';
+                }
+            });
+        }
+
+        function refreshLiteratureTable() {
+            console.log('Refreshing literature table');
+            const tbody = document.querySelector('.literature-table tbody'); // 修改选择器
+            if (!tbody) {
+                console.error('Literature table body not found');
+                return;
+            }
+            tbody.innerHTML = '<tr><td colspan="8">加载中...</td></tr>';
+            $.ajax({
+                url: '/db/literature?t=' + new Date().getTime(),
+                type: 'GET',
+                success: function (data) {
+                    console.log('Literature data:', data);
+                    if (!data || !Array.isArray(data)) {
+                        console.error('Invalid or empty literature data');
+                        tbody.innerHTML = '<tr><td colspan="8">数据为空或格式错误</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = '';
+                    data.forEach(literature => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${literature.literatureId || ''}</td>
+                    <td>${literature.title || ''}</td>
+                    <td>${literature.authors || ''}</td>
+                    <td>${literature.publicationYear || ''}</td>
+                    <td>${literature.mainPlant || ''}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${literature.literatureId}" data-type="literature">编辑</button>
+                        <button class="action-btn delete-btn" data-id="${literature.literatureId}" data-type="literature">删除</button>
+                    </td>
+                `;
+                        tbody.appendChild(row);
+                    });
+                    bindDeleteEvents();
+                    $('#literature-tab').click(); // 确保切换到文献选项卡
+                },
+                error: function (error) {
+                    console.error('请求文献数据失败:', error);
+                    tbody.innerHTML = '<tr><td colspan="8">加载失败，请重试</td></tr>';
                 }
             });
         }

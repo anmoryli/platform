@@ -50,4 +50,9 @@ public class GetController {
     public List<Prescription> getPrescription() {
         return prescriptionService.selectAll();
     }
+
+    @RequestMapping("/relation")
+    public List<com.anmory.platform.DatabaseService.Dao.Relation> getRelation() {
+        return plantService.selectRelation();
+    }
 }

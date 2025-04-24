@@ -34,7 +34,12 @@ public class DelController {
 
     @RequestMapping("/plant")
     public int deletePlant(@RequestParam int id) {
-        return plantService.deletePlant(id);
+        int i = plantService.deletePlant(id);
+        if(i != 1) {
+            return 0;
+        }
+        else if(i == 1) return 1;
+        return -1;
     }
 
     @RequestMapping("/literature")
