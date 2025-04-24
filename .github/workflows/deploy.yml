@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "target/platform.jar"
+          source: "/target/platform.jar"
           target: "/root/source/repo/target/"
 
       # 6. 执行服务器上的部署脚本
