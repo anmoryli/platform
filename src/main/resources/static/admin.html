@@ -989,6 +989,64 @@
             text-align: right;
         }
 
+        .submit-btn {
+            background-color: #194F8A;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .submit-btn:hover {
+            background-color: #3b82f6;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .submit-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ai-help-response {
+            margin-top: 16px;
+            height: 700px;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            height: 192px;
+            overflow-y: auto;
+            background-color: #f9fafb;
+            font-size: 0.875rem;
+            color: #374151;
+            word-wrap: break-word;
+        }
+
         .ai-message.bot {
             background-color: var(--text-white);
             border: 1px solid var(--border-color);
@@ -1029,6 +1087,10 @@
             width: 100%;
             font-weight: 500;
             transition: all 0.3s ease;
+        }
+
+        .ai-help-btn {
+            background-color: #194F8A;
         }
 
         .ai-chat-send:hover {
@@ -1110,7 +1172,7 @@
                 success: function (data) {
                     if (data) {
                         // 默认加载首页内容
-                        loadContent('admin_home');
+                        loadContent('admin_database');
                     }
                     else {
                         alert("未登录，请登录确保数据库安全!!!");
@@ -1888,10 +1950,80 @@ oxygen
                         <!-- 用户数据管理内容 -->
                     </div>
                 </div>
+
+<div class="ai-help-container bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-4">AI 帮助录入</h3>
+                    <div class="mb-4">
+                        <label for="type" class="block text-sm font-medium text-gray-700">表类型(值必须是植物，药材，药方，文献其中之一)</label>
+                        <input type="text" id="type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="例如：植物">
+                    </div>
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-medium text-gray-700">表值名称(和表的类型对应，例如上面输入的是植物，那么这里就要填要搜的具体植物名称)</label>
+                        <input type="text" id="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="例如：雪莲花">
+                    </div>
+                    <button class="submit-btn text-white py-2 px-4 rounded-md" id="submit-btn-ai">获取AI帮助</button>
+                    <div class="ai-help-response mt-4 p-4 border border-gray-300 rounded-md h-68 overflow-y-auto" id="ai-help-response"></div>
+                </div>
             `;
 
             $('#content-container').html(html);
             initDatabasePage();
+
+            // 获取AI帮助
+            $('#submit-btn-ai').click(function () {
+                getAiHelp();
+            });
+
+            // 获取 AI 帮助
+            function getAiHelp() {
+                const type = document.getElementById('type').value.trim();
+                const name = document.getElementById('name').value.trim();
+                const responseContainer = document.getElementById('ai-help-response');
+                const submitBtn = document.getElementById('submit-btn-ai');
+
+                // 输入校验
+                const validTypes = ['植物', '药材', '药方', '文献'];
+                if (!type || !name) {
+                    responseContainer.innerHTML = '<span style="color: red;">请输入表类型和表值名称！</span>';
+                    return;
+                }
+                if (!validTypes.includes(type)) {
+                    responseContainer.innerHTML = '<span style="color: red;">表类型必须是植物、药材、药方、文献之一！</span>';
+                    return;
+                }
+
+                // 显示加载状态
+                submitBtn.classList.add('loading');
+                submitBtn.textContent = '加载中...';
+                responseContainer.innerHTML = '正在查询...';
+
+                $.ajax({
+                    url: '/automatic/record',
+                    type: 'POST',
+                    data: {
+                        type: type,
+                        name: name
+                    },
+                    success: function (response) {
+                        if (response) {
+                            // 将换行符替换为 <br>
+                            const formattedResponse = response.replace(/\r\n|\r|\n/g, '<br>');
+                            responseContainer.innerHTML = formattedResponse;
+                        } else {
+                            responseContainer.innerHTML = '未找到匹配数据';
+                        }
+                    },
+                    error: function (error) {
+                        console.error('请求失败:', error);
+                        responseContainer.innerHTML = '<span style="color: red;">获取 AI 帮助失败！</span>';
+                    },
+                    complete: function () {
+                        // 恢复按钮状态
+                        submitBtn.classList.remove('loading');
+                        submitBtn.textContent = '获取AI帮助';
+                    }
+                });
+            }
 
             // 在表单插入后再绑定事件监听器
             const addPlantForm = document.getElementById('add-plant-form');
@@ -2281,7 +2413,7 @@ oxygen
                 }
             });
         }
-        
+
         function refreshHerbTable() {
             console.log('Refreshing herb table');
             const tbody = document.querySelector('.herb-table tbody'); // 修改选择器

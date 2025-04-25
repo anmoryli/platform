@@ -4,6 +4,9 @@ import com.anmory.platform.DatabaseService.Service.HerbServiceR;
 import com.anmory.platform.DatabaseService.Service.LiteratureService;
 import com.anmory.platform.DatabaseService.Service.PlantService;
 import com.anmory.platform.DatabaseService.Service.PrescriptionService;
+import com.anmory.platform.UserService.User;
+import com.anmory.platform.UserService.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +35,8 @@ public class AddController {
     PrescriptionService prescriptionService;
     @Autowired
     LiteratureService literatureService;
+    @Autowired
+    UserService userService;
 
     @RequestMapping("/addPlant")
     public int addPlant(String plantName,
@@ -44,14 +49,17 @@ public class AddController {
                         String plantFeatures,
                         String plantOrigin,
                         String plantProtectLevel,
-                        String notes
+                        String notes,
+                        HttpSession session
     ) throws IOException {
+        User user = (User) session.getAttribute("session_user_key");
+        if(user == null) return 0;
+        userService.addRecordNums(user.getUsername());
         String imgPath = "/usr/local/nginx/images/plant/" + file.getOriginalFilename();
         File dir = new File("/usr/local/nginx/images/plant/");
         if (!dir.exists()) {
             dir.mkdirs();
         }
-
 //        String imgPath = "D:/testImg/" + file.getOriginalFilename();
 //        File dir = new File("D:/testImg/");
 //        if (!dir.exists()) {
@@ -90,8 +98,12 @@ public class AddController {
                        String functionIndication,
                        String clinicalApplication,
                        String pharmacologicalEffect,
-                       String notes) {
+                       String notes,
+                       HttpSession session) {
         try {
+            User user = (User) session.getAttribute("session_user_key");
+            if(user == null) return 0;
+            userService.addRecordNums(user.getUsername());
             int plantId = herbServiceR.getPlantIdByPlantName(plantName);
             System.out.println(plantId);
             return herbServiceR.insertHerb(
@@ -131,8 +143,12 @@ public class AddController {
             @RequestParam(defaultValue = "0") Integer reviewsCount,
             @RequestParam(defaultValue = "1.0") String version,
             @RequestParam(required = false) String medicineIds,
-            @RequestParam(defaultValue = "true") Boolean isPublic
+            @RequestParam(defaultValue = "true") Boolean isPublic,
+            HttpSession session
     ) throws IOException {
+        User user = (User) session.getAttribute("session_user_key");
+        if(user == null) return 0;
+        userService.addRecordNums(user.getUsername());
         String imageUrl = file.getOriginalFilename();
         String filePath = "/usr/local/nginx/images/prescription/" + file.getOriginalFilename();
 
@@ -187,8 +203,12 @@ public class AddController {
             @RequestParam(required = false) String filePath,
             @RequestParam(required = false) String mainPlant,
             @RequestParam(required = false) String researchField,
-            @RequestParam(required = false) String keywords
+            @RequestParam(required = false) String keywords,
+            HttpSession session
     ) {
+        User user = (User) session.getAttribute("session_user_key");
+        if(user == null) return 0;
+        userService.addRecordNums(user.getUsername());
         return literatureService.insertLiterature(
                 title,
                 tibetanTitle,

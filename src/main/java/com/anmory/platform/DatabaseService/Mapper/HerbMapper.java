@@ -41,7 +41,7 @@ public interface HerbMapper {
             @Param("notes") String notes
     );
 
-    @Select("select * from medicine.plant where medicine.plant.plant_name = #{plantName}")
+    @Select("select plant_id from medicine.plant where medicine.plant.plant_name = #{plantName}")
     int getPlantIdByPlantName(String plantName);
 
     @Delete("delete from medicine.herb where herb_id=#{id}")

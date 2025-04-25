@@ -33,4 +33,7 @@ public interface UserMapper {
 
     @Select("select count(*) from medicine.user_info")
     int countUsers();
+
+    @Update("update user_info set record_nums = record_nums+1")
+    int addRecordNum(String username);
 }

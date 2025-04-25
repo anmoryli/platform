@@ -41,4 +41,6 @@ public class UserService {
         return userMapper.countUsers();
     }
 
+    public int addRecordNums(String username) {return userMapper.addRecordNum(username);}
+
 }

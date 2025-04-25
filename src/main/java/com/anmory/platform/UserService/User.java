@@ -21,6 +21,7 @@ public class User {
     private String password;
     private int isAdmin;
     private String email;
+    private String recordNums;
     private Date createTime;
     private Date updateTime;
 }

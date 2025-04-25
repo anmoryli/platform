@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+用户 -> AI : 发送药材/植物/药方/文献名称
+AI -> 函数 : 查询该表的字段
+函数 -> AI : 返回字段列表
+AI -> 函数 : 编写sql语句
+函数 -> AI : 返回sql语句
+AI -> sql函数 : 执行sql语句
+@enduml
