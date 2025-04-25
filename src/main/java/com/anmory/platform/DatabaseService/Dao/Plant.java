@@ -23,4 +23,5 @@ public class Plant {
     private String plantOrigin;
     private String plantProtectLevel;
     private String notes;
+    private String recordedBy;
 }

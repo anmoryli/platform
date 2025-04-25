@@ -20,11 +20,11 @@ public interface HerbMapper {
     @Insert("INSERT INTO medicine.herb (" +
             "herb_name, plant_id, herb_tibetan_name, herb_alias, herb_description, part_used, " +
             "herb_features, flavor_tropism, function_indication, clinical_application, " +
-            "pharmacological_effect, notes" +
+            "pharmacological_effect, notes, recorded_by" +
             ") VALUES (" +
             "#{herbName},#{plantId}, #{herbTibetanName}, #{herbAlias}, #{herbDescription}, #{partUsed}, " +
             "#{herbFeatures}, #{flavorTropism}, #{functionIndication}, #{clinicalApplication}, " +
-            "#{pharmacologicalEffect}, #{notes}" +
+            "#{pharmacologicalEffect}, #{notes},#{recordedBy}" +
             ")")
     int insertHerb(
             @Param("herbName") String herbName,
@@ -38,12 +38,16 @@ public interface HerbMapper {
             @Param("functionIndication") String functionIndication,
             @Param("clinicalApplication") String clinicalApplication,
             @Param("pharmacologicalEffect") String pharmacologicalEffect,
-            @Param("notes") String notes
+            @Param("notes") String notes,
+            @Param("recordedBy") String recordedBy
     );
 
     @Select("select plant_id from medicine.plant where medicine.plant.plant_name = #{plantName}")
-    int getPlantIdByPlantName(String plantName);
+    Integer getPlantIdByPlantName(String plantName);
 
     @Delete("delete from medicine.herb where herb_id=#{id}")
     int deleteHerb(int id);
+
+    @Select("select * from medicine.herb limit #{offset}, #{size}")
+    List<Herb> selectHerbPage(int offset, int size);
 }

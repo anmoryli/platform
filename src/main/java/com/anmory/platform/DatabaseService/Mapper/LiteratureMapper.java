@@ -16,11 +16,11 @@ public interface LiteratureMapper {
     @Insert("INSERT INTO literature (" +
             "title, tibetan_title, authors, publication_year, journal_or_publisher, " +
             "volume_issue, pages, abstract, download_link, file_path, main_plant, " +
-            "research_field, keywords" +
+            "research_field, keywords,recorded_by" +
             ") VALUES (" +
             "#{title}, #{tibetanTitle}, #{authors}, #{publicationYear}, #{journalOrPublisher}, " +
             "#{volumeIssue}, #{pages}, #{abstractText}, #{downloadLink}, #{filePath}, #{mainPlant}, " +
-            "#{researchField}, #{keywords}" +
+            "#{researchField}, #{keywords},#{recordedBy}" +
             ")")
     int insertLiterature(
             @Param("title") String title,
@@ -35,7 +35,8 @@ public interface LiteratureMapper {
             @Param("filePath") String filePath,
             @Param("mainPlant") String mainPlant,
             @Param("researchField") String researchField,
-            @Param("keywords") String keywords
+            @Param("keywords") String keywords,
+            @Param("recordedBy") String recordedBy
     );
 
     @Select("select * from literature")
@@ -43,4 +44,7 @@ public interface LiteratureMapper {
 
     @Delete("delete from literature where literature_id=#{id}")
     int deleteLiterature(int id);
+
+    @Select("select * from literature limit #{offset}, #{size}")
+    List<Literature> selectLiteraturePage(int offset, int size);
 }

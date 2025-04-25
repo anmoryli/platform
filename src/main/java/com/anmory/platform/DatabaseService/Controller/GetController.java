@@ -32,27 +32,32 @@ public class GetController {
     PrescriptionService prescriptionService;
 
     @RequestMapping("/plant")
-    public List<Plant> getPlants() {
-        return plantService.selectAll();
+    public List<Plant> getPlants(int page) {
+        int offset = (page - 1) * 50;
+        return plantService.selectPage(offset, 50);
     }
 
     @RequestMapping("/herb")
-    public List<com.anmory.platform.DatabaseService.Dao.Herb> getHerbs() {
-        return herbServiceR.selectAll();
+    public List<com.anmory.platform.DatabaseService.Dao.Herb> getHerbs(int page) {
+        int offset = (page - 1) * 50;
+        return herbServiceR.selectHerbPage(offset, 50);
     }
 
     @RequestMapping("/literature")
-    public List<Literature> getLiterature() {
-        return literatureService.selectAll();
+    public List<Literature> getLiterature(int page) {
+        int offset = (page - 1) * 50;
+        return literatureService.selectLiteraturePage(offset, 50);
     }
 
     @RequestMapping("/prescription")
-    public List<Prescription> getPrescription() {
-        return prescriptionService.selectAll();
+    public List<Prescription> getPrescription(int page) {
+        int offset = (page - 1) * 50;
+        return prescriptionService.selectPrescriptionPage(offset, 50);
     }
 
     @RequestMapping("/relation")
-    public List<com.anmory.platform.DatabaseService.Dao.Relation> getRelation() {
-        return plantService.selectRelation();
+    public List<com.anmory.platform.DatabaseService.Dao.Relation> getRelation(int page) {
+        int offset = (page - 1) * 50;
+        return plantService.selectRelationPage(offset, 50);
     }
 }

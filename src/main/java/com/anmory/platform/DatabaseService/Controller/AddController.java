@@ -53,7 +53,7 @@ public class AddController {
                         HttpSession session
     ) throws IOException {
         User user = (User) session.getAttribute("session_user_key");
-        if(user == null) return 0;
+        if(user == null) return -1;
         userService.addRecordNums(user.getUsername());
         String imgPath = "/usr/local/nginx/images/plant/" + file.getOriginalFilename();
         File dir = new File("/usr/local/nginx/images/plant/");
@@ -82,7 +82,8 @@ public class AddController {
                 plantFeatures,
                 plantOrigin,
                 plantProtectLevel,
-                notes
+                notes,
+                user.getUsername()
         );
     }
 
@@ -102,9 +103,10 @@ public class AddController {
                        HttpSession session) {
         try {
             User user = (User) session.getAttribute("session_user_key");
-            if(user == null) return 0;
+            if(user == null) return -1;
             userService.addRecordNums(user.getUsername());
-            int plantId = herbServiceR.getPlantIdByPlantName(plantName);
+            Integer plantId = herbServiceR.getPlantIdByPlantName(plantName);
+            if(plantId == null) return 0;
             System.out.println(plantId);
             return herbServiceR.insertHerb(
                     herbName,
@@ -118,7 +120,8 @@ public class AddController {
                     functionIndication,
                     clinicalApplication,
                     pharmacologicalEffect,
-                    notes
+                    notes,
+                    user.getUsername()
             );
         }catch (Exception e) {
             return 0;
@@ -147,7 +150,7 @@ public class AddController {
             HttpSession session
     ) throws IOException {
         User user = (User) session.getAttribute("session_user_key");
-        if(user == null) return 0;
+        if(user == null) return -1;
         userService.addRecordNums(user.getUsername());
         String imageUrl = file.getOriginalFilename();
         String filePath = "/usr/local/nginx/images/prescription/" + file.getOriginalFilename();
@@ -207,7 +210,7 @@ public class AddController {
             HttpSession session
     ) {
         User user = (User) session.getAttribute("session_user_key");
-        if(user == null) return 0;
+        if(user == null) return -1;
         userService.addRecordNums(user.getUsername());
         return literatureService.insertLiterature(
                 title,
@@ -222,7 +225,8 @@ public class AddController {
                 filePath,
                 mainPlant,
                 researchField,
-                keywords
+                keywords,
+                user.getUsername()
         );
     }
 }

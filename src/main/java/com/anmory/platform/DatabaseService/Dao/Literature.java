@@ -28,4 +28,5 @@ public class Literature {
     private String keywords; // 关键词，用于快速检索
     private Date createTime; // 记录创建时间
     private Date updateTime; // 记录更新时间
+    private String recordedBy;
 }

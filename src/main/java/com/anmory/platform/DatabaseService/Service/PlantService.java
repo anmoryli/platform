@@ -29,7 +29,8 @@ public class PlantService {
                            String plantFeatures,
                            String plantOrigin,
                            String plantProtectLevel,
-                           String notes) {
+                           String notes,
+                           String recordedBy) {
         return plantMapper.insertPlant(plantName,
                 plantLatin,
                 plantAlias,
@@ -40,7 +41,8 @@ public class PlantService {
                 plantFeatures,
                 plantOrigin,
                 plantProtectLevel,
-                notes);
+                notes,
+                recordedBy);
     }
 
     public List<Plant> selectAll() {
@@ -53,5 +55,13 @@ public class PlantService {
 
     public List<Relation> selectRelation() {
         return plantMapper.selectRelation();
+    }
+
+    public List<Plant> selectPage(int offset, int size) {
+        return plantMapper.selectPage(offset, size);
+    }
+
+    public List<Relation> selectRelationPage(int offset, int size) {
+        return plantMapper.selectRelationPage(offset, size);
     }
 }

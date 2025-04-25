@@ -123,4 +123,11 @@ public class UserController {
         User user = (User) session.getAttribute("session_user_key");
         return userService.changePassword(user.getUsername(),password);
     }
+
+    @RequestMapping("/getUserAndContribution")
+    public User getUser(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user;
+    }
 }

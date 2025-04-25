@@ -18,8 +18,8 @@ public class PrescriptionService {
     @Autowired
     PrescriptionMapper prescriptionMapper;
 
-    public int insertPrescription(String prescriptionName, String composition, String dosage, String treatment, String source, String suitablePopulation, String precautions, String category, String preparationMethod, String doctorOrExpert, String status, String imageUrl, String filePath, Float rating, Integer reviewsCount, String version, String medicineIds, Boolean isPublic) {
-        return prescriptionMapper.insertPrescription(prescriptionName, composition, dosage, treatment, source, suitablePopulation, precautions, category, preparationMethod, doctorOrExpert, status, imageUrl, filePath, rating, reviewsCount, version, medicineIds, isPublic);
+    public int insertPrescription(String prescriptionName, String composition, String dosage, String treatment, String source, String suitablePopulation, String precautions, String category, String preparationMethod, String doctorOrExpert, String status, String imageUrl, String filePath, Float rating, Integer reviewsCount, String version, String medicineIds, Boolean isPublic, String recordedBy) {
+        return prescriptionMapper.insertPrescription(prescriptionName, composition, dosage, treatment, source, suitablePopulation, precautions, category, preparationMethod, doctorOrExpert, status, imageUrl, filePath, rating, reviewsCount, version, medicineIds, isPublic,recordedBy);
     }
 
     public List<Prescription> selectAll() {
@@ -28,5 +28,9 @@ public class PrescriptionService {
 
     public int deletePre(int id) {
         return prescriptionMapper.deletePre(id);
+    }
+
+    public List<Prescription> selectPrescriptionPage(int offset, int size) {
+        return prescriptionMapper.selectPrescriptionPage(offset, size);
     }
 }

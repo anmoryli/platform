@@ -23,4 +23,5 @@ public class Herb {
     private String clinicalApplication; // 数据库列名为 clinical_application
     private String pharmacologicalEffect; // 数据库列名为 pharmacological_effect
     private String notes; // 数据库列名为 notes
+    private String recordedBy;
 }

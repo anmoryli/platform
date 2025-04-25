@@ -1097,6 +1097,30 @@
             background-color: var(--primary-dark);
         }
 
+        h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #e8f0fe;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            h3 {
+                flex-direction: column;
+                /* 垂直排列 */
+                align-items: flex-start;
+                /* 左对齐 */
+            }
+
+            .right {
+                margin-top: 5px;
+                /* 增加间距 */
+            }
+        }
+
         /* 响应式调整 */
         @media (max-width: 768px) {
             .admin-section {
@@ -1165,6 +1189,29 @@
 
     <script src="/js/jquery.min.js"></script>
     <script>
+
+        // 获取用户信息并更新页面
+        function fetchUserInfo() {
+            $.ajax({
+                url: '/user/getUserAndContribution', // 后端接口地址
+                type: 'GET',
+                success: function (response) {
+                    if (response == null || response == "") {
+                        document.getElementById('user-info').textContent = '你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!';
+                    } else {
+                        console.log(response);
+                        const userName = response.username || '未知用户';
+                        const contribution = response.recordNums || 0;
+                        document.getElementById('user-info').textContent = `你好:${userName}, 你的贡献量为:${contribution}`;
+                    }
+                },
+                error: function (error) {
+                    console.error('获取用户信息失败:', error);
+                    document.getElementById('user-info').textContent = '你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!';
+                }
+            });
+        }
+
         $(document).ready(function () {
             $.ajax({
                 url: '/user/confirmLogin',
@@ -1173,6 +1220,7 @@
                     if (data) {
                         // 默认加载首页内容
                         loadContent('admin_database');
+                        fetchUserInfo();
                     }
                     else {
                         alert("未登录，请登录确保数据库安全!!!");
@@ -1465,7 +1513,10 @@
         function loadDatabasePage() {
             let html = `
                 <div class="admin-section">
-    <h3>数据库管理</h3>
+    <h3>
+    <span class="left">数据库管理</span>
+    <span class="right" id="user-info">你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!</span>
+</h3>
     
     <div class="tabs">
         <div class="tab active" data-tab="plants-tab" onclick=refreshPlantTable()>植物数据</div>
@@ -1541,6 +1592,30 @@
                 <button type="button" class="cancel-btn">取消</button>
             </form>
         </div>
+
+        <div class="pagination">
+    <div class="pagination-btn active" id="plant-1" onclick="refreshPlantTable(1)">1</div>
+    <div class="pagination-btn" id="plant-2" onclick="refreshPlantTable(2)">2</div>
+    <div class="pagination-btn" id="plant-3" onclick="refreshPlantTable(3)">3</div>
+    <div class="pagination-btn" id="plant-4" onclick="refreshPlantTable(4)">4</div>
+    <div class="pagination-btn" id="plant-5" onclick="refreshPlantTable(5)">5</div>
+    <div class="pagination-btn" id="plant-6" onclick="refreshPlantTable(6)">6</div>
+    <div class="pagination-btn" id="plant-7" onclick="refreshPlantTable(7)">7</div>
+    <div class="pagination-btn" id="plant-8" onclick="refreshPlantTable(8)">8</div>
+    <div class="pagination-btn" id="plant-9" onclick="refreshPlantTable(9)">9</div>
+    <div class="pagination-btn" id="plant-10" onclick="refreshPlantTable(10)">10</div>
+    <div class="pagination-btn" id="plant-11" onclick="refreshPlantTable(11)">11</div>
+    <div class="pagination-btn" id="plant-12" onclick="refreshPlantTable(12)">12</div>
+    <div class="pagination-btn" id="plant-13" onclick="refreshPlantTable(13)">13</div>
+    <div class="pagination-btn" id="plant-14" onclick="refreshPlantTable(14)">14</div>
+    <div class="pagination-btn" id="plant-15" onclick="refreshPlantTable(15)">15</div>
+    <div class="pagination-btn" id="plant-16" onclick="refreshPlantTable(16)">16</div>
+    <div class="pagination-btn" id="plant-17" onclick="refreshPlantTable(17)">17</div>
+    <div class="pagination-btn" id="plant-18" onclick="refreshPlantTable(18)">18</div>
+    <div class="pagination-btn" id="plant-19" onclick="refreshPlantTable(19)">19</div>
+    <div class="pagination-btn" id="plant-20" onclick="refreshPlantTable(20)">20</div>
+    <div class="pagination-btn" id="plant-next" onclick="refreshPlantTable('next')">下一页 »</div>
+</div>
         
         <div class="form-container" id="edit-plant-form-container" style="display: none;">
             <h3>编辑植物</h3>
@@ -1625,6 +1700,30 @@
             </tbody>
         </table>
 
+        <div class="pagination">
+    <div class="pagination-btn active" id="plant-1" onclick="refreshPlantTable(1)">1</div>
+    <div class="pagination-btn" id="plant-2" onclick="refreshPlantTable(2)">2</div>
+    <div class="pagination-btn" id="plant-3" onclick="refreshPlantTable(3)">3</div>
+    <div class="pagination-btn" id="plant-4" onclick="refreshPlantTable(4)">4</div>
+    <div class="pagination-btn" id="plant-5" onclick="refreshPlantTable(5)">5</div>
+    <div class="pagination-btn" id="plant-6" onclick="refreshPlantTable(6)">6</div>
+    <div class="pagination-btn" id="plant-7" onclick="refreshPlantTable(7)">7</div>
+    <div class="pagination-btn" id="plant-8" onclick="refreshPlantTable(8)">8</div>
+    <div class="pagination-btn" id="plant-9" onclick="refreshPlantTable(9)">9</div>
+    <div class="pagination-btn" id="plant-10" onclick="refreshPlantTable(10)">10</div>
+    <div class="pagination-btn" id="plant-11" onclick="refreshPlantTable(11)">11</div>
+    <div class="pagination-btn" id="plant-12" onclick="refreshPlantTable(12)">12</div>
+    <div class="pagination-btn" id="plant-13" onclick="refreshPlantTable(13)">13</div>
+    <div class="pagination-btn" id="plant-14" onclick="refreshPlantTable(14)">14</div>
+    <div class="pagination-btn" id="plant-15" onclick="refreshPlantTable(15)">15</div>
+    <div class="pagination-btn" id="plant-16" onclick="refreshPlantTable(16)">16</div>
+    <div class="pagination-btn" id="plant-17" onclick="refreshPlantTable(17)">17</div>
+    <div class="pagination-btn" id="plant-18" onclick="refreshPlantTable(18)">18</div>
+    <div class="pagination-btn" id="plant-19" onclick="refreshPlantTable(19)">19</div>
+    <div class="pagination-btn" id="plant-20" onclick="refreshPlantTable(20)">20</div>
+    <div class="pagination-btn" id="plant-next" onclick="refreshPlantTable('next')">下一页 »</div>
+</div>
+
         <!-- 新增模块：植物与药材关联 -->
     <div class="admin-section" style="margin-top: 20px;">
         <h3>植物与药材关联</h3>
@@ -1642,11 +1741,28 @@
     </div>
 
         <div class="pagination">
-            <div class="pagination-btn active">1</div>
-            <div class="pagination-btn">2</div>
-            <div class="pagination-btn">3</div>
-            <div class="pagination-btn">下一页 »</div>
-        </div>
+    <div class="pagination-btn active" id="plant-1" onclick="refreshPlantTable(1)">1</div>
+    <div class="pagination-btn" id="plant-2" onclick="refreshPlantTable(2)">2</div>
+    <div class="pagination-btn" id="plant-3" onclick="refreshPlantTable(3)">3</div>
+    <div class="pagination-btn" id="plant-4" onclick="refreshPlantTable(4)">4</div>
+    <div class="pagination-btn" id="plant-5" onclick="refreshPlantTable(5)">5</div>
+    <div class="pagination-btn" id="plant-6" onclick="refreshPlantTable(6)">6</div>
+    <div class="pagination-btn" id="plant-7" onclick="refreshPlantTable(7)">7</div>
+    <div class="pagination-btn" id="plant-8" onclick="refreshPlantTable(8)">8</div>
+    <div class="pagination-btn" id="plant-9" onclick="refreshPlantTable(9)">9</div>
+    <div class="pagination-btn" id="plant-10" onclick="refreshPlantTable(10)">10</div>
+    <div class="pagination-btn" id="plant-11" onclick="refreshPlantTable(11)">11</div>
+    <div class="pagination-btn" id="plant-12" onclick="refreshPlantTable(12)">12</div>
+    <div class="pagination-btn" id="plant-13" onclick="refreshPlantTable(13)">13</div>
+    <div class="pagination-btn" id="plant-14" onclick="refreshPlantTable(14)">14</div>
+    <div class="pagination-btn" id="plant-15" onclick="refreshPlantTable(15)">15</div>
+    <div class="pagination-btn" id="plant-16" onclick="refreshPlantTable(16)">16</div>
+    <div class="pagination-btn" id="plant-17" onclick="refreshPlantTable(17)">17</div>
+    <div class="pagination-btn" id="plant-18" onclick="refreshPlantTable(18)">18</div>
+    <div class="pagination-btn" id="plant-19" onclick="refreshPlantTable(19)">19</div>
+    <div class="pagination-btn" id="plant-20" onclick="refreshPlantTable(20)">20</div>
+    <div class="pagination-btn" id="plant-next" onclick="refreshPlantTable('next')">下一页 »</div>
+</div>
     </div>
 
     <!-- 药材数据管理 -->
@@ -1713,6 +1829,30 @@
             </form>
         </div>
 
+        <div class="pagination">
+    <div class="pagination-btn active" id="herb-1" onclick="refreshHerbTable(1)">1</div>
+    <div class="pagination-btn" id="herb-2" onclick="refreshHerbTable(2)">2</div>
+    <div class="pagination-btn" id="herb-3" onclick="refreshHerbTable(3)">3</div>
+    <div class="pagination-btn" id="herb-4" onclick="refreshHerbTable(4)">4</div>
+    <div class="pagination-btn" id="herb-5" onclick="refreshHerbTable(5)">5</div>
+    <div class="pagination-btn" id="herb-6" onclick="refreshHerbTable(6)">6</div>
+    <div class="pagination-btn" id="herb-7" onclick="refreshHerbTable(7)">7</div>
+    <div class="pagination-btn" id="herb-8" onclick="refreshHerbTable(8)">8</div>
+    <div class="pagination-btn" id="herb-9" onclick="refreshHerbTable(9)">9</div>
+    <div class="pagination-btn" id="herb-10" onclick="refreshHerbTable(10)">10</div>
+    <div class="pagination-btn" id="herb-11" onclick="refreshHerbTable(11)">11</div>
+    <div class="pagination-btn" id="herb-12" onclick="refreshHerbTable(12)">12</div>
+    <div class="pagination-btn" id="herb-13" onclick="refreshHerbTable(13)">13</div>
+    <div class="pagination-btn" id="herb-14" onclick="refreshHerbTable(14)">14</div>
+    <div class="pagination-btn" id="herb-15" onclick="refreshHerbTable(15)">15</div>
+    <div class="pagination-btn" id="herb-16" onclick="refreshHerbTable(16)">16</div>
+    <div class="pagination-btn" id="herb-17" onclick="refreshHerbTable(17)">17</div>
+    <div class="pagination-btn" id="herb-18" onclick="refreshHerbTable(18)">18</div>
+    <div class="pagination-btn" id="herb-19" onclick="refreshHerbTable(19)">19</div>
+    <div class="pagination-btn" id="herb-20" onclick="refreshHerbTable(20)">20</div>
+    <div class="pagination-btn" id="herb-next" onclick="refreshHerbTable('next')">下一页 »</div>
+</div>
+
         <table class="data-table herb-table">
             <thead>
                 <tr>
@@ -1741,6 +1881,29 @@
 <!--                </tr>-->
             </tbody>
         </table>
+        <div class="pagination">
+    <div class="pagination-btn active" id="herb-1" onclick="refreshHerbTable(1)">1</div>
+    <div class="pagination-btn" id="herb-2" onclick="refreshHerbTable(2)">2</div>
+    <div class="pagination-btn" id="herb-3" onclick="refreshHerbTable(3)">3</div>
+    <div class="pagination-btn" id="herb-4" onclick="refreshHerbTable(4)">4</div>
+    <div class="pagination-btn" id="herb-5" onclick="refreshHerbTable(5)">5</div>
+    <div class="pagination-btn" id="herb-6" onclick="refreshHerbTable(6)">6</div>
+    <div class="pagination-btn" id="herb-7" onclick="refreshHerbTable(7)">7</div>
+    <div class="pagination-btn" id="herb-8" onclick="refreshHerbTable(8)">8</div>
+    <div class="pagination-btn" id="herb-9" onclick="refreshHerbTable(9)">9</div>
+    <div class="pagination-btn" id="herb-10" onclick="refreshHerbTable(10)">10</div>
+    <div class="pagination-btn" id="herb-11" onclick="refreshHerbTable(11)">11</div>
+    <div class="pagination-btn" id="herb-12" onclick="refreshHerbTable(12)">12</div>
+    <div class="pagination-btn" id="herb-13" onclick="refreshHerbTable(13)">13</div>
+    <div class="pagination-btn" id="herb-14" onclick="refreshHerbTable(14)">14</div>
+    <div class="pagination-btn" id="herb-15" onclick="refreshHerbTable(15)">15</div>
+    <div class="pagination-btn" id="herb-16" onclick="refreshHerbTable(16)">16</div>
+    <div class="pagination-btn" id="herb-17" onclick="refreshHerbTable(17)">17</div>
+    <div class="pagination-btn" id="herb-18" onclick="refreshHerbTable(18)">18</div>
+    <div class="pagination-btn" id="herb-19" onclick="refreshHerbTable(19)">19</div>
+    <div class="pagination-btn" id="herb-20" onclick="refreshHerbTable(20)">20</div>
+    <div class="pagination-btn" id="herb-next" onclick="refreshHerbTable('next')">下一页 »</div>
+</div>
     </div>
 
     <!-- 药方数据管理 -->
@@ -1818,6 +1981,30 @@
             </form>
         </div>
 
+        <div class="pagination">
+    <div class="pagination-btn active" id="prescription-1" onclick="refreshPrescriptionTable(1)">1</div>
+    <div class="pagination-btn" id="prescription-2" onclick="refreshPrescriptionTable(2)">2</div>
+    <div class="pagination-btn" id="prescription-3" onclick="refreshPrescriptionTable(3)">3</div>
+    <div class="pagination-btn" id="prescription-4" onclick="refreshPrescriptionTable(4)">4</div>
+    <div class="pagination-btn" id="prescription-5" onclick="refreshPrescriptionTable(5)">5</div>
+    <div class="pagination-btn" id="prescription-6" onclick="refreshPrescriptionTable(6)">6</div>
+    <div class="pagination-btn" id="prescription-7" onclick="refreshPrescriptionTable(7)">7</div>
+    <div class="pagination-btn" id="prescription-8" onclick="refreshPrescriptionTable(8)">8</div>
+    <div class="pagination-btn" id="prescription-9" onclick="refreshPrescriptionTable(9)">9</div>
+    <div class="pagination-btn" id="prescription-10" onclick="refreshPrescriptionTable(10)">10</div>
+    <div class="pagination-btn" id="prescription-11" onclick="refreshPrescriptionTable(11)">11</div>
+    <div class="pagination-btn" id="prescription-12" onclick="refreshPrescriptionTable(12)">12</div>
+    <div class="pagination-btn" id="prescription-13" onclick="refreshPrescriptionTable(13)">13</div>
+    <div class="pagination-btn" id="prescription-14" onclick="refreshPrescriptionTable(14)">14</div>
+    <div class="pagination-btn" id="prescription-15" onclick="refreshPrescriptionTable(15)">15</div>
+    <div class="pagination-btn" id="prescription-16" onclick="refreshPrescriptionTable(16)">16</div>
+    <div class="pagination-btn" id="prescription-17" onclick="refreshPrescriptionTable(17)">17</div>
+    <div class="pagination-btn" id="prescription-18" onclick="refreshPrescriptionTable(18)">18</div>
+    <div class="pagination-btn" id="prescription-19" onclick="refreshPrescriptionTable(19)">19</div>
+    <div class="pagination-btn" id="prescription-20" onclick="refreshPrescriptionTable(20)">20</div>
+    <div class="pagination-btn" id="prescription-next" onclick="refreshPrescriptionTable('next')">下一页 »</div>
+</div>
+
         <table class="data-table prescription-table">
             <thead>
                 <tr>
@@ -1844,6 +2031,29 @@
 <!--                </tr>-->
             </tbody>
         </table>
+        <div class="pagination">
+    <div class="pagination-btn active" id="prescription-1" onclick="refreshPrescriptionTable(1)">1</div>
+    <div class="pagination-btn" id="prescription-2" onclick="refreshPrescriptionTable(2)">2</div>
+    <div class="pagination-btn" id="prescription-3" onclick="refreshPrescriptionTable(3)">3</div>
+    <div class="pagination-btn" id="prescription-4" onclick="refreshPrescriptionTable(4)">4</div>
+    <div class="pagination-btn" id="prescription-5" onclick="refreshPrescriptionTable(5)">5</div>
+    <div class="pagination-btn" id="prescription-6" onclick="refreshPrescriptionTable(6)">6</div>
+    <div class="pagination-btn" id="prescription-7" onclick="refreshPrescriptionTable(7)">7</div>
+    <div class="pagination-btn" id="prescription-8" onclick="refreshPrescriptionTable(8)">8</div>
+    <div class="pagination-btn" id="prescription-9" onclick="refreshPrescriptionTable(9)">9</div>
+    <div class="pagination-btn" id="prescription-10" onclick="refreshPrescriptionTable(10)">10</div>
+    <div class="pagination-btn" id="prescription-11" onclick="refreshPrescriptionTable(11)">11</div>
+    <div class="pagination-btn" id="prescription-12" onclick="refreshPrescriptionTable(12)">12</div>
+    <div class="pagination-btn" id="prescription-13" onclick="refreshPrescriptionTable(13)">13</div>
+    <div class="pagination-btn" id="prescription-14" onclick="refreshPrescriptionTable(14)">14</div>
+    <div class="pagination-btn" id="prescription-15" onclick="refreshPrescriptionTable(15)">15</div>
+    <div class="pagination-btn" id="prescription-16" onclick="refreshPrescriptionTable(16)">16</div>
+    <div class="pagination-btn" id="prescription-17" onclick="refreshPrescriptionTable(17)">17</div>
+    <div class="pagination-btn" id="prescription-18" onclick="refreshPrescriptionTable(18)">18</div>
+    <div class="pagination-btn" id="prescription-19" onclick="refreshPrescriptionTable(19)">19</div>
+    <div class="pagination-btn" id="prescription-20" onclick="refreshPrescriptionTable(20)">20</div>
+    <div class="pagination-btn" id="prescription-next" onclick="refreshPrescriptionTable('next')">下一页 »</div>
+</div>
     </div>
 
     <!-- 文献数据管理 -->
@@ -1915,6 +2125,30 @@ oxygen
             </form>
         </div>
 
+        <div class="pagination">
+    <div class="pagination-btn active" id="literature-1" onclick="refreshLiteratureTable(1)">1</div>
+    <div class="pagination-btn" id="literature-2" onclick="refreshLiteratureTable(2)">2</div>
+    <div class="pagination-btn" id="literature-3" onclick="refreshLiteratureTable(3)">3</div>
+    <div class="pagination-btn" id="literature-4" onclick="refreshLiteratureTable(4)">4</div>
+    <div class="pagination-btn" id="literature-5" onclick="refreshLiteratureTable(5)">5</div>
+    <div class="pagination-btn" id="literature-6" onclick="refreshLiteratureTable(6)">6</div>
+    <div class="pagination-btn" id="literature-7" onclick="refreshLiteratureTable(7)">7</div>
+    <div class="pagination-btn" id="literature-8" onclick="refreshLiteratureTable(8)">8</div>
+    <div class="pagination-btn" id="literature-9" onclick="refreshLiteratureTable(9)">9</div>
+    <div class="pagination-btn" id="literature-10" onclick="refreshLiteratureTable(10)">10</div>
+    <div class="pagination-btn" id="literature-11" onclick="refreshLiteratureTable(11)">11</div>
+    <div class="pagination-btn" id="literature-12" onclick="refreshLiteratureTable(12)">12</div>
+    <div class="pagination-btn" id="literature-13" onclick="refreshLiteratureTable(13)">13</div>
+    <div class="pagination-btn" id="literature-14" onclick="refreshLiteratureTable(14)">14</div>
+    <div class="pagination-btn" id="literature-15" onclick="refreshLiteratureTable(15)">15</div>
+    <div class="pagination-btn" id="literature-16" onclick="refreshLiteratureTable(16)">16</div>
+    <div class="pagination-btn" id="literature-17" onclick="refreshLiteratureTable(17)">17</div>
+    <div class="pagination-btn" id="literature-18" onclick="refreshLiteratureTable(18)">18</div>
+    <div class="pagination-btn" id="literature-19" onclick="refreshLiteratureTable(19)">19</div>
+    <div class="pagination-btn" id="literature-20" onclick="refreshLiteratureTable(20)">20</div>
+    <div class="pagination-btn" id="literature-next" onclick="refreshLiteratureTable('next')">下一页 »</div>
+</div>
+
         <table class="data-table literature-table">
             <thead>
                 <tr>
@@ -1941,6 +2175,29 @@ oxygen
 <!--                </tr>-->
             </tbody>
         </table>
+        <div class="pagination">
+    <div class="pagination-btn active" id="literature-1" onclick="refreshLiteratureTable(1)">1</div>
+    <div class="pagination-btn" id="literature-2" onclick="refreshLiteratureTable(2)">2</div>
+    <div class="pagination-btn" id="literature-3" onclick="refreshLiteratureTable(3)">3</div>
+    <div class="pagination-btn" id="literature-4" onclick="refreshLiteratureTable(4)">4</div>
+    <div class="pagination-btn" id="literature-5" onclick="refreshLiteratureTable(5)">5</div>
+    <div class="pagination-btn" id="literature-6" onclick="refreshLiteratureTable(6)">6</div>
+    <div class="pagination-btn" id="literature-7" onclick="refreshLiteratureTable(7)">7</div>
+    <div class="pagination-btn" id="literature-8" onclick="refreshLiteratureTable(8)">8</div>
+    <div class="pagination-btn" id="literature-9" onclick="refreshLiteratureTable(9)">9</div>
+    <div class="pagination-btn" id="literature-10" onclick="refreshLiteratureTable(10)">10</div>
+    <div class="pagination-btn" id="literature-11" onclick="refreshLiteratureTable(11)">11</div>
+    <div class="pagination-btn" id="literature-12" onclick="refreshLiteratureTable(12)">12</div>
+    <div class="pagination-btn" id="literature-13" onclick="refreshLiteratureTable(13)">13</div>
+    <div class="pagination-btn" id="literature-14" onclick="refreshLiteratureTable(14)">14</div>
+    <div class="pagination-btn" id="literature-15" onclick="refreshLiteratureTable(15)">15</div>
+    <div class="pagination-btn" id="literature-16" onclick="refreshLiteratureTable(16)">16</div>
+    <div class="pagination-btn" id="literature-17" onclick="refreshLiteratureTable(17)">17</div>
+    <div class="pagination-btn" id="literature-18" onclick="refreshLiteratureTable(18)">18</div>
+    <div class="pagination-btn" id="literature-19" onclick="refreshLiteratureTable(19)">19</div>
+    <div class="pagination-btn" id="literature-20" onclick="refreshLiteratureTable(20)">20</div>
+    <div class="pagination-btn" id="literature-next" onclick="refreshLiteratureTable('next')">下一页 »</div>
+</div>
     </div>
 </div>
                     
@@ -1965,6 +2222,79 @@ oxygen
                     <div class="ai-help-response mt-4 p-4 border border-gray-300 rounded-md h-68 overflow-y-auto" id="ai-help-response"></div>
                 </div>
             `;
+
+            function goToPlantPage(data) {
+                // 在表单插入后再绑定事件监听器
+                const addPlantForm = document.getElementById('add-plant-form');
+                if (addPlantForm) {
+                    addPlantForm.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const formData = new FormData(this);
+                        formData.append('plantName', document.getElementById('plant-name').value);
+                        formData.append('plantLatin', document.getElementById('plant-latin').value);
+                        formData.append('plantAlias', document.getElementById('plant-alias').value);
+                        formData.append('plantTibetanName', document.getElementById('plant-tibetan-name').value);
+                        formData.append('plantFamilyName', document.getElementById('plant-family-name').value);
+                        formData.append('plantGenusName', document.getElementById('plant-genus-name').value);
+                        formData.append('plantFeatures', document.getElementById('plant-features').value);
+                        formData.append('plantOrigin', document.getElementById('plant-origin').value);
+                        formData.append('plantProtectLevel', document.getElementById('plant-protect-level').value);
+                        formData.append('notes', document.getElementById('notes').value);
+
+                        const fileInput = document.getElementById('image-upload');
+                        if (fileInput && fileInput.files.length > 0) {
+                            formData.append('file', fileInput.files[0]);
+                        } else {
+                            console.warn('未选择图片文件');
+                        }
+
+                        const page = goToPlantPage();
+
+                        $.ajax({
+                            url: '/add/addPlant?page=',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response == -1) {
+                                    alert("登录过期，请重新登录后再录入!!!");
+                                    location.href = "admin_login_v.html";
+                                    return;
+                                }
+                                else if (response != -1) {
+                                    alert('植物数据添加成功！');
+                                    // 展示植物添加页面
+                                    refreshPlantTable();
+                                    loadDatabasePage();
+                                    document.getElementById('add-plant-form').reset();
+                                    // 刷新植物列表
+                                    $('#add-plant-form-container').slideToggle();
+                                }
+                            },
+                            error: function (error) {
+                                console.error('请求失败:', error);
+                                alert('植物数据添加失败！');
+                            }
+                        });
+                    });
+                } else {
+                    console.error('表单 add-plant-form 未找到！');
+                }
+            }
+
+            function goToHerbPage(data) {
+                return data;
+            }
+
+            function goToPrescriptionPage(data) {
+                return data;
+            }
+
+            function goToLiteraturePage(data) {
+                return data;
+            }
 
             $('#content-container').html(html);
             initDatabasePage();
@@ -2050,19 +2380,29 @@ oxygen
                         console.warn('未选择图片文件');
                     }
 
+                    const page = goToPlantPage();
+
                     $.ajax({
-                        url: '/add/addPlant',
+                        url: '/add/addPlant?page=',
                         type: 'POST',
                         data: formData,
                         processData: false,
                         contentType: false,
                         success: function (response) {
-                            alert('植物数据添加成功！');
-                            // 展示植物添加页面
-                            refreshPlantTable();
-                            loadDatabasePage();
-                            // 刷新植物列表
-                            $('#add-plant-form-container').slideToggle();
+                            if (response == -1) {
+                                alert("登录过期，请重新登录后再录入!!!");
+                                location.href = "admin_login_v.html";
+                                return;
+                            }
+                            else if (response != -1) {
+                                alert('植物数据添加成功！');
+                                // 展示植物添加页面
+                                refreshPlantTable();
+                                loadDatabasePage();
+                                document.getElementById('add-plant-form').reset();
+                                // 刷新植物列表
+                                $('#add-plant-form-container').slideToggle();
+                            }
                         },
                         error: function (error) {
                             console.error('请求失败:', error);
@@ -2105,17 +2445,24 @@ oxygen
                                 alert('药材数据添加失败！请检查植物名称是否存在！');
                                 return;
                             }
-                            alert('药材数据添加成功！');
-                            // 重置表单
-                            // addHerbForm.reset();
-                            // 刷新药材列表
-                            refreshHerbTable();
-                            // 保持表单可见
-                            // 模拟点击药材数据管理标签
-                            $('#herb-tab').click();
-                            // 清空表单
-                            document.getElementById('add-herb-form').reset();
-                            $('#add-herb-form-container').slideToggle();
+                            else if (response == -1) {
+                                alert("登录过期，请重新登录后再录入!!!");
+                                location.href = "admin_login_v.html";
+                                return;
+                            }
+                            else if (response != 0) {
+                                alert('药材数据添加成功！');
+                                // 重置表单
+                                // addHerbForm.reset();
+                                // 刷新药材列表
+                                refreshHerbTable();
+                                // 保持表单可见
+                                // 模拟点击药材数据管理标签
+                                $('#herb-tab').click();
+                                // 清空表单
+                                document.getElementById('add-herb-form').reset();
+                                $('#add-herb-form-container').slideToggle();
+                            }
                         },
                         error: function (error) {
                             console.error('请求失败:', error);
@@ -2161,15 +2508,25 @@ oxygen
                         processData: false,
                         contentType: false,
                         success: function (response) {
-                            alert('药方数据添加成功！');
-                            // 展现药方数据
-                            loadDatabasePage();
-                            // 模拟点击药方数据管理标签
-                            refreshPrescriptionTable();
-                            $('#prescription-tab').click();
-                            // 刷新药方列表
-                            document.getElementById('add-herb-form').reset();
-                            $('#add-prescription-form-container').slideToggle();
+                            if (response == -1) {
+                                alert("登录过期，请重新登录后再录入!!!");
+                                location.href = "admin_login_v.html";
+                                return;
+                            }
+                            else if (response == 0) {
+                                alert("药方添加失败，请检查录入参数!!!");
+                            }
+                            else if (response == 1) {
+                                alert('药方数据添加成功！');
+                                // 展现药方数据
+                                loadDatabasePage();
+                                // 模拟点击药方数据管理标签
+                                refreshPrescriptionTable();
+                                $('#prescription-tab').click();
+                                // 刷新药方列表
+                                document.getElementById('add-prescription-form').reset();
+                                $('#add-prescription-form-container').slideToggle();
+                            }
                         },
                         error: function (error) {
                             console.error('请求失败:', error);
@@ -2210,12 +2567,22 @@ oxygen
                         processData: false,
                         contentType: false,
                         success: function (response) {
-                            alert('文献数据添加成功！');
-                            // 模拟点击文献数据管理标签
-                            refreshLiteratureTable();
-                            $('#literature-tab').click();
-                            document.getElementById('add-herb-form').reset();
-                            $('#add-literature-form-container').slideToggle();
+                            if (response == -1) {
+                                alert("登录过期，请重新登录后再录入!!!");
+                                location.href = "admin_login_v.html";
+                                return;
+                            }
+                            else if (response == 1) {
+                                alert('文献数据添加成功！');
+                                // 模拟点击文献数据管理标签
+                                refreshLiteratureTable();
+                                $('#literature-tab').click();
+                                document.getElementById('add-literature-form').reset();
+                                $('#add-literature-form-container').slideToggle();
+                            }
+                            else if (response == 0) {
+                                alert('文献数据添加失败！');
+                            }
                         },
                         error: function (error) {
                             console.error('请求失败:', error);
@@ -2310,7 +2677,7 @@ oxygen
             });
         }
 
-        function refreshPlantTable() {
+        function refreshPlantTable(data) {
             console.log('Refreshing plant table');
             const plantTbody = document.querySelector('.plant-table tbody');
             const herbTbody = document.querySelector('.plant-herb-table tbody');
@@ -2323,8 +2690,11 @@ oxygen
 
             // 获取植物数据
             $.ajax({
-                url: '/db/plant?t=' + new Date().getTime(),
+                url: '/db/plant',
                 type: 'GET',
+                data: {
+                    page: data || 1 // 使用传入的页码或默认值
+                },
                 success: function (plantData) {
                     console.log('Plant data:', plantData);
                     if (!plantData || !Array.isArray(plantData)) {
@@ -2358,6 +2728,9 @@ oxygen
                     $.ajax({
                         url: '/db/relation',
                         type: 'GET',
+                        data: {
+                            page: data || 1 // 使用传入的页码或默认值
+                        },
                         success: function (relationData) {
                             console.log('Relation data:', relationData);
                             if (!relationData || !Array.isArray(relationData)) {
@@ -2414,7 +2787,7 @@ oxygen
             });
         }
 
-        function refreshHerbTable() {
+        function refreshHerbTable(data) {
             console.log('Refreshing herb table');
             const tbody = document.querySelector('.herb-table tbody'); // 修改选择器
             if (!tbody) {
@@ -2425,6 +2798,9 @@ oxygen
             $.ajax({
                 url: '/db/herb?t=' + new Date().getTime(),
                 type: 'GET',
+                data: {
+                    page: data || 1 // 使用传入的页码或默认值
+                },
                 success: function (data) {
                     console.log('Herb data:', data);
                     if (!data || !Array.isArray(data)) {
@@ -2459,7 +2835,7 @@ oxygen
             });
         }
 
-        function refreshPrescriptionTable() {
+        function refreshPrescriptionTable(data) {
             console.log('Refreshing prescription table');
             const tbody = document.querySelector('.prescription-table tbody'); // 修改选择器
             if (!tbody) {
@@ -2470,6 +2846,9 @@ oxygen
             $.ajax({
                 url: '/db/prescription?t=' + new Date().getTime(),
                 type: 'GET',
+                data: {
+                    page: data || 1 // 使用传入的页码或默认值
+                },
                 success: function (data) {
                     console.log('Prescription data:', data);
                     if (!data || !Array.isArray(data)) {
@@ -2503,7 +2882,7 @@ oxygen
             });
         }
 
-        function refreshLiteratureTable() {
+        function refreshLiteratureTable(data) {
             console.log('Refreshing literature table');
             const tbody = document.querySelector('.literature-table tbody'); // 修改选择器
             if (!tbody) {
@@ -2514,6 +2893,9 @@ oxygen
             $.ajax({
                 url: '/db/literature?t=' + new Date().getTime(),
                 type: 'GET',
+                data: {
+                    page: data || 1 // 使用传入的页码或默认值
+                },
                 success: function (data) {
                     console.log('Literature data:', data);
                     if (!data || !Array.isArray(data)) {

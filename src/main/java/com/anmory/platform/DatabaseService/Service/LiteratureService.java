@@ -31,7 +31,8 @@ public class LiteratureService {
             String filePath,
             String mainPlant,
             String researchField,
-            String keywords
+            String keywords,
+            String recordedBy
     ) {
         return LiteratureMapper.insertLiterature(
                 title,
@@ -46,7 +47,8 @@ public class LiteratureService {
                 filePath,
                 mainPlant,
                 researchField,
-                keywords
+                keywords,
+                recordedBy
         );
     }
 
@@ -56,5 +58,9 @@ public class LiteratureService {
 
     public int deleteLiterature(int id) {
         return LiteratureMapper.deleteLiterature(id);
+    }
+
+    public List<Literature> selectLiteraturePage(int offset, int size) {
+        return LiteratureMapper.selectLiteraturePage(offset, size);
     }
 }

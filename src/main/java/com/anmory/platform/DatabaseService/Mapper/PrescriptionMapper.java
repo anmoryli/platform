@@ -19,12 +19,12 @@ public interface PrescriptionMapper {
     @Insert("INSERT INTO prescription (" +
             "prescription_name, composition, dosage, treatment, source, suitable_population, " +
             "precautions, category, preparation_method, doctor_or_expert, status, image_url, " +
-            "file_path, rating, reviews_count, version, medicine_ids, is_public" +
+            "file_path, rating, reviews_count, version, medicine_ids, is_public,recorded_by" +
             ") VALUES (" +
             "#{prescriptionName}, #{composition}, #{dosage}, #{treatment}, #{source}, " +
             "#{suitablePopulation}, #{precautions}, #{category}, #{preparationMethod}, " +
             "#{doctorOrExpert}, #{status}, #{imageUrl}, #{filePath}, #{rating}, #{reviewsCount}, " +
-            "#{version}, #{medicineIds}, #{isPublic}" +
+            "#{version}, #{medicineIds}, #{isPublic},#{recordedBy}" +
             ")")
     int insertPrescription(
             @Param("prescriptionName") String prescriptionName,
@@ -44,9 +44,13 @@ public interface PrescriptionMapper {
             @Param("reviewsCount") Integer reviewsCount,
             @Param("version") String version,
             @Param("medicineIds") String medicineIds,
-            @Param("isPublic") Boolean isPublic
+            @Param("isPublic") Boolean isPublic,
+            @Param("recordedBy") String recordedBy
     );
 
     @Delete("delete from medicine.prescription where prescription_id=#{id}")
     int deletePre(int id);
+
+    @Select("select * from medicine.prescription limit #{offset}, #{size}")
+    List<Prescription> selectPrescriptionPage(int offset, int size);
 }

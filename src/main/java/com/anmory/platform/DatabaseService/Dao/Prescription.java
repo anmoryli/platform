@@ -33,4 +33,5 @@ public class Prescription {
     private Boolean isPublic; // 是否公开，1表示公开，0表示私有
     private Date createTime; // 创建时间
     private Date updateTime; // 更新时间
+    private String recordedBy;
 }

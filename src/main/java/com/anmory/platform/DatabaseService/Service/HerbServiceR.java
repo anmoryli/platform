@@ -30,20 +30,25 @@ public class HerbServiceR {
             String functionIndication,
             String clinicalApplication,
             String pharmacologicalEffect,
-            String notes
+            String notes,
+            String recordedBy
     ) {
-        return herbMapper.insertHerb(herbName, plantId, herbTibetanName, herbAlias, herbDescription, partUsed, herbFeatures, flavorTropism, functionIndication, clinicalApplication, pharmacologicalEffect, notes);
+        return herbMapper.insertHerb(herbName, plantId, herbTibetanName, herbAlias, herbDescription, partUsed, herbFeatures, flavorTropism, functionIndication, clinicalApplication, pharmacologicalEffect, notes, recordedBy);
     }
 
     public List<Herb> selectAll() {
         return herbMapper.selectAll();
     }
 
-    public int getPlantIdByPlantName(String plantName) {
+    public Integer getPlantIdByPlantName(String plantName) {
         return herbMapper.getPlantIdByPlantName(plantName);
     }
 
     public int deleteHerb(int id) {
         return herbMapper.deleteHerb(id);
+    }
+
+    public List<Herb> selectHerbPage(int offset, int size) {
+        return herbMapper.selectHerbPage(offset, size);
     }
 }
