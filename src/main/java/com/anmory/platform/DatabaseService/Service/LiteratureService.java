@@ -52,6 +52,10 @@ public class LiteratureService {
         );
     }
 
+    public Literature getLiteratureByTitle(String title) {
+        return LiteratureMapper.getLiteratureByTitle(title);
+    }
+
     public List<Literature> selectAll() {
         return LiteratureMapper.selectAll();
     }

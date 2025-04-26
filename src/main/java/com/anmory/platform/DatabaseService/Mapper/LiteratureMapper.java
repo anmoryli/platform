@@ -45,6 +45,9 @@ public interface LiteratureMapper {
     @Delete("delete from literature where literature_id=#{id}")
     int deleteLiterature(int id);
 
-    @Select("select * from literature limit #{offset}, #{size}")
+    @Select("select * from literature order by literature.literature_id desc limit #{offset}, #{size}")
     List<Literature> selectLiteraturePage(int offset, int size);
+
+    @Select("select * from literature where literature.title = #{title} limit 1")
+    Literature getLiteratureByTitle(String title);
 }

@@ -40,6 +40,10 @@ public class HerbServiceR {
         return herbMapper.selectAll();
     }
 
+    public Herb getHerbByName(String herbName) {
+        return herbMapper.selectHerbByName(herbName);
+    }
+
     public Integer getPlantIdByPlantName(String plantName) {
         return herbMapper.getPlantIdByPlantName(plantName);
     }

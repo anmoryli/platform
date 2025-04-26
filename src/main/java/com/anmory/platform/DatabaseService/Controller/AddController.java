@@ -88,8 +88,8 @@ public class AddController {
     }
 
     @RequestMapping("/addHerb")
-    public int addHerb(String herbName,
-                       String plantName,
+    public int addHerb(String plantName,
+                       String herbName,
                        String herbTibetanName,
                        String herbAlias,
                        String herbDescription,
@@ -106,6 +106,7 @@ public class AddController {
             if(user == null) return -1;
             userService.addRecordNums(user.getUsername());
             Integer plantId = herbServiceR.getPlantIdByPlantName(plantName);
+            System.out.println(plantId);
             if(plantId == null) return 0;
             System.out.println(plantId);
             return herbServiceR.insertHerb(
@@ -124,7 +125,8 @@ public class AddController {
                     user.getUsername()
             );
         }catch (Exception e) {
-            return 0;
+            e.printStackTrace();
+            return 2;
         }
     }
 
@@ -188,7 +190,8 @@ public class AddController {
                 reviewsCount,
                 version,
                 medicineIds,
-                isPublic
+                isPublic,
+                user.getUsername()
         );
     }
 

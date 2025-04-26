@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 public class QAController {
     private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
-    private static final String API_KEY = "sk-c1de8d51734546a8ba435dd905c3b02b";
+    private static final String API_KEY = "sk-792025c6193c4f53afdcfddbaa1041e5";
     @Autowired
     Neo4jService neo4jService;
     @Autowired

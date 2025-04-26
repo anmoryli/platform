@@ -19,6 +19,10 @@
             --primary-light: #2d6ebd;
             --secondary-color: #5a6268;
             --accent-color: #d9534f;
+            --red-light: #e57373;
+            /* 柔和的浅红 */
+            --red-dark: #d32f2f;
+            /* 较深的红，用于悬停 */
             --success-color: #2d8a3e;
             --warning-color: #f39c12;
             --text-color: #222222;
@@ -167,6 +171,44 @@
 
         .edit-btn:hover {
             background-color: var(--primary-color);
+        }
+
+        .search-btn {
+            background-color: var(--primary-light);
+            color: var(--text-white);
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .clear-btn {
+            background-color: var(--red-light);
+            color: var(--text-white);
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background-color: var(--red-dark);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
         }
 
         .delete-btn {
@@ -1190,6 +1232,35 @@
     <script src="/js/jquery.min.js"></script>
     <script>
 
+        function checkLoginStatus() {
+            $.ajax({
+                url: '/user/checkSession',
+                method: 'GET',
+                xhrFields: {
+                    withCredentials: true // 确保发送 Cookie 或其他认证信息
+                },
+                success: function (data) {
+                    if (!data) {
+                        console.log('登录状态过期，正在重定向到登录页面...');
+                        alert('登录状态过期，正在重定向到登录页面...');
+                        location.href = '/admin_login_v.html'; // 重定向到登录页面
+                    } else {
+                        console.log('用户已经登录，继续操作...');
+                        fetchUserInfo(); // 获取用户信息
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error checking login status:', error);
+                }
+            });
+        }
+
+        // 每隔 5 秒检查一次
+        const checkInterval = setInterval(checkLoginStatus, 5000);
+
+        // 页面卸载时清除定时器
+        window.addEventListener('unload', () => clearInterval(checkInterval));
+
         // 获取用户信息并更新页面
         function fetchUserInfo() {
             $.ajax({
@@ -1210,6 +1281,10 @@
                     document.getElementById('user-info').textContent = '你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!';
                 }
             });
+        }
+
+        function refreshUserInfo() {
+            fetchUserInfo();
         }
 
         $(document).ready(function () {
@@ -1515,7 +1590,7 @@
                 <div class="admin-section">
     <h3>
     <span class="left">数据库管理</span>
-    <span class="right" id="user-info">你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!</span>
+    <span class="right" id="user-info" onclick=refreshUserInfo()>你好:未知用户, 你的贡献量为:0,请登录后再录入!!!!!(点我刷新)</span>
 </h3>
     
     <div class="tabs">
@@ -1530,6 +1605,8 @@
     <div class="tab-content active" id="plants-tab">
         <div class="search-container">
             <input type="text" class="search-input" id="plants-search" placeholder="搜索植物名称、拉丁学名或别名...">
+            <button class="search-btn" onclick=searchPlant()>搜索</button>
+            <button class="clear-btn" onclick=clearPlantSearch()>清空</button>
         </div>
         
         <button class="add-btn" id="show-add-plant-form">添加新植物</button>
@@ -1769,6 +1846,8 @@
     <div class="tab-content" id="herb-tab">
         <div class="search-container">
             <input type="text" class="search-input" id="herb-search" placeholder="搜索药材名称、藏文名或别名...">
+            <button class="search-btn" onclick=searchHerb()>搜索</button>
+            <button class="clear-btn" onclick=clearHerb()>清空</button>
         </div>
 
         <button class="add-btn" id="show-add-herb-form">添加新药材</button>
@@ -1910,6 +1989,8 @@
     <div class="tab-content" id="prescription-tab">
         <div class="search-container">
             <input type="text" class="search-input" id="prescription-search" placeholder="搜索药方名称或用途...">
+            <button class="search-btn" onclick=searchPrescription()>搜索</button>
+            <button class="clear-btn" onclick=clearPrescription()>清空</button>
         </div>
 
         <button class="add-btn" id="show-add-prescription-form">添加新药方</button>
@@ -2060,6 +2141,8 @@
     <div class="tab-content" id="literature-tab">
         <div class="search-container">
             <input type="text" class="search-input" id="literature-search" placeholder="搜索文献标题、作者或关键词...">
+            <button class="search-button" onclick="searchLiterature()">搜索</button>
+            <button class="clear-button" onclick="clearLiteratureSearch()">清空</button>
         </div>
 
         <button class="add-btn" id="show-add-literature-form">添加新文献</button>
@@ -2223,78 +2306,79 @@ oxygen
                 </div>
             `;
 
-            function goToPlantPage(data) {
-                // 在表单插入后再绑定事件监听器
-                const addPlantForm = document.getElementById('add-plant-form');
-                if (addPlantForm) {
-                    addPlantForm.addEventListener('submit', function (event) {
-                        event.preventDefault();
+            // function goToPlantPage(data) {
+            //     // 在表单插入后再绑定事件监听器
+            //     const addPlantForm = document.getElementById('add-plant-form');
+            //     if (addPlantForm) {
+            //         addPlantForm.addEventListener('submit', function (event) {
+            //             event.preventDefault();
 
-                        const formData = new FormData(this);
-                        formData.append('plantName', document.getElementById('plant-name').value);
-                        formData.append('plantLatin', document.getElementById('plant-latin').value);
-                        formData.append('plantAlias', document.getElementById('plant-alias').value);
-                        formData.append('plantTibetanName', document.getElementById('plant-tibetan-name').value);
-                        formData.append('plantFamilyName', document.getElementById('plant-family-name').value);
-                        formData.append('plantGenusName', document.getElementById('plant-genus-name').value);
-                        formData.append('plantFeatures', document.getElementById('plant-features').value);
-                        formData.append('plantOrigin', document.getElementById('plant-origin').value);
-                        formData.append('plantProtectLevel', document.getElementById('plant-protect-level').value);
-                        formData.append('notes', document.getElementById('notes').value);
+            //             const formData = new FormData(this);
+            //             formData.append('plantName', document.getElementById('plant-name').value);
+            //             formData.append('plantLatin', document.getElementById('plant-latin').value);
+            //             formData.append('plantAlias', document.getElementById('plant-alias').value);
+            //             formData.append('plantTibetanName', document.getElementById('plant-tibetan-name').value);
+            //             formData.append('plantFamilyName', document.getElementById('plant-family-name').value);
+            //             formData.append('plantGenusName', document.getElementById('plant-genus-name').value);
+            //             formData.append('plantFeatures', document.getElementById('plant-features').value);
+            //             formData.append('plantOrigin', document.getElementById('plant-origin').value);
+            //             formData.append('plantProtectLevel', document.getElementById('plant-protect-level').value);
+            //             formData.append('notes', document.getElementById('notes').value);
 
-                        const fileInput = document.getElementById('image-upload');
-                        if (fileInput && fileInput.files.length > 0) {
-                            formData.append('file', fileInput.files[0]);
-                        } else {
-                            console.warn('未选择图片文件');
-                        }
+            //             const fileInput = document.getElementById('image-upload');
+            //             if (fileInput && fileInput.files.length > 0) {
+            //                 formData.append('file', fileInput.files[0]);
+            //             } else {
+            //                 console.warn('未选择图片文件');
+            //             }
 
-                        const page = goToPlantPage();
+            //             const page = goToPlantPage();
 
-                        $.ajax({
-                            url: '/add/addPlant?page=',
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success: function (response) {
-                                if (response == -1) {
-                                    alert("登录过期，请重新登录后再录入!!!");
-                                    location.href = "admin_login_v.html";
-                                    return;
-                                }
-                                else if (response != -1) {
-                                    alert('植物数据添加成功！');
-                                    // 展示植物添加页面
-                                    refreshPlantTable();
-                                    loadDatabasePage();
-                                    document.getElementById('add-plant-form').reset();
-                                    // 刷新植物列表
-                                    $('#add-plant-form-container').slideToggle();
-                                }
-                            },
-                            error: function (error) {
-                                console.error('请求失败:', error);
-                                alert('植物数据添加失败！');
-                            }
-                        });
-                    });
-                } else {
-                    console.error('表单 add-plant-form 未找到！');
-                }
-            }
+            //             $.ajax({
+            //                 url: '/add/addPlant?page=',
+            //                 type: 'POST',
+            //                 data: formData,
+            //                 processData: false,
+            //                 contentType: false,
+            //                 success: function (response) {
+            //                     if (response == -1) {
+            //                         alert("登录过期，请重新登录后再录入!!!");
+            //                         location.href = "admin_login_v.html";
+            //                         return;
+            //                     }
+            //                     else if (response != -1) {
+            //                         alert('植物数据添加成功！');
+            //                         fetchUserInfo();
+            //                         // 展示植物添加页面
+            //                         refreshPlantTable();
+            //                         loadDatabasePage();
+            //                         document.getElementById('add-plant-form').reset();
+            //                         // 刷新植物列表
+            //                         $('#add-plant-form-container').slideToggle();
+            //                     }
+            //                 },
+            //                 error: function (error) {
+            //                     console.error('请求失败:', error);
+            //                     alert('植物数据添加失败！');
+            //                 }
+            //             });
+            //         });
+            //     } else {
+            //         console.error('表单 add-plant-form 未找到！');
+            //     }
+            // }
 
-            function goToHerbPage(data) {
-                return data;
-            }
+            // function goToHerbPage(data) {
+            //     return data;
+            // }
 
-            function goToPrescriptionPage(data) {
-                return data;
-            }
+            // function goToPrescriptionPage(data) {
+            //     return data;
+            // }
 
-            function goToLiteraturePage(data) {
-                return data;
-            }
+            // function goToLiteraturePage(data) {
+            //     return data;
+            // }
 
             $('#content-container').html(html);
             initDatabasePage();
@@ -2380,8 +2464,6 @@ oxygen
                         console.warn('未选择图片文件');
                     }
 
-                    const page = goToPlantPage();
-
                     $.ajax({
                         url: '/add/addPlant?page=',
                         type: 'POST',
@@ -2396,6 +2478,7 @@ oxygen
                             }
                             else if (response != -1) {
                                 alert('植物数据添加成功！');
+                                fetchUserInfo();
                                 // 展示植物添加页面
                                 refreshPlantTable();
                                 loadDatabasePage();
@@ -2450,8 +2533,9 @@ oxygen
                                 location.href = "admin_login_v.html";
                                 return;
                             }
-                            else if (response != 0) {
+                            else if (response != 0 && response != 2) {
                                 alert('药材数据添加成功！');
+                                fetchUserInfo();
                                 // 重置表单
                                 // addHerbForm.reset();
                                 // 刷新药材列表
@@ -2462,6 +2546,9 @@ oxygen
                                 // 清空表单
                                 document.getElementById('add-herb-form').reset();
                                 $('#add-herb-form-container').slideToggle();
+                            }
+                            else if (response == 2) {
+                                alert('该药材已存在，请勿重复添加！');
                             }
                         },
                         error: function (error) {
@@ -2518,6 +2605,7 @@ oxygen
                             }
                             else if (response == 1) {
                                 alert('药方数据添加成功！');
+                                fetchUserInfo();
                                 // 展现药方数据
                                 loadDatabasePage();
                                 // 模拟点击药方数据管理标签
@@ -2574,6 +2662,7 @@ oxygen
                             }
                             else if (response == 1) {
                                 alert('文献数据添加成功！');
+                                fetchUserInfo();
                                 // 模拟点击文献数据管理标签
                                 refreshLiteratureTable();
                                 $('#literature-tab').click();
@@ -4146,6 +4235,189 @@ oxygen
                 if (userLocationChart) userLocationChart.resize();
                 if (searchKeywordsChart) searchKeywordsChart.resize();
             });
+        }
+
+        // 搜索植物
+        function searchPlant() {
+            const searchTerm = $('#plants-search').val().trim();
+            if (searchTerm) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/db/searchPlant',
+                    data: { name: searchTerm },
+                    success: function (response) {
+                        const tbody = $('.plant-table tbody');
+                        if (response && typeof response === 'object' && !Array.isArray(response)) {
+                            let html = `
+                        <tr>
+                            <td>${response.plantId || ''}</td>
+                            <td>${response.plantName || ''}</td>
+                            <td>${response.plantLatin || ''}</td>
+                            <td>${response.plantTibetanName || ''}</td>
+                            <td>${response.plantAlias || ''}</td>
+                            <td>${response.plantFamilyName || ''}</td>
+                            <td>${response.plantGenusName || ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${response.plantId}" data-type="plant">编辑</button>
+                                <button class="action-btn delete-btn" data-id="${response.plantId}" data-type="plant">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                            tbody.html(html);
+                        } else {
+                            tbody.html('<tr><td colspan="8">未找到匹配数据</td></tr>');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('搜索植物失败:', error);
+                        $('.plant-table tbody').html('<tr><td colspan="8">搜索失败，请重试</td></tr>');
+                    }
+                });
+            } else {
+                refreshPlantTable(1);
+            }
+        }
+
+        // 搜索药材
+        function searchHerb() {
+            const searchTerm = $('#herb-search').val().trim();
+            if (searchTerm) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/db/searchHerb',
+                    data: { name: searchTerm },
+                    success: function (response) {
+                        const tbody = $('.herb-table tbody');
+                        if (response && typeof response === 'object' && !Array.isArray(response)) {
+                            let html = `
+                        <tr>
+                            <td>${response.herbId || ''}</td>
+                            <td>${response.herbName || ''}</td>
+                            <td>${response.herbTibetanName || ''}</td>
+                            <td>${response.herbAlias || ''}</td>
+                            <td>${response.partUsed || ''}</td>
+                            <td>${response.functionIndication || ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${response.herbId}" data-type="herb">编辑</button>
+                                <button class="action-btn delete-btn" data-id="${response.herbId}" data-type="herb">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                            tbody.html(html);
+                        } else {
+                            tbody.html('<tr><td colspan="7">未找到匹配数据</td></tr>');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('搜索药材失败:', error);
+                        $('.herb-table tbody').html('<tr><td colspan="7">搜索失败，请重试</td></tr>');
+                    }
+                });
+            } else {
+                refreshHerbTable(1);
+            }
+        }
+
+        // 搜索药方
+        function searchPrescription() {
+            const searchTerm = $('#prescription-search').val().trim();
+            if (searchTerm) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/db/searchPrescription',
+                    data: { name: searchTerm },
+                    success: function (response) {
+                        const tbody = $('.prescription-table tbody');
+                        if (response && typeof response === 'object' && !Array.isArray(response)) {
+                            let html = `
+                        <tr>
+                            <td>${response.prescriptionId || ''}</td>
+                            <td>${response.prescriptionName || ''}</td>
+                            <td>${response.treatment || ''}</td>
+                            <td>${response.category || ''}</td>
+                            <td>${response.status || ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${response.prescriptionId}" data-type="prescription">编辑</button>
+                                <button class="action-btn delete-btn" data-id="${response.prescriptionId}" data-type="prescription">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                            tbody.html(html);
+                        } else {
+                            tbody.html('<tr><td colspan="6">未找到匹配数据</td></tr>');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('搜索药方失败:', error);
+                        $('.prescription-table tbody').html('<tr><td colspan="6">搜索失败，请重试</td></tr>');
+                    }
+                });
+            } else {
+                refreshPrescriptionTable(1);
+            }
+        }
+
+        // 搜索文献
+        function searchLiterature() {
+            const searchTerm = $('#literature-search').val().trim();
+            if (searchTerm) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/db/searchLiterature',
+                    data: { name: searchTerm },
+                    success: function (response) {
+                        const tbody = $('.literature-table tbody');
+                        if (response && typeof response === 'object' && !Array.isArray(response)) {
+                            let html = `
+                        <tr>
+                            <td>${response.literatureId || ''}</td>
+                            <td>${response.title || ''}</td>
+                            <td>${response.authors || ''}</td>
+                            <td>${response.publicationYear || ''}</td>
+                            <td>${response.mainPlant || ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${response.literatureId}" data-type="literature">编辑</button>
+                                <button class="action-btn delete-btn" data-id="${response.literatureId}" data-type="literature">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                            tbody.html(html);
+                        } else {
+                            tbody.html('<tr><td colspan="6">未找到匹配数据</td></tr>');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('搜索文献失败:', error);
+                        $('.literature-table tbody').html('<tr><td colspan="6">搜索失败，请重试</td></tr>');
+                    }
+                });
+            } else {
+                refreshLiteratureTable(1);
+            }
+        }
+
+        // 清空植物搜索
+        function clearPlantSearch() {
+            $('#plants-search').val('');
+            refreshPlantTable(1);
+        }
+
+        // 清空药材搜索
+        function clearHerbSearch() {
+            $('#herb-search').val('');
+            refreshHerbTable(1);
+        }
+
+        // 清空药方搜索
+        function clearPrescriptionSearch() {
+            $('#prescription-search').val('');
+            refreshPrescriptionTable(1);
+        }
+
+        // 清空文献搜索
+        function clearLiteratureSearch() {
+            $('#literature-search').val('');
+            refreshLiteratureTable(1);
         }
     </script>
 </body>

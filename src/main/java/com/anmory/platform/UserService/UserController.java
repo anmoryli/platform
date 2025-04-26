@@ -29,6 +29,7 @@ public class UserController {
         User user = userService.getByName(username);
         if(user.getPassword().equals(password)) {
             session.setAttribute("session_user_key",user);
+            session.setMaxInactiveInterval(10 * 365 * 24 * 60 * 60);
             return true;
         }
         return false;
@@ -128,6 +129,37 @@ public class UserController {
     public User getUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("session_user_key");
+        int contribution = userService.getContribution(user.getUsername());
+        user.setRecordNums(contribution);
+        session.setAttribute("session_user_key",user);
         return user;
+    }
+
+    @RequestMapping("/checkSession")
+    public boolean checkSession(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user != null;
+    }
+
+    @RequestMapping("/adminPermession")
+    public boolean adminPermession(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user != null;
+    }
+
+    @RequestMapping("/isAdmin")
+    public boolean isAdmin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user.getIsAdmin() == 1;
+    }
+
+    @RequestMapping("/isPassedAmin")
+    public boolean isPassedAmin(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session_user_key");
+        return user.getIsAdmin() == 1;
     }
 }

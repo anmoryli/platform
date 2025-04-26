@@ -33,4 +33,8 @@ public class PrescriptionService {
     public List<Prescription> selectPrescriptionPage(int offset, int size) {
         return prescriptionMapper.selectPrescriptionPage(offset, size);
     }
+
+    public Prescription getPrescriptionByName(String name) {
+        return prescriptionMapper.getPrescriptionByName(name);
+    }
 }

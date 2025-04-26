@@ -49,6 +49,10 @@ public class PlantService {
         return plantMapper.selectAll();
     }
 
+    public Plant selectPlantByName(String name) {
+        return plantMapper.getPlantByName(name);
+    }
+
     public int deletePlant(int id) {
         return plantMapper.deletePlant(id);
     }

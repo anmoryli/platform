@@ -472,7 +472,7 @@
         <nav>
             <ul>
                 <li><a href="recognize_v.html">图片识别</a></li>
-                <li><a href="graph_v.html">知识图谱</a></li>
+                <li><a href="graph_v.html">慧灵智能体</a></li>
                 <li><a href="db_v.html">数据库</a></li>
                 <li><a href="admin_login_v.html">管理中心</a></li>
                 <li><a href="me_v.html">个人中心</a></li>
@@ -780,6 +780,7 @@
             <button class="button_me" onclick="back()">返回首页</button>
             <button class="button_me" onclick="logOut()">退出登录</button>
             <button class="button_me" onclick="resetPassword()">修改密码</button>
+            <button class="button_me" onclick="adminPermession()">申请管理员账号</button>
         </div>
     </div>
 </div>
@@ -787,6 +788,10 @@
 <script src="/js/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
+        let isAdmin = getIsAdmin();
+        if(isAdmin == false) {
+            checkIsPassedAmin();
+        }
         // 获取用户信息
         $.ajax({
             type: "post",
@@ -801,6 +806,45 @@
                 $('#profile-username').text(user.userName);
             }
         });
+
+        function checkIsPassedAmin() {
+           $.ajax({
+                type: 'get',
+                url:'/user/isPassedAmin',
+                success: function (data) {
+                    if(data == 1){ 
+                        alert("您已经成为管理员了!!!");
+                        return true;}
+                        alert("您还未通过申请管理员账号!!!");
+                    return false;
+                }
+            }) 
+        }
+
+        function getIsAdmin() {
+            $.ajax({
+                type: 'get',
+                url:'/user/isAdmin',
+                success: function (data) {
+                    if(data == 1) return true;
+                    return false;
+                }
+            })
+        }
+
+        function adminPermession() {
+            $.ajax({
+                type: "post",
+                url: "/user/adminPermession",
+                success: function (result) {
+                    if (result === true) {
+                        alert("申请成功！请耐心等待管理员审核。");
+                    } else {
+                        alert("申请失败，请稍后再试。");
+                    }
+                }
+            });
+        }
 
         // 标签页切换
         $('.tab').click(function() {

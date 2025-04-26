@@ -51,6 +51,9 @@ public interface PrescriptionMapper {
     @Delete("delete from medicine.prescription where prescription_id=#{id}")
     int deletePre(int id);
 
-    @Select("select * from medicine.prescription limit #{offset}, #{size}")
+    @Select("select * from medicine.prescription order by prescription_id desc limit #{offset}, #{size}")
     List<Prescription> selectPrescriptionPage(int offset, int size);
+
+    @Select("select * from medicine.prescription where medicine.prescription.prescription_name = #{name} limit 1")
+    Prescription getPrescriptionByName(String name);
 }

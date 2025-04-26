@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知识图谱</title>
+    <title>慧灵智能体</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/inter.css" />
@@ -14,12 +14,15 @@
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
 
+    <!-- 引入 marked.js 和 DOMPurify 用于 Markdown 解析和净化 -->
+    <script src="/js/marked.min.js"></script>
+    <script src="/js/purify.min.js"></script>
+
     <!--JAVASCRIPT-->
     <!--=================================================-->
 
     <!--Pace - Page Load Progress Par [OPTIONAL]-->
     <link href="css/pace.min.css" rel="stylesheet">
-
     <script src="js/pace.min.js"></script>
 
     <!--jQuery [ REQUIRED ]-->
@@ -240,6 +243,8 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             padding: 1rem;
+            /* 宽度设置大一点 */
+            height: 900px;
             display: flex;
             flex-direction: column;
         }
@@ -281,7 +286,7 @@
         }
 
         .chat-container {
-            height: 300px;
+            height: 800px;
             overflow-y: auto;
             padding: 1rem;
             background-color: var(--chat-bg);
@@ -307,8 +312,10 @@
         .message-bubble {
             padding: 0.75rem 1rem;
             border-radius: 8px;
-            max-width: 80%;
+            width: 100%; /* 占满整个对话框 */
+            box-sizing: border-box;
             position: relative;
+            word-wrap: break-word; /* 确保长文本换行 */
         }
 
         .user-message .message-bubble {
@@ -319,6 +326,29 @@
         .bot-message .message-bubble {
             background-color: var(--bot-message-bg);
             color: var(--text-color);
+        }
+
+        /* Markdown 表格样式 */
+        .message-bubble table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.5rem 0;
+        }
+
+        .message-bubble table th,
+        .message-bubble table td {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .message-bubble table th {
+            background-color: rgba(26, 82, 118, 0.1);
+            font-weight: 600;
+        }
+
+        .message-bubble table tr:nth-child(even) {
+            background-color: rgba(240, 240, 240, 0.5);
         }
 
         .message-time {
@@ -408,9 +438,7 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
             z-index: 9999;
             max-width: 500px;
-            /* 增加最大宽度 */
             pointer-events: none;
-            /* 确保鼠标事件可以穿透浮窗 */
         }
 
         .tooltip-title {
@@ -418,7 +446,6 @@
             font-weight: bold;
             color: #1a5276;
             margin-bottom: 10px;
-            /* 增加底部间距 */
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
@@ -427,24 +454,17 @@
             font-size: 14px;
             color: #333;
             margin-bottom: 15px;
-            /* 增加底部间距 */
             white-space: normal;
-            /* 允许文本换行 */
             word-break: break-all;
-            /* 长单词自动换行 */
             overflow: hidden;
-            /* 隐藏溢出的内容 */
             text-overflow: ellipsis;
-            /* 显示省略号 */
             display: -webkit-box;
             -webkit-line-clamp: 3;
-            /* 控制显示的行数 */
             -webkit-box-orient: vertical;
         }
 
         .tooltip-properties {
             margin-top: 10px;
-            /* 增加顶部间距 */
             border-top: 1px solid #eee;
             padding-top: 10px;
         }
@@ -453,7 +473,6 @@
             display: flex;
             font-size: 12px;
             margin-bottom: 10px;
-            /* 增加底部间距 */
         }
 
         .property-name {
@@ -461,23 +480,17 @@
             width: 80px;
             color: #555;
             white-space: nowrap;
-            /* 不换行 */
         }
 
         .property-value {
             flex: 1;
             color: #666;
             white-space: normal;
-            /* 允许文本换行 */
             word-break: break-all;
-            /* 长单词自动换行 */
             overflow: hidden;
-            /* 隐藏溢出的内容 */
             text-overflow: ellipsis;
-            /* 显示省略号 */
             display: -webkit-box;
             -webkit-line-clamp: 2;
-            /* 控制显示的行数 */
             -webkit-box-orient: vertical;
         }
 
@@ -485,11 +498,9 @@
             0% {
                 opacity: 1;
             }
-
             50% {
                 opacity: 0.7;
             }
-
             100% {
                 opacity: 1;
             }
@@ -512,7 +523,6 @@
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
-
             100% {
                 transform: translate(-50%, -50%) scale(3);
                 opacity: 0;
@@ -701,7 +711,7 @@
             <nav>
                 <ul>
                     <li><a href="recognize_v.html">图片识别</a></li>
-                    <li><a href="graph_v.html">知识图谱</a></li>
+                    <li><a href="graph_v.html">慧灵智能体</a></li>
                     <li><a href="db_v.html">数据库</a></li>
                     <li><a href="admin_login_v.html">管理中心</a></li>
                     <li><a href="me_v.html">个人中心</a></li>
@@ -765,7 +775,8 @@
                 </span>
                 <select id="modelSelect" class="model-select">
                     <option value="deepseek">DeepSeek</option>
-                    <option value="self">自研机器人</option>
+                    <option value="lingxi">灵析(知识图谱问答)</option>
+                    <option value="huicha">慧查(数据库问答)</option>
                 </select>
                 <span class="send-edit">
                     <input type="text" placeholder="输入内容" class="input" id="userInput" maxlength="500">
@@ -825,17 +836,12 @@
                 var nodeName = params.data.name;
                 $.ajax({
                     type: "GET",
-                    url: '/plantDetail',
+                    url: '/db/searchHerb',
                     data: { name: nodeName },
                     success: function (response) {
                         var details = response; // 用于存储药材详细信息
                         console.log("获取到的详细信息:", response);
                         console.log("药材详细信息:", details);
-                        // console.log("悬浮的节点名称:", nodeName);
-                        // var nodeValue = params.data.id || "";
-                        // console.log("悬浮的节点id:", nodeValue);
-                        // 获取节点详细信息
-
                         // 构建浮窗HTML内容
                         var tooltipContent = '<div class="tooltip-title">' + nodeName + '</div>';
 
@@ -1058,19 +1064,14 @@
 
             // 语音识别配置
             const voiceRecognitionConfig = {
-                // 语音识别服务URL - 可以是本地JAR包中的服务
                 serviceUrl: '/voice-recognition',
-                // 语音识别超时时间（毫秒）
                 timeout: 10000,
-                // 语言设置
                 language: 'zh-CN',
-                // 是否使用WebSocket
                 useWebSocket: false,
-                // WebSocket URL（如果使用）
                 webSocketUrl: 'ws://175.24.205.213:8080/voice-ws'
             };
 
-            // 初始化语音识别 - 使用Web Speech API或自定义实现
+            // 初始化语音识别
             initVoiceRecognition();
 
             // 更新字符计数器
@@ -1092,7 +1093,7 @@
 
             // 显示打字指示器
             function showTypingIndicator() {
-                if (typingIndicator) return; // 如果已经存在，不再创建
+                if (typingIndicator) return;
 
                 typingIndicator = $("<div>").addClass("message bot-message");
                 const bubble = $("<div>").addClass("message-bubble").html(
@@ -1130,7 +1131,6 @@
             $("#clearChatBtn").click(function () {
                 if (confirm("确定要清空所有对话吗？")) {
                     $("#chatContainer").html('');
-                    // 添加欢迎消息
                     appendMessage("欢迎使用藏药植物知识助手，请选择模型并输入您的问题。", 'bot-message');
                 }
             });
@@ -1148,23 +1148,26 @@
                     return;
                 }
 
-                // 获取选择的模型
                 const selectedModel = $("#modelSelect").val();
                 console.log("选择的模型:", selectedModel);
 
-                // 显示用户消息
+                // 显示用户消息（不解析 Markdown）
                 appendMessage(userInput, 'user-message');
 
                 // 清空输入框并重置字符计数
                 $("#userInput").val('');
                 updateCharCounter();
 
-                // 显示打字指示器
                 isWaitingForResponse = true;
                 showTypingIndicator();
 
-                // 根据选择的模型发送不同的请求
-                const endpoint = selectedModel === 'deepseek' ? '/ds_chat' : '/qa';
+                // 定义模型到端点的映射
+                const endpointMap = {
+                    deepseek: '/ds_chat',
+                    huicha: '/bot/nl2sql',
+                    lingxi: '/qa'
+                };
+                const endpoint = endpointMap[selectedModel] || '/qa';
 
                 // 发送 AJAX 请求
                 $.ajax({
@@ -1173,16 +1176,14 @@
                     contentType: "application/json",
                     data: JSON.stringify({ userInput: userInput }),
                     success: function (response) {
-                        // 隐藏打字指示器
                         hideTypingIndicator();
                         isWaitingForResponse = false;
 
-                        // 显示 AI 回复
-                        console.log(response);
-                        appendMessage(response, 'bot-message');
+                        // 假设 response 是字符串，解析为 Markdown
+                        const markdownContent = typeof response === 'string' ? response : JSON.stringify(response);
+                        appendMessage(markdownContent, 'bot-message', true); // 解析 Markdown
                     },
                     error: function (xhr, status, error) {
-                        // 隐藏打字指示器
                         hideTypingIndicator();
                         isWaitingForResponse = false;
 
@@ -1192,7 +1193,7 @@
                 });
             });
 
-            // 按Enter键发送消息
+            // 按 Enter 键发送消息
             $("#userInput").keypress(function (e) {
                 if (e.which === 13) {
                     $("#sendBtn").click();
@@ -1201,20 +1202,25 @@
             });
 
             // 添加消息到聊天窗口
-            function appendMessage(content, className) {
+            function appendMessage(content, className, isMarkdown = false) {
                 const chatContainer = $("#chatContainer");
                 const messageElement = $("<div>").addClass("message").addClass(className);
-
-                // 创建消息气泡，添加复制按钮和时间戳
                 const bubble = $("<div>").addClass("message-bubble");
 
-                // 添加消息内容
-                bubble.text(content);
+                // 处理消息内容
+                if (isMarkdown) {
+                    // 解析 Markdown 并净化 HTML
+                    const htmlContent = marked.parse(content);
+                    const sanitizedContent = DOMPurify.sanitize(htmlContent);
+                    bubble.html(sanitizedContent);
+                } else {
+                    // 非 Markdown 内容，直接设置文本
+                    bubble.text(content);
+                }
 
                 // 添加复制按钮和时间戳
                 const timeStamp = $("<div>").addClass("message-time").text(getCurrentTime());
 
-                // 只为机器人消息添加复制按钮
                 if (className === 'bot-message') {
                     const copyBtn = $("<button>")
                         .addClass("copy-btn")
@@ -1229,7 +1235,6 @@
                 messageElement.append(bubble);
                 chatContainer.append(messageElement);
 
-                // 滚动到底部
                 scrollToBottom();
             }
 
@@ -1238,40 +1243,29 @@
 
             // 初始化语音识别
             function initVoiceRecognition() {
-                // 检查浏览器是否支持Web Speech API
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
-                const SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
-
-                // 检查浏览器是否支持语音识别
                 const isSpeechRecognitionSupported = !!SpeechRecognition;
 
                 if (isSpeechRecognitionSupported) {
-                    // 使用Web Speech API
                     initWebSpeechAPI();
                 } else {
-                    // 使用自定义JAR包中的语音识别服务
                     initCustomVoiceRecognition();
                 }
             }
 
-            // 使用Web Speech API初始化语音识别
             function initWebSpeechAPI() {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
 
-                // 配置语音识别
-                recognition.continuous = false; // 不连续识别
-                recognition.interimResults = true; // 返回临时结果
-                recognition.maxAlternatives = 1; // 返回最可能的识别结果
-                recognition.lang = voiceRecognitionConfig.language; // 设置语言
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+                recognition.lang = voiceRecognitionConfig.language;
 
-                // 识别结果事件
                 recognition.onresult = function (event) {
                     let interimTranscript = '';
                     let finalTranscript = '';
 
-                    // 处理识别结果
                     for (let i = event.resultIndex; i < event.results.length; ++i) {
                         if (event.results[i].isFinal) {
                             finalTranscript += event.results[i][0].transcript;
@@ -1280,58 +1274,47 @@
                         }
                     }
 
-                    // 如果有最终结果，填入输入框
                     if (finalTranscript) {
                         $("#userInput").val(finalTranscript);
                         updateCharCounter();
                     } else if (interimTranscript) {
-                        // 显示临时结果
                         $("#userInput").val(interimTranscript);
                         updateCharCounter();
                     }
                 };
 
-                // 识别结束事件
                 recognition.onend = function () {
                     console.log("语音识别结束");
                     updateVoiceButtonState(false);
                     isRecognizing = false;
                 };
 
-                // 识别错误事件
                 recognition.onerror = function (event) {
                     console.error("语音识别错误:", event.error);
                     handleVoiceRecognitionError(event.error);
                 };
 
-                // 识别开始事件
                 recognition.onstart = function () {
                     console.log("语音识别开始");
                     isRecognizing = true;
                 };
             }
 
-            // 使用自定义JAR包中的语音识别服务
             function initCustomVoiceRecognition() {
                 console.log("使用自定义语音识别服务");
-
-                // 这里不需要初始化对象，只需要在点击按钮时调用自定义服务
                 $("#voiceBtn").text("点击语音输入 (自定义)");
             }
 
-            // 开始语音识别
             function startVoiceRecognition() {
                 if (isRecognizing) {
                     stopVoiceRecognition();
                     return;
                 }
 
-                // 检查浏览器是否支持Web Speech API
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const isSpeechRecognitionSupported = !!SpeechRecognition;
 
                 if (isSpeechRecognitionSupported && recognition) {
-                    // 使用Web Speech API
                     try {
                         recognition.start();
                         updateVoiceButtonState(true);
@@ -1340,19 +1323,15 @@
                         alert("启动语音识别失败，请重试");
                     }
                 } else {
-                    // 使用自定义JAR包中的语音识别服务
                     useCustomVoiceRecognitionService();
                 }
             }
 
-            // 停止语音识别
             function stopVoiceRecognition() {
-                // 检查浏览器是否支持Web Speech API
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 const isSpeechRecognitionSupported = !!SpeechRecognition;
 
                 if (isSpeechRecognitionSupported && recognition) {
-                    // 使用Web Speech API
                     try {
                         recognition.stop();
                         updateVoiceButtonState(false);
@@ -1361,28 +1340,20 @@
                         console.error("停止语音识别失败:", error);
                     }
                 } else {
-                    // 使用自定义JAR包中的语音识别服务
                     stopCustomVoiceRecognitionService();
                 }
             }
 
-            // 使用自定义JAR包中的语音识别服务
             function useCustomVoiceRecognitionService() {
                 updateVoiceButtonState(true);
                 isRecognizing = true;
 
-                // 显示录音中状态
                 $("#userInput").val("正在录音...");
 
-                // 使用WebSocket或HTTP请求连接JAR包中的语音识别服务
                 if (voiceRecognitionConfig.useWebSocket) {
-                    // 使用WebSocket
                     connectToWebSocketService();
                 } else {
-                    // 使用HTTP请求
-                    // 这里模拟一个HTTP请求，实际应用中应该使用真实的API
                     setTimeout(function () {
-                        // 模拟识别结果
                         const recognizedText = "这是自定义语音识别服务的结果";
                         $("#userInput").val(recognizedText);
                         updateCharCounter();
@@ -1392,42 +1363,32 @@
                 }
             }
 
-            // 停止自定义语音识别服务
             function stopCustomVoiceRecognitionService() {
-                // 发送停止请求到JAR包中的服务
-                // 这里模拟停止请求
                 updateVoiceButtonState(false);
                 isRecognizing = false;
                 $("#userInput").val("");
                 updateCharCounter();
             }
 
-            // 连接到WebSocket服务
             function connectToWebSocketService() {
-                // 创建WebSocket连接
                 const socket = new WebSocket(voiceRecognitionConfig.webSocketUrl);
 
                 socket.onopen = function () {
                     console.log("WebSocket连接已建立");
-                    // 发送开始录音命令
                     socket.send(JSON.stringify({ command: "start" }));
                 };
 
                 socket.onmessage = function (event) {
                     const data = JSON.parse(event.data);
                     if (data.type === "result") {
-                        // 收到识别结果
                         $("#userInput").val(data.text);
                         updateCharCounter();
                     } else if (data.type === "interim") {
-                        // 收到临时结果
                         $("#userInput").val(data.text);
                         updateCharCounter();
                     } else if (data.type === "error") {
-                        // 收到错误
                         handleVoiceRecognitionError(data.error);
                     } else if (data.type === "end") {
-                        // 识别结束
                         updateVoiceButtonState(false);
                         isRecognizing = false;
                         socket.close();
@@ -1447,7 +1408,6 @@
                 };
             }
 
-            // 处理语音识别错误
             function handleVoiceRecognitionError(error) {
                 let errorMessage = "语音识别失败";
                 switch (error) {
@@ -1480,17 +1440,14 @@
                         break;
                 }
 
-                // 显示错误消息
                 if (error !== 'aborted') {
                     alert(errorMessage);
                 }
 
-                // 更新按钮状态
                 updateVoiceButtonState(false);
                 isRecognizing = false;
             }
 
-            // 更新语音按钮状态
             function updateVoiceButtonState(isRecording) {
                 if (isRecording) {
                     $("#voiceBtn").addClass("recording");
@@ -1503,7 +1460,6 @@
                 }
             }
 
-            // 语音按钮点击事件
             $("#voiceBtn").click(function () {
                 startVoiceRecognition();
             });
@@ -1536,13 +1492,11 @@
                 // 显示加载动画
                 compareChart.showLoading();
 
-                // 这里应该发送请求到后端比较药材
-                // 为了演示，我们使用模拟数据
+                // 模拟后端请求
                 setTimeout(function () {
                     renderCompareChart(herb1, herb2);
                     compareChart.hideLoading();
 
-                    // 更新比较结果文本
                     $('#compare-result').html(`
                         <div class="comparison-details">
                             <h4>药材比较详情</h4>
@@ -1566,7 +1520,7 @@
                                     <td>主治</td>
                                     <td>活血化瘀，温经通络</td>
                                     <td>清热解毒，凉血止血</td>
-                                </tr>
+                               宁波
                                 <tr>
                                     <td>禁忌</td>
                                     <td>孕妇慎用</td>

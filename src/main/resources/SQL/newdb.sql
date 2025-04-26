@@ -342,3 +342,5 @@ INSERT INTO user_upload (
 (10, '余甘子健康益处.docx', '/uploads/documents/余甘子健康益处.docx', '文档', 1280000, 'http://example.com/uploads/documents/余甘子健康益处.docx', TRUE, '成功', NULL, '2024-05-03 11:30:00'),
 (11, 'Bodhi mental health.pdf', '/uploads/documents/Bodhi mental health.pdf', '文档', 2304000, 'http://example.com/uploads/documents/Bodhi mental health.pdf', FALSE, '失败', '文件损坏', '2024-05-15 16:45:00'),
 (12, '独一味治疗跌打损伤.mp4', '/uploads/videos/独一味治疗跌打损伤.mp4', '视频', 13312000, 'http://example.com/uploads/videos/独一味治疗跌打损伤.mp4', TRUE, '处理中', NULL, '2024-05-25 09:50:00');
+
+

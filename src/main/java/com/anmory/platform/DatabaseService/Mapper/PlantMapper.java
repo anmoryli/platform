@@ -30,9 +30,12 @@ public interface PlantMapper {
     @Select("select medicine.plant.plant_id, medicine.plant.plant_name, medicine.herb.herb_name from medicine.plant, medicine.herb where medicine.plant.plant_id = medicine.herb.plant_id")
     List<Relation> selectRelation();
 
-    @Select("select medicine.plant.plant_id, medicine.plant.plant_name, medicine.herb.herb_name from medicine.plant, medicine.herb where medicine.plant.plant_id = medicine.herb.plant_id limit #{offset}, #{size}")
+    @Select("select medicine.plant.plant_id, medicine.plant.plant_name, medicine.herb.herb_name from medicine.plant, medicine.herb where medicine.plant.plant_id = medicine.herb.plant_id order by plant_id desc limit #{offset}, #{size}")
     List<Relation> selectRelationPage(int offset, int size);
 
-    @Select("select * from medicine.plant limit #{offset}, #{size}")
+    @Select("select * from medicine.plant order by plant_id desc limit #{offset}, #{size}")
     List<Plant> selectPage(int offset, int size);
+
+    @Select("select * from medicine.plant where medicine.plant.plant_name = #{name} limit 1")
+    Plant getPlantByName(String name);
 }

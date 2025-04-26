@@ -60,4 +60,24 @@ public class GetController {
         int offset = (page - 1) * 50;
         return plantService.selectRelationPage(offset, 50);
     }
+
+    @RequestMapping("/searchPlant")
+    public Plant searchPlant(String name) {
+        return plantService.selectPlantByName(name);
+    }
+
+    @RequestMapping("/searchHerb")
+    public com.anmory.platform.DatabaseService.Dao.Herb searchHerb(String name) {
+        return herbServiceR.getHerbByName(name);
+    }
+
+    @RequestMapping("/searchLiterature")
+    public Literature searchLiterature(String name) {
+        return literatureService.getLiteratureByTitle(name);
+    }
+
+    @RequestMapping("/searchPrescription")
+    public Prescription searchPrescription(String name) {
+        return prescriptionService.getPrescriptionByName(name);
+    }
 }

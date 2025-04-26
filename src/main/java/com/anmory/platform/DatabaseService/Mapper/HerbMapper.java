@@ -14,7 +14,7 @@ import java.util.List;
 
 @Mapper
 public interface HerbMapper {
-    @Select("select * from medicine.herb")
+    @Select("select * from medicine.herb order by herb_id desc")
     List<Herb> selectAll();
 
     @Insert("INSERT INTO medicine.herb (" +
@@ -48,6 +48,9 @@ public interface HerbMapper {
     @Delete("delete from medicine.herb where herb_id=#{id}")
     int deleteHerb(int id);
 
-    @Select("select * from medicine.herb limit #{offset}, #{size}")
+    @Select("select * from medicine.herb order by herb_id desc limit #{offset}, #{size}")
     List<Herb> selectHerbPage(int offset, int size);
+
+    @Select("select * from medicine.herb where medicine.herb.herb_name = #{name} limit 1")
+    Herb selectHerbByName(String name);
 }

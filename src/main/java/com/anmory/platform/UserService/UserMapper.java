@@ -36,4 +36,7 @@ public interface UserMapper {
 
     @Update("update user_info set record_nums = record_nums+1 where medicine.user_info.username=#{username}")
     int addRecordNum(String username);
+
+    @Select("select record_nums from medicine.user_info where username=#{username}")
+    int getContribution(String username);
 }

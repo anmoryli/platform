@@ -43,4 +43,8 @@ public class UserService {
 
     public int addRecordNums(String username) {return userMapper.addRecordNum(username);}
 
+    public int getContribution(String username) {
+        return userMapper.getContribution(username);
+    }
+
 }
