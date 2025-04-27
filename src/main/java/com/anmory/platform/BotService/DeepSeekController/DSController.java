@@ -1,6 +1,7 @@
 package com.anmory.platform.BotService.DeepSeekController;
 import com.anmory.platform.BotService.Controller.BotController;
 import com.anmory.platform.UserService.User;
+import com.anmory.platform.UserService.UserAiConversationService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -34,11 +38,16 @@ public class DSController {
     private static final String BASE_URL = "https://api.deepseek.com/v1/chat/completions";
     private static final String API_KEY = "sk-792025c6193c4f53afdcfddbaa1041e5";
 
+    @Autowired
+    UserAiConversationService userAiConversationService;
+
     @RequestMapping("/ds_chat")
     public String chat(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
 
+        Instant  start = Instant.now();
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("session_user_key");
+        int userId = user == null ? -1 : user.getId();
         String userInput = requestMap.get("userInput");
         System.out.println(userInput);
         // 创建请求体
@@ -78,6 +87,7 @@ public class DSController {
             os.write(input, 0, input.length);
         }
 
+        String reply = "";
         int responseCode = conn.getResponseCode();
         System.out.println("Response Code: " + responseCode);
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
@@ -100,6 +110,7 @@ public class DSController {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
+            reply = replyContent;
             return replyContent;
 
         } else {
@@ -112,6 +123,9 @@ public class DSController {
             }
             errorReader.close();
         }
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        userAiConversationService.insert(userId,  userInput, reply, "deepseek", null, Float.parseFloat(String.valueOf(duration.toMillis())), "zh-CN", true);
         return "访问出错";
     }
 

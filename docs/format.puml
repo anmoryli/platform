@@ -1,0 +1,39 @@
+@startuml
+class Platform{
+# Format
++ setFormat(Format format)
++ play(String fileName)
+}
+
+interface Format{
++ decode(String osType,String fileName)
+}
+
+class Windows extends Platform{
++ play(String fileName)
+}
+
+class Linux extends Platform{
++ play(String fileName)
+}
+
+class Unix extends Platform{
++ play(String fileName)
+}
+
+class MPEG implements Format{
++ decode(String osType,String fileName)
+}
+
+class AVI implements Format{
++ decode(String osType,String fileName)
+}
+
+class RMVB implements Format{
++ decode(String osType,String fileName)
+}
+
+class WMV implements Format{
++ decode(String osType,String fileName)
+}
+@enduml

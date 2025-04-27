@@ -154,24 +154,25 @@ public class AddController {
         User user = (User) session.getAttribute("session_user_key");
         if(user == null) return -1;
         userService.addRecordNums(user.getUsername());
-        String imageUrl = file.getOriginalFilename();
-        String filePath = "/usr/local/nginx/images/prescription/" + file.getOriginalFilename();
+        String imageUrl;
+        String filePath;
+        if(file != null) {
+            imageUrl = file.getOriginalFilename();
+            filePath = "/usr/local/nginx/images/prescription/" + file.getOriginalFilename();
 
-        File dir = new File("/usr/local/nginx/images/prescription/");
-        if (!dir.exists()) {
-            dir.mkdirs();
+            File dir = new File("/usr/local/nginx/images/prescription/");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            FileOutputStream fos = new FileOutputStream(new File(filePath));
+            fos.write(file.getBytes());
+            System.out.println("图片上传成功");
+            fos.close();
         }
-
-//        String filePath = "D:/testImg/" + file.getOriginalFilename();
-//        File dir = new File("D:/testImg/");
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
-
-        FileOutputStream fos = new FileOutputStream(new File(filePath));
-        fos.write(file.getBytes());
-        System.out.println("图片上传成功");
-        fos.close();
+        else {
+            imageUrl = "暂无图片";
+            filePath = "暂无图片";
+        }
         return prescriptionService.insertPrescription(
                 prescriptionName,
                 composition,

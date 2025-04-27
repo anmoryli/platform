@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数据库</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/inter.css"/>
+    <link rel="stylesheet" href="/css/inter.css" />
     <script src="/js/jquery.min.js"></script>
     <link rel="icon" href="images/favicon3.gif">
     <link rel="shortcut icon" href="images/favicon3.gif">
@@ -289,6 +289,9 @@
 
         .db-card-field {
             display: flex;
+            flex-direction: row;
+            width: 100%;
+            box-sizing: border-box;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -301,11 +304,12 @@
             color: var(--primary-color);
             font-weight: 500;
             padding: 0.75rem 1rem;
-            width: 30%;
             min-width: 120px;
+            width: 30%;
             border-right: 1px solid var(--border-color);
             display: flex;
             align-items: center;
+            box-sizing: border-box;
         }
 
         .db-card-value {
@@ -313,6 +317,8 @@
             flex: 1;
             background-color: white;
             color: var(--text-color);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .db-card-value.multiline {
@@ -342,17 +348,48 @@
         #prescription-cards,
         #literature-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(2, 1fr); /* Two cards per row */
             gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        @media (max-width: 480px) {
-            #herb-cards,
-            #plant-cards,
-            #prescription-cards,
-            #literature-cards {
-                grid-template-columns: 1fr;
-            }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .pagination-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-btn:disabled {
+            background-color: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #e0e0e0;
         }
 
         .loader {
@@ -366,8 +403,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -408,19 +450,12 @@
                 gap: 1rem;
             }
 
-            .db-card-field {
-                flex-direction: column;
-            }
-
-            .db-card-label {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-                padding: 0.5rem 1rem;
-            }
-
-            .db-card-value {
-                padding: 0.75rem 1rem;
+            #herb-cards,
+            #plant-cards,
+            #prescription-cards,
+            #literature-cards {
+                grid-template-columns: 1fr; /* One card per row on smaller screens */
+                max-width: 100%;
             }
         }
     </style>
@@ -459,6 +494,7 @@
                     <div class="table-title mb-0">药材信息表</div>
                 </div>
                 <div id="herb-cards" class="grid grid-cols-1 gap-4"></div>
+                <div id="herb-pagination" class="pagination"></div>
             </div>
 
             <!-- 植物信息表 -->
@@ -467,6 +503,7 @@
                     <div class="table-title mb-0">植物信息表</div>
                 </div>
                 <div id="plant-cards" class="grid grid-cols-1 gap-4"></div>
+                <div id="plant-pagination" class="pagination"></div>
             </div>
 
             <!-- 药方信息表 -->
@@ -475,6 +512,7 @@
                     <div class="table-title mb-0">药方信息表</div>
                 </div>
                 <div id="prescription-cards" class="grid grid-cols-1 gap-4"></div>
+                <div id="prescription-pagination" class="pagination"></div>
             </div>
 
             <!-- 文献信息表 -->
@@ -483,6 +521,7 @@
                     <div class="table-title mb-0">文献信息表</div>
                 </div>
                 <div id="literature-cards" class="grid grid-cols-1 gap-4"></div>
+                <div id="literature-pagination" class="pagination"></div>
             </div>
         </div>
     </div>
@@ -505,92 +544,142 @@
 
     <script>
         let currentTab = 'herb';
+        let currentPages = {
+            herb: 1,
+            plant: 1,
+            prescription: 1,
+            literature: 1
+        };
 
         // 切换 Tab 并更新按钮样式
         function switchTab(tabName) {
             currentTab = tabName;
-            
+
             document.querySelectorAll('.table').forEach(table => table.classList.add('hidden'));
             document.getElementById(tabName).classList.remove('hidden');
-            
+
             document.querySelectorAll('.tab-bar button').forEach(button => button.classList.remove('active'));
             document.getElementById(`${tabName}-tab`).classList.add('active');
-            
-            loadTabData(tabName);
+
+            loadTabData(tabName, currentPages[tabName]);
         }
 
         // 加载对应 Tab 的数据
-        function loadTabData(tabName) {
+        function loadTabData(tabName, page = 1) {
             if (tabName === 'herb') {
-                loadHerbData();
+                loadHerbData(page);
             } else if (tabName === 'plant') {
-                loadPlantData();
+                loadPlantData(page);
             } else if (tabName === 'prescription') {
-                loadPrescriptionData();
+                loadPrescriptionData(page);
             } else if (tabName === 'literature') {
-                loadLiteratureData();
+                loadLiteratureData(page);
             }
         }
 
+        // 生成分页按钮
+        function generatePagination(tabName, currentPage, totalPages) {
+            let html = '';
+            const maxButtons = 10; // Maximum number of page buttons to show
+            let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+            // Adjust startPage if endPage is at totalPages
+            if (endPage === totalPages) {
+                startPage = Math.max(1, endPage - maxButtons + 1);
+            }
+
+            // Previous button
+            html += `
+                <div class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                     onclick="refresh${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Table(${currentPage - 1})">
+                     « 上一页
+                </div>
+            `;
+
+            // Page number buttons
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <div class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                         id="${tabName}-${i}" 
+                         onclick="refresh${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Table(${i})">
+                         ${i}
+                    </div>
+                `;
+            }
+
+            // Next button
+            html += `
+                <div class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                     onclick="refresh${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Table(${currentPage + 1})">
+                     下一页 »
+                </div>
+            `;
+
+            document.getElementById(`${tabName}-pagination`).innerHTML = html;
+        }
+
         // 加载药材信息数据
-        function loadHerbData() {
+        function loadHerbData(page = 1) {
             $("#herb-cards").html('<div class="loader mx-auto"></div>');
-            
             $.ajax({
                 type: 'get',
-                url: '/db/herb',
-                success: function (herbs) {
+                url: `/db/herb?page=${page}`,
+                success: function (response) {
+                    const herbs = response;
+                    const totalPages = 20; // Assuming a fixed number of pages for simplicity
+
                     let html = "";
                     for (var herb of herbs) {
                         html += `
                         <div class="db-card">
                             <div class="db-card-header">
-                                ${escapeHtml(herb.herb_name)}
+                                ${escapeHtml(herb.herbName)}
                             </div>
                             <div class="db-card-body">
                                 <div class="db-card-field">
                                     <div class="db-card-label">ID</div>
-                                    <div class="db-card-value">${herb.herb_id}</div>
+                                    <div class="db-card-value">${herb.herbId}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">关联植物ID</div>
-                                    <div class="db-card-value">${herb.plant_id || '无'}</div>
+                                    <div class="db-card-value">${herb.plantId || '无'}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">藏文名</div>
-                                    <div class="db-card-value">${escapeHtml(herb.herb_tibetan_name)}</div>
+                                    <div class="db-card-value">${escapeHtml(herb.herbTibetanName)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">别名</div>
-                                    <div class="db-card-value">${escapeHtml(herb.herb_alias)}</div>
+                                    <div class="db-card-value">${escapeHtml(herb.herbAlias)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">描述</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.herb_description)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.herbDescription)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">药用部位</div>
-                                    <div class="db-card-value">${escapeHtml(herb.part_used)}</div>
+                                    <div class="db-card-value">${escapeHtml(herb.partUsed)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">特征</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.herb_features)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.herbFeatures)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">性味归经</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.flavor_tropism)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.flavorTropism)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">功能与主治</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.function_indication)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.functionIndication)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">临床应用</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.clinical_application)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.clinicalApplication)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">药理作用</div>
-                                    <div class="db-card-value multiline">${escapeHtml(herb.pharmacological_effect)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(herb.pharmacologicalEffect)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">附注</div>
@@ -598,77 +687,81 @@
                                 </div>
                             </div>
                             <div class="db-card-footer">
-                                <button class="btn btn-primary" onclick="viewHerbDetail('${herb.herb_id}')">查看详情</button>
+                                <button class="btn btn-primary" onclick="viewHerbDetail('${herb.herbId}')">查看详情</button>
                             </div>
                         </div>
                         `;
                     }
-                    
+
                     if (herbs.length === 0) {
                         html = '<div class="text-center p-4">暂无药材数据</div>';
                     }
-                    
+
                     $("#herb-cards").html(html);
+                    generatePagination('herb', page, totalPages);
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取药材数据失败:", error);
                     $("#herb-cards").html('<div class="text-center p-4 text-danger">获取数据失败，请稍后再试</div>');
+                    $("#herb-pagination").html('');
                 }
             });
         }
 
         // 加载植物信息数据
-        function loadPlantData() {
+        function loadPlantData(page = 1) {
             $("#plant-cards").html('<div class="loader mx-auto"></div>');
-            
             $.ajax({
                 type: 'get',
-                url: '/db/plant',
-                success: function (plants) {
+                url: `/db/plant?page=${page}`,
+                success: function (response) {
+                    const plants = response;
+                    const totalPages = 20;
+
                     let html = "";
                     for (var plant of plants) {
                         html += `
                         <div class="db-card">
-                            ${plant.img_path ? `<img src="${escapeHtml(plant.img_path)}" alt="${escapeHtml(plant.plant_name)}" class="db-card-image">` : ''}
+                            ${plant.img_path ? `<img src="${escapeHtml(plant.imgPath)}" alt="${escapeHtml(plant.plantName)}" class="db-card-image">` : ''}
                             <div class="db-card-header">
-                                ${escapeHtml(plant.plant_name)}
+                                ${escapeHtml(plant.plantName)}
                             </div>
                             <div class="db-card-body">
                                 <div class="db-card-field">
                                     <div class="db-card-label">ID</div>
-                                    <div class="db-card-value">${plant.plant_id}</div>
+                                    <div class="db-card-value">${plant.plantId}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">拉丁学名</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_latin)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantLatin)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">别称</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_alias)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantAlias)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">藏文名</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_tibetan_name)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantTibetanName)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">科名</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_family_name)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantFamilyName)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">属名</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_genus_name)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantGenusName)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">特征</div>
-                                    <div class="db-card-value multiline">${escapeHtml(plant.plant_features)}</div>
+                                    <div class="db-card-value multiline">${escapeHtml(plant.plantFeatures)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">采集地点</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_origin)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantOrigin)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">保护等级</div>
-                                    <div class="db-card-value">${escapeHtml(plant.plant_protect_level)}</div>
+                                    <div class="db-card-value">${escapeHtml(plant.plantProtectLevel)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">附注</div>
@@ -676,45 +769,49 @@
                                 </div>
                             </div>
                             <div class="db-card-footer">
-                                <button class="btn btn-primary" onclick="viewPlantDetail('${plant.plant_id}')">查看详情</button>
+                                <button class="btn btn-primary" onclick="viewPlantDetail('${plant.plantId}')">查看详情</button>
                             </div>
                         </div>
                         `;
                     }
-                    
+
                     if (plants.length === 0) {
                         html = '<div class="text-center p-4">暂无植物数据</div>';
                     }
-                    
+
                     $("#plant-cards").html(html);
+                    generatePagination('plant', page, totalPages);
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取植物数据失败:", error);
                     $("#plant-cards").html('<div class="text-center p-4 text-danger">获取数据失败，请稍后再试</div>');
+                    $("#plant-pagination").html('');
                 }
             });
         }
 
         // 加载药方信息数据
-        function loadPrescriptionData() {
+        function loadPrescriptionData(page = 1) {
             $("#prescription-cards").html('<div class="loader mx-auto"></div>');
-            
             $.ajax({
                 type: 'get',
-                url: '/db/prescription',
-                success: function (prescriptions) {
+                url: `/db/prescription?page=${page}`,
+                success: function (response) {
+                    const prescriptions = response;
+                    const totalPages = 20;
+
                     let html = "";
                     for (var prescription of prescriptions) {
                         html += `
                         <div class="db-card">
-                            ${prescription.image_url ? `<img src="${escapeHtml(prescription.image_url)}" alt="${escapeHtml(prescription.prescription_name)}" class="db-card-image">` : ''}
+                            ${prescription.image_url ? `<img src="${escapeHtml(prescription.imageUrl)}" alt="${escapeHtml(prescription.prescriptionName)}" class="db-card-image">` : ''}
                             <div class="db-card-header">
-                                ${escapeHtml(prescription.prescription_name)}
+                                ${escapeHtml(prescription.prescriptionName)}
                             </div>
                             <div class="db-card-body">
                                 <div class="db-card-field">
                                     <div class="db-card-label">ID</div>
-                                    <div class="db-card-value">${prescription.prescription_id}</div>
+                                    <div class="db-card-value">${prescription.prescriptionId}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">成分</div>
@@ -734,7 +831,7 @@
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">适用人群</div>
-                                    <div class="db-card-value">${escapeHtml(prescription.suitable_population)}</div>
+                                    <div class="db-card-value">${escapeHtml(prescription.suitablePopulation)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">注意事项</div>
@@ -746,33 +843,37 @@
                                 </div>
                             </div>
                             <div class="db-card-footer">
-                                <button class="btn btn-primary" onclick="viewPrescriptionDetail('${prescription.prescription_id}')">查看详情</button>
+                                <button class="btn btn-primary" onclick="viewPrescriptionDetail('${prescription.prescriptionId}')">查看详情</button>
                             </div>
                         </div>
                         `;
                     }
-                    
+
                     if (prescriptions.length === 0) {
                         html = '<div class="text-center p-4">暂无药方数据</div>';
                     }
-                    
+
                     $("#prescription-cards").html(html);
+                    generatePagination('prescription', page, totalPages);
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取药方数据失败:", error);
                     $("#prescription-cards").html('<div class="text-center p-4 text-danger">获取数据失败，请稍后再试</div>');
+                    $("#prescription-pagination").html('');
                 }
             });
         }
 
         // 加载文献信息数据
-        function loadLiteratureData() {
+        function loadLiteratureData(page = 1) {
             $("#literature-cards").html('<div class="loader mx-auto"></div>');
-            
             $.ajax({
                 type: 'get',
-                url: '/db/literature',
-                success: function (literatures) {
+                url: `/db/literature?page=${page}`,
+                success: function (response) {
+                    const literatures = response;
+                    const totalPages = 20;
+
                     let html = "";
                     for (var literature of literatures) {
                         html += `
@@ -783,11 +884,11 @@
                             <div class="db-card-body">
                                 <div class="db-card-field">
                                     <div class="db-card-label">ID</div>
-                                    <div class="db-card-value">${literature.literature_id}</div>
+                                    <div class="db-card-value">${literature.literatureId}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">藏文标题</div>
-                                    <div class="db-card-value">${escapeHtml(literature.tibetan_title)}</div>
+                                    <div class="db-card-value">${escapeHtml(literature.tibetanTitle)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">作者</div>
@@ -795,11 +896,11 @@
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">出版年份</div>
-                                    <div class="db-card-value">${literature.publication_year || '未知'}</div>
+                                    <div class="db-card-value">${literature.publicationYear || '未知'}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">期刊/出版社</div>
-                                    <div class="db-card-value">${escapeHtml(literature.journal_or_publisher)}</div>
+                                    <div class="db-card-value">${escapeHtml(literature.journalOrPublisher)}</div>
                                 </div>
                                 <div class="db-card-field">
                                     <div class="db-card-label">摘要</div>
@@ -807,54 +908,85 @@
                                 </div>
                             </div>
                             <div class="db-card-footer">
-                                <button class="btn btn-primary" onclick="viewLiteratureDetail('${literature.literature_id}')">查看详情</button>
+                                <button class="btn btn-primary" onclick="viewLiteratureDetail('${literature.literatureId}')">查看详情</button>
                             </div>
                         </div>
                         `;
                     }
-                    
+
                     if (literatures.length === 0) {
                         html = '<div class="text-center p-4">暂无文献数据</div>';
                     }
-                    
+
                     $("#literature-cards").html(html);
+                    generatePagination('literature', page, totalPages);
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取文献数据失败:", error);
                     $("#literature-cards").html('<div class="text-center p-4 text-danger">获取数据失败，请稍后再试</div>');
+                    $("#literature-pagination").html('');
                 }
             });
+        }
+
+        // 刷新药材表格
+        function refreshHerbTable(page) {
+            if (page > 0) {
+                loadHerbData(page);
+            }
+        }
+
+        // 刷新植物表格
+        function refreshPlantTable(page) {
+            if (page > 0) {
+                loadPlantData(page);
+            }
+        }
+
+        // 刷新药方表格
+        function refreshPrescriptionTable(page) {
+            if (page > 0) {
+                loadPrescriptionData(page);
+            }
+        }
+
+        // 刷新文献表格
+        function refreshLiteratureTable(page) {
+            if (page > 0) {
+                loadLiteratureData(page);
+            }
         }
 
         // 查看药材详情
         function viewHerbDetail(id) {
             $.ajax({
                 type: 'get',
-                url: `/herb/id/${id}`,
-                success: function(herb) {
+                url: `/db/herbDetail`,
+                data: {id: id},
+                success: function (herb) {
                     let detailHtml = `
                         <div class="detail-content">
-                            <p><strong>ID:</strong> ${herb.herb_id}</p>
-                            <p><strong>药材名称:</strong> ${escapeHtml(herb.herb_name)}</p>
-                            <p><strong>关联植物ID:</strong> ${herb.plant_id || '无'}</p>
-                            <p><strong>藏文名:</strong> ${escapeHtml(herb.herb_tibetan_name)}</p>
-                            <p><strong>别名:</strong> ${escapeHtml(herb.herb_alias)}</p>
-                            <p><strong>描述:</strong> ${escapeHtml(herb.herb_description)}</p>
-                            <p><strong>药用部位:</strong> ${escapeHtml(herb.part_used)}</p>
-                            <p><strong>特征:</strong> ${escapeHtml(herb.herb_features)}</p>
-                            <p><strong>性味归经:</strong> ${escapeHtml(herb.flavor_tropism)}</p>
-                            <p><strong>功能与主治:</strong> ${escapeHtml(herb.function_indication)}</p>
-                            <p><strong>临床应用:</strong> ${escapeHtml(herb.clinical_application)}</p>
-                            <p><strong>药理作用:</strong> ${escapeHtml(herb.pharmacological_effect)}</p>
+                            <p><strong>ID:</strong> ${herb.herbId}</p>
+                            <p><strong>药材名称:</strong> ${escapeHtml(herb.herbName)}</p>
+                            <p><strong>关联植物ID:</strong> ${herb.plantId || '无'}</p>
+                            <p><strong>藏文名:</strong> ${escapeHtml(herb.herbTibetanName)}</p>
+                            <p><strong>别名:</strong> ${escapeHtml(herb.herbAlias)}</p>
+                            <p><strong>描述:</strong> ${escapeHtml(herb.herbDescription)}</p>
+                            <p><strong>药用部位:</strong> ${escapeHtml(herb.partUsed)}</p>
+                            <p><strong>特征:</strong> ${escapeHtml(herb.herbFeatures)}</p>
+                            <p><strong>性味归经:</strong> ${escapeHtml(herb.flavorTropism)}</p>
+                            <p><strong>功能与主治:</strong> ${escapeHtml(herb.functionIndication)}</p>
+                            <p><strong>临床应用:</strong> ${escapeHtml(herb.clinicalApplication)}</p>
+                            <p><strong>药理作用:</strong> ${escapeHtml(herb.pharmacologicalEffect)}</p>
                             <p><strong>附注:</strong> ${escapeHtml(herb.notes)}</p>
                         </div>
                     `;
-                    
+
                     document.getElementById('detail-modal-title').textContent = '药材详情';
                     document.getElementById('detail-modal-body').innerHTML = detailHtml;
                     openModal('detail-modal');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取药材详情失败:", error);
                     alert("获取药材详情失败");
                 }
@@ -865,30 +997,32 @@
         function viewPlantDetail(id) {
             $.ajax({
                 type: 'get',
-                url: `/plant/id/${id}`,
-                success: function(plant) {
+                url: `/db/plantDetail`,
+                data: {id: id},
+                success: function (plant) {
+                    const imgUrl = "http://175.24.205.213:82/usr/local/nginx/images/plant/" + plant.imgPath;
                     let detailHtml = `
                         <div class="detail-content">
-                            ${plant.img_path ? `<img src="${escapeHtml(plant.img_path)}" alt="${escapeHtml(plant.plant_name)}" class="mb-4 w-full h-auto rounded">` : ''}
-                            <p><strong>ID:</strong> ${plant.plant_id}</p>
-                            <p><strong>植物名称:</strong> ${escapeHtml(plant.plant_name)}</p>
-                            <p><strong>拉丁学名:</strong> ${escapeHtml(plant.plant_latin)}</p>
-                            <p><strong>别称:</strong> ${escapeHtml(plant.plant_alias)}</p>
-                            <p><strong>藏文名:</strong> ${escapeHtml(plant.plant_tibetan_name)}</p>
-                            <p><strong>科名:</strong> ${escapeHtml(plant.plant_family_name)}</p>
-                            <p><strong>属名:</strong> ${escapeHtml(plant.plant_genus_name)}</p>
-                            <p><strong>特征:</strong> ${escapeHtml(plant.plant_features)}</p>
-                            <p><strong>采集地点:</strong> ${escapeHtml(plant.plant_origin)}</p>
-                            <p><strong>保护等级:</strong> ${escapeHtml(plant.plant_protect_level)}</p>
+                            ${plant.imgPath ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(plant.plantName)}" class="mb-4 w-full h-auto rounded">` : ''}
+                            <p><strong>ID:</strong> ${plant.plantId}</p>
+                            <p><strong>植物名称:</strong> ${escapeHtml(plant.plantName)}</p>
+                            <p><strong>拉丁学名:</strong> ${escapeHtml(plant.plantLatin)}</p>
+                            <p><strong>别称:</strong> ${escapeHtml(plant.plantAlias)}</p>
+                            <p><strong>藏文名:</strong> ${escapeHtml(plant.plantTibetanName)}</p>
+                            <p><strong>科名:</strong> ${escapeHtml(plant.plantFamilyName)}</p>
+                            <p><strong>属名:</strong> ${escapeHtml(plant.plantGenusName)}</p>
+                            <p><strong>特征:</strong> ${escapeHtml(plant.plantFeatures)}</p>
+                            <p><strong>采集地点:</strong> ${escapeHtml(plant.plantOrigin)}</p>
+                            <p><strong>保护等级:</strong> ${escapeHtml(plant.plantProtectLevel)}</p>
                             <p><strong>附注:</strong> ${escapeHtml(plant.notes)}</p>
                         </div>
                     `;
-                    
+
                     document.getElementById('detail-modal-title').textContent = '植物详情';
                     document.getElementById('detail-modal-body').innerHTML = detailHtml;
                     openModal('detail-modal');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取植物详情失败:", error);
                     alert("获取植物详情失败");
                 }
@@ -899,39 +1033,40 @@
         function viewPrescriptionDetail(id) {
             $.ajax({
                 type: 'get',
-                url: `/prescription/id/${id}`,
-                success: function(prescription) {
+                url: `/db/prescriptionDetail`,
+                data: {id: id},
+                success: function (prescription) {
+                    const imgUrl = "http://175.24.205.213:83" + prescription.filePath;
                     let detailHtml = `
                         <div class="detail-content">
-                            ${prescription.image_url ? `<img src="${escapeHtml(prescription.image_url)}" alt="${escapeHtml(prescription.prescription_name)}" class="mb-4 w-full h-auto rounded">` : ''}
-                            <p><strong>ID:</strong> ${prescription.prescription_id}</p>
-                            <p><strong>药方名称:</strong> ${escapeHtml(prescription.prescription_name)}</p>
+                            ${prescription.imageUrl ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(prescription.prescriptionName)}" class="mb-4 w-full h-auto rounded">` : ''}
+                            <p><strong>ID:</strong> ${prescription.prescriptionId}</p>
+                            <p><strong>药方名称:</strong> ${escapeHtml(prescription.prescriptionName)}</p>
                             <p><strong>成分:</strong> ${escapeHtml(prescription.composition)}</p>
                             <p><strong>成分用量:</strong> ${escapeHtml(prescription.dosage)}</p>
                             <p><strong>用途:</strong> ${escapeHtml(prescription.treatment)}</p>
                             <p><strong>药方来源:</strong> ${escapeHtml(prescription.source)}</p>
-                            <p><strong>适用人群:</strong> ${escapeHtml(prescription.suitable_population)}</p>
+                            <p><strong>适用人群:</strong> ${escapeHtml(prescription.suitablePopulation)}</p>
                             <p><strong>注意事项:</strong> ${escapeHtml(prescription.precautions)}</p>
                             <p><strong>分类:</strong> ${escapeHtml(prescription.category)}</p>
-                            <p><strong>制备方法:</strong> ${escapeHtml(prescription.preparation_method)}</p>
-                            <p><strong>推荐医生/专家:</strong> ${escapeHtml(prescription.doctor_or_expert)}</p>
+                            <p><strong>制备方法:</strong> ${escapeHtml(prescription.preparationMethod)}</p>
+                            <p><strong>推荐医生/专家:</strong> ${escapeHtml(prescription.doctorOrExpert)}</p>
                             <p><strong>状态:</strong> ${escapeHtml(prescription.status)}</p>
-                            <p><strong>文件路径:</strong> ${prescription.file_path ? `<a href="${escapeHtml(prescription.file_path)}" target="_blank">查看文件</a>` : '无'}</p>
                             <p><strong>用户评分:</strong> ${prescription.rating}</p>
-                            <p><strong>评价总数:</strong> ${prescription.reviews_count}</p>
+                            <p><strong>评价总数:</strong> ${prescription.reviewsCount}</p>
                             <p><strong>版本号:</strong> ${escapeHtml(prescription.version)}</p>
-                            <p><strong>药材ID列表:</strong> ${escapeHtml(prescription.medicine_ids)}</p>
+                            <p><strong>药材ID列表:</strong> ${escapeHtml(prescription.medicineIds)}</p>
                             <p><strong>是否公开:</strong> ${prescription.is_public ? '是' : '否'}</p>
-                            <p><strong>创建时间:</strong> ${new Date(prescription.create_time).toLocaleString()}</p>
-                            <p><strong>更新时间:</strong> ${new Date(prescription.update_time).toLocaleString()}</p>
+                            <p><strong>创建时间:</strong> ${new Date(prescription.createTime).toLocaleString()}</p>
+                            <p><strong>更新时间:</strong> ${new Date(prescription.updateTime).toLocaleString()}</p>
                         </div>
                     `;
-                    
+
                     document.getElementById('detail-modal-title').textContent = '药方详情';
                     document.getElementById('detail-modal-body').innerHTML = detailHtml;
                     openModal('detail-modal');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取药方详情失败:", error);
                     alert("获取药方详情失败");
                 }
@@ -942,34 +1077,35 @@
         function viewLiteratureDetail(id) {
             $.ajax({
                 type: 'get',
-                url: `/literature/id/${id}`,
-                success: function(literature) {
+                url: `/db/literatureDetail`,
+                data: {id: id},
+                success: function (literature) {
                     let detailHtml = `
                         <div class="detail-content">
-                            <p><strong>ID:</strong> ${literature.literature_id}</p>
+                            <p><strong>ID:</strong> ${literature.literatureId}</p>
                             <p><strong>文献标题:</strong> ${escapeHtml(literature.title)}</p>
-                            <p><strong>藏文标题:</strong> ${escapeHtml(literature.tibetan_title)}</p>
+                            <p><strong>藏文标题:</strong> ${escapeHtml(literature.tibetanTitle)}</p>
                             <p><strong>作者:</strong> ${escapeHtml(literature.authors)}</p>
-                            <p><strong>出版年份:</strong> ${literature.publication_year || '未知'}</p>
-                            <p><strong>期刊/出版社:</strong> ${escapeHtml(literature.journal_or_publisher)}</p>
-                            <p><strong>卷期:</strong> ${escapeHtml(literature.volume_issue)}</p>
+                            <p><strong>出版年份:</strong> ${literature.publicationYear || '未知'}</p>
+                            <p><strong>期刊/出版社:</strong> ${escapeHtml(literature.journalOrPublisher)}</p>
+                            <p><strong>卷期:</strong> ${escapeHtml(literature.volumeIssue)}</p>
                             <p><strong>页码:</strong> ${escapeHtml(literature.pages)}</p>
                             <p><strong>摘要:</strong> ${escapeHtml(literature.abstract)}</p>
-                            <p><strong>下载链接:</strong> ${literature.download_link ? `<a href="${escapeHtml(literature.download_link)}" target="_blank">下载</a>` : '无'}</p>
-                            <p><strong>文件路径:</strong> ${literature.file_path ? `<a href="${escapeHtml(literature.file_path)}" target="_blank">查看文件</a>` : '无'}</p>
-                            <p><strong>主要植物:</strong> ${escapeHtml(literature.main_plant)}</p>
-                            <p><strong>研究领域:</strong> ${escapeHtml(literature.research_field)}</p>
+                            <p><strong>下载链接:</strong> ${literature.downloadLink ? `<a href="${escapeHtml(literature.downloadLink)}" target="_blank">下载</a>` : '无'}</p>
+                            <p><strong>文件路径:</strong> ${literature.filePath ? `<a href="${escapeHtml(literature.filePath)}" target="_blank">查看文件</a>` : '无'}</p>
+                            <p><strong>主要植物:</strong> ${escapeHtml(literature.mainPlant)}</p>
+                            <p><strong>研究领域:</strong> ${escapeHtml(literature.researchField)}</p>
                             <p><strong>关键词:</strong> ${escapeHtml(literature.keywords)}</p>
-                            <p><strong>创建时间:</strong> ${new Date(literature.create_time).toLocaleString()}</p>
-                            <p><strong>更新时间:</strong> ${new Date(literature.update_time).toLocaleString()}</p>
+                            <p><strong>创建时间:</strong> ${new Date(literature.createTime).toLocaleString()}</p>
+                            <p><strong>更新时间:</strong> ${new Date(literature.updateTime).toLocaleString()}</p>
                         </div>
                     `;
-                    
+
                     document.getElementById('detail-modal-title').textContent = '文献详情';
                     document.getElementById('detail-modal-body').innerHTML = detailHtml;
                     openModal('detail-modal');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("获取文献详情失败:", error);
                     alert("获取文献详情失败");
                 }
@@ -993,11 +1129,11 @@
             if (!str) return '';
             return str.toString().replace(/[&<>"']/g, function (match) {
                 return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#39;'
+                    '&': '&',
+                    '<': '<',
+                    '>': '>',
+                    '"': '"',
+                    "'": ''
                 }[match];
             });
         }
@@ -1008,4 +1144,5 @@
         };
     </script>
 </body>
+
 </html>

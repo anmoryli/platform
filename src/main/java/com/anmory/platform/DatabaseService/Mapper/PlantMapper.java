@@ -38,4 +38,7 @@ public interface PlantMapper {
 
     @Select("select * from medicine.plant where medicine.plant.plant_name = #{name} limit 1")
     Plant getPlantByName(String name);
+
+    @Select("select * from medicine.plant where medicine.plant.plant_id = #{id} limit 1")
+    Plant getPlantById(int id);
 }

@@ -777,6 +777,7 @@
                     <option value="deepseek">DeepSeek</option>
                     <option value="lingxi">灵析(知识图谱问答)</option>
                     <option value="huicha">慧查(数据库问答)</option>
+                    <option value="ruitu">睿图(生成图片)</option>
                 </select>
                 <span class="send-edit">
                     <input type="text" placeholder="输入内容" class="input" id="userInput" maxlength="500">
@@ -1165,9 +1166,11 @@
                 const endpointMap = {
                     deepseek: '/ds_chat',
                     huicha: '/bot/nl2sql',
-                    lingxi: '/qa'
+                    lingxi: '/qa',
+                    ruitu: '/genImg'
                 };
-                const endpoint = endpointMap[selectedModel] || '/qa';
+                const endpoint = endpointMap[selectedModel] || '/ds_chat';
+                console.log("使用的端点:", endpoint);
 
                 // 发送 AJAX 请求
                 $.ajax({
@@ -1176,6 +1179,17 @@
                     contentType: "application/json",
                     data: JSON.stringify({ userInput: userInput }),
                     success: function (response) {
+                        console.log("响应数据:", response);
+                        if(endpoint == '/genImg'){
+                            const imgUrl = response; // 假设返回的图片 URL 在 imgUrl 字段中
+                            const imgElement = "<img src='" + imgUrl + "' alt='生成的图片' style='max-width: 100%; height: auto;' />";
+                            console.log("imgElement:", imgElement);
+                            appendMessage(imgUrl,'bot-message',true);
+                            // appendMessage(imgElement, 'bot-message', false); // 直接添加图片元素
+                            $("#chatContainer").append(imgElement); // 直接添加图片元素
+                            scrollToBottom(); // 滚动到底部
+                            return;
+                        }
                         hideTypingIndicator();
                         isWaitingForResponse = false;
 

@@ -31,6 +31,46 @@ public class GetController {
     @Autowired
     PrescriptionService prescriptionService;
 
+    @RequestMapping("/plantDetail")
+    public Plant getPlantDetail(int id) {
+        return plantService.selectPlantById(id);
+    }
+
+    @RequestMapping("/herbDetail")
+    public com.anmory.platform.DatabaseService.Dao.Herb getHerbDetail(int id) {
+        return herbServiceR.selectHerbById(id);
+    }
+
+    @RequestMapping("/literatureDetail")
+    public Literature getLiteratureDetail(int id) {
+        return literatureService.selectLiteratureById(id);
+    }
+
+    @RequestMapping("/prescriptionDetail")
+    public Prescription getPrescriptionDetail(int id) {
+        return prescriptionService.selectPrescriptionById(id);
+    }
+
+    @RequestMapping("/plantAll")
+    public List<Plant> getPlants() {
+        return plantService.selectAll();
+    }
+
+    @RequestMapping("/herbAll")
+    public List<com.anmory.platform.DatabaseService.Dao.Herb> getHerbs() {
+        return herbServiceR.selectAll();
+    }
+
+    @RequestMapping("/literatureAll")
+    public List<Literature> getLiterature() {
+        return literatureService.selectAll();
+    }
+
+    @RequestMapping("/prescriptionAll")
+    public List<Prescription> getPrescription() {
+        return prescriptionService.selectAll();
+    }
+
     @RequestMapping("/plant")
     public List<Plant> getPlants(int page) {
         int offset = (page - 1) * 50;

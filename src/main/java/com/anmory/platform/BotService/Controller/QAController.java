@@ -2,6 +2,7 @@ package com.anmory.platform.BotService.Controller;
 
 import com.anmory.platform.BotService.Service.GetEntityService;
 import com.anmory.platform.UserService.User;
+import com.anmory.platform.UserService.UserAiConversationService;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -19,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -35,12 +38,16 @@ public class QAController {
     Neo4jService neo4jService;
     @Autowired
     GetEntityService getEntityService;
+    @Autowired
+    UserAiConversationService userAiConversationService;
     @RequestMapping("/qa")
     public String qa(@RequestBody Map<String, String> requestMap, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("session_user_key");
+        int userId = user == null ? -1 : user.getId();
         String userInput = requestMap.get("userInput");
         System.out.println(userInput);
+        Instant start = Instant.now();
         // 创建请求体
         var requestBody = new JsonObject();
         requestBody.addProperty("model", "deepseek-chat");
@@ -101,6 +108,9 @@ public class QAController {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
+            Instant end = Instant.now();
+            Duration duration = Duration.between(start, end);
+            userAiConversationService.insert(userId, userInput, replyContent, "qa", null, Float.parseFloat(String.valueOf(duration.toMillis())), "zh", true);
             return replyContent;
 
         } else {

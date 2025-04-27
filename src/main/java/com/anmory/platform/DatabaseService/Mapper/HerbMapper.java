@@ -53,4 +53,7 @@ public interface HerbMapper {
 
     @Select("select * from medicine.herb where medicine.herb.herb_name = #{name} limit 1")
     Herb selectHerbByName(String name);
+
+    @Select("select * from medicine.herb where medicine.herb.herb_id = #{id} limit 1")
+    Herb selectHerbById(int id);
 }

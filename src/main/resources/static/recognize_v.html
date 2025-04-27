@@ -781,6 +781,117 @@
             justify-content: space-between;
         }
 
+        /* 全局容器样式 */
+        .tab-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 视频流部分 */
+        .video-stream-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .video-stream-section h2 {
+            color: #1A5276;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .stream-description {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* 视频区域 */
+        .video-area {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 20px;
+        }
+
+        .video-player {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            border: 1px solid #1A5276;
+        }
+
+        /* 状态文本 */
+        .stream-status,
+        .action-status {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .stream-status p,
+        .action-status {
+            margin: 0;
+        }
+
+        /* 按钮区域 */
+        .video-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background-color: #1A5276;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: #13425f;
+        }
+
+        .action-btn:active {
+            background-color: #0f3550;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .video-stream-section h2 {
+                font-size: 20px;
+            }
+
+            .stream-description {
+                font-size: 14px;
+            }
+
+            .video-area {
+                padding: 15px;
+            }
+
+            .action-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .navbar-content {
@@ -909,6 +1020,7 @@
                 <div class="app-tab active" data-tab="recognition-tab">图片识别</div>
                 <div class="app-tab" data-tab="history-tab">识别历史</div>
                 <div class="app-tab" data-tab="training-tab">训练集上传</div>
+                <div class="app-tab" data-tab="video-tab">视频流获取</div>
             </div>
 
             <!-- 图片识别标签页内容 -->
@@ -992,6 +1104,33 @@
                     </div>
 
                     <div id="uploadStatus" class="upload-status"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="video-tab">
+                <div class="video-stream-section">
+                    <h2>实时视频流</h2>
+                    <p class="stream-description">通过硬件传输实时获取视频流，可进行拍照、录制、识别或上传操作。视频数据仅用于个人研究，与图片识别功能独立。</p>
+
+                    <div class="video-area">
+                        <div class="video-container">
+                            <video id="videoStream" autoplay playsinline class="video-player"></video>
+                            <canvas id="snapshotCanvas" style="display: none;"></canvas>
+                        </div>
+
+                        <div class="stream-status" id="streamStatus">
+                            <p>正在连接视频流...</p>
+                        </div>
+
+                        <div class="video-actions">
+                            <button id="captureBtn" class="action-btn">拍照</button>
+                            <button id="recordBtn" class="action-btn">录制</button>
+                            <button id="recognizeBtn" class="action-btn">识别</button>
+                            <button id="uploadVideoBtn" class="action-btn">上传</button>
+                        </div>
+                    </div>
+
+                    <div id="actionStatus" class="action-status"></div>
                 </div>
             </div>
         </div>
@@ -1445,7 +1584,7 @@
                     url: "/plantDetail",
                     data: { name: plantName },
                     success: function (data) {
-                        console.log("植物信息:",data);
+                        console.log("植物信息:", data);
                         displayPlantDetails(data);
                     },
                     error: function () {

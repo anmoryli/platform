@@ -2583,11 +2583,7 @@ oxygen
                     const fileInput = document.getElementById('prescription-image-upload');
                     if (fileInput && fileInput.files.length > 0) {
                         formData.append('file', fileInput.files[0]);
-                    } else {
-                        alert('请上传图片文件！');
-                        return; // 阻止表单提交
                     }
-
                     $.ajax({
                         url: '/add/addPrescription',
                         type: 'POST',
@@ -2607,10 +2603,10 @@ oxygen
                                 alert('药方数据添加成功！');
                                 fetchUserInfo();
                                 // 展现药方数据
-                                loadDatabasePage();
-                                // 模拟点击药方数据管理标签
                                 refreshPrescriptionTable();
+                                // loadDatabasePage();
                                 $('#prescription-tab').click();
+                                // 模拟点击药方数据管理标签
                                 // 刷新药方列表
                                 document.getElementById('add-prescription-form').reset();
                                 $('#add-prescription-form-container').slideToggle();

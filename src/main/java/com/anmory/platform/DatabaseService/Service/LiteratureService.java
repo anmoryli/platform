@@ -56,6 +56,10 @@ public class LiteratureService {
         return LiteratureMapper.getLiteratureByTitle(title);
     }
 
+    public Literature selectLiteratureById(int id) {
+        return LiteratureMapper.selectLiteratureById(id);
+    }
+
     public List<Literature> selectAll() {
         return LiteratureMapper.selectAll();
     }

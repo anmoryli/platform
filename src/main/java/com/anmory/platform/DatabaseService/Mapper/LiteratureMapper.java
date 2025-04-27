@@ -50,4 +50,7 @@ public interface LiteratureMapper {
 
     @Select("select * from literature where literature.title = #{title} limit 1")
     Literature getLiteratureByTitle(String title);
+
+    @Select("select * from literature where literature.literature_id = #{id} limit 1")
+    Literature selectLiteratureById(int id);
 }

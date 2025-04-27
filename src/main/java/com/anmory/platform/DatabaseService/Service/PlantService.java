@@ -53,6 +53,10 @@ public class PlantService {
         return plantMapper.getPlantByName(name);
     }
 
+    public Plant selectPlantById(int id) {
+        return plantMapper.getPlantById(id);
+    }
+
     public int deletePlant(int id) {
         return plantMapper.deletePlant(id);
     }

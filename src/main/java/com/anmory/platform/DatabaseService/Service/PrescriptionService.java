@@ -37,4 +37,8 @@ public class PrescriptionService {
     public Prescription getPrescriptionByName(String name) {
         return prescriptionMapper.getPrescriptionByName(name);
     }
+
+    public Prescription selectPrescriptionById(int id) {
+        return prescriptionMapper.selectPrescriptionById(id);
+    }
 }

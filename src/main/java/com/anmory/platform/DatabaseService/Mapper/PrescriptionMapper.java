@@ -56,4 +56,7 @@ public interface PrescriptionMapper {
 
     @Select("select * from medicine.prescription where medicine.prescription.prescription_name = #{name} limit 1")
     Prescription getPrescriptionByName(String name);
+
+    @Select("select * from medicine.prescription where medicine.prescription.prescription_id = #{id} limit 1")
+    Prescription selectPrescriptionById(int id);
 }
