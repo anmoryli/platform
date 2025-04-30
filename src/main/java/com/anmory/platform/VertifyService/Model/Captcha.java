@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author Anmory/李梦杰
  * @description TODO
  * @date 2025-03-17 下午11:00
  */

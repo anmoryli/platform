@@ -6,7 +6,6 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Anmory/李梦杰
  * @description TODO
  * @date 2025-03-15 下午12:58
  */

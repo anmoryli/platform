@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 /**
- * @author Anmory/李梦杰
  * @description TODO
  * @date 2025-04-26 下午3:30
  */

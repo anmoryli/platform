@@ -6,7 +6,6 @@ import org.apache.commons.mail.SimpleEmail;
 import java.util.Properties;
 
 /**
- * @author Anmory/李梦杰
  * @description TODO
  * @date 2025-03-24 下午7:52
  */

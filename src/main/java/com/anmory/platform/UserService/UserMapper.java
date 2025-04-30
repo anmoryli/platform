@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
- * @author Anmory/李梦杰
  * @description TODO
  * @date 2025-03-24 上午10:21
  */
