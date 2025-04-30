@@ -1,5 +1,6 @@
 package com.anmory.platform.BotService.Controller;
 
+import com.anmory.platform.UserService.UserAiConversationService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,9 @@ import java.util.*;
 
 @RestController
 public class BotController {
+
+    @Autowired
+    UserAiConversationService userAiConversationService;
 
     private static final Logger log = LoggerFactory.getLogger(BotController.class);
     private static final String API_URL = "https://spark-api-open.xf-yun.com/v1/chat/completions"; // 替换为实际的AI服务端点

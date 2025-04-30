@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员页面 - 藏药植物药知识平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/inter.css" />
+    <!-- 引入 ECharts 和 jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-wordcloud@2.0.0/dist/echarts-wordcloud.min.js"></script>
+    <link rel="icon" href="images/favicon.gif">
+    <link rel="shortcut icon" href="images/favicon.gif">
+    <style>
+        :root {
+            --primary-color: #1a4f8a;
+            --primary-dark: #0e325a;
+            --primary-light: #2d6ebd;
+            --secondary-color: #5a6268;
+            --accent-color: #d9534f;
+            --red-light: #e57373;
+            --red-dark: #d32f2f;
+            --success-color: #2d8a3e;
+            --warning-color: #f39c12;
+            --text-color: #222222;
+            --text-light: #4a4a4a;
+            --text-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --bg-gray: #e9ecef;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-section {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: var(--text-white);
+            box-shadow: 0 1px 3px var(--shadow-color);
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .admin-section h3 {
+            color: var(--primary-dark);
+            font-size: 20px;
+            font-family: 'Inter', sans-serif;
+            text-align: left;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .content-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(217, 83, 79, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(217, 83, 79, 0.2);
+        }
+
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--text-white);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .visualization-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .visualization-container {
+                grid-template-columns: 1fr;
+            }
+            .stats-container {
+                flex-direction: column;
+            }
+            .stat-card {
+                min-width: 100%;
+            }
+        }
+
+        .visualization-card {
+            background-color: var(--text-white);
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px var(--shadow-color);
+        }
+
+        .visualization-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            height: 300px;
+            display: block;
+            visibility: visible;
+        }
+
+        .blurry-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .navbar-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-content h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar-content nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-content nav ul li a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .navbar-content nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header class="blurry-navbar">
+        <div class="navbar-content">
+            <h1>藏药植物药知识平台 - 管理员页面</h1>
+            <nav>
+                <ul>
+                    <li><a href="admin.html">退出</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 内容容器 -->
+    <div id="content-container" class="content-container"></div>
+
+    <script>
+        // 加载仪表盘和用户分析页面
+        function loadAdminPage() {
+            console.log('Loading admin page');
+
+            // 检查 jQuery 和 ECharts
+            if (typeof $ === 'undefined') {
+                console.error('jQuery is not loaded');
+                $('#content-container').html('<p class="error-message">jQuery 未加载，请检查页面配置</p>');
+                return;
+            }
+            if (typeof echarts === 'undefined') {
+                console.error('ECharts is not loaded');
+                $('#content-container').html('<p class="error-message">ECharts 未加载，请检查脚本引用</p>');
+                return;
+            }
+
+            // 动态生成 HTML 内容
+            let html = `
+                <div class="admin-section">
+                    <h3>平台数据统计</h3>
+                    <div class="chart-wrapper" id="data-chart"></div>
+                </div>
+                <div class="admin-section">
+                    <h3>用户数据分析</h3>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntUsers">0</div>
+                            <div class="stat-label">注册用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntLiveUser">0</div>
+                            <div class="stat-label">本月活跃用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntImages">0</div>
+                            <div class="stat-label">累计识别次数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntKnowledge">0</div>
+                            <div class="stat-label">知识图谱查询</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntKnowledgeNodes">0</div>
+                            <div class="stat-label">知识图谱结点数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntHerbs">0</div>
+                            <div class="stat-label">药材表记录</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntPrescriptions">0</div>
+                            <div class="stat-label">药方表记录</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntPlants">0</div>
+                            <div class="stat-label">植物表记录</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntDocuments">0</div>
+                            <div class="stat-label">文献表记录</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntImageResponseTime">0</div>
+                            <div class="stat-label">图像识别响应时间 (秒)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cntAIResponseTime">0</div>
+                            <div class="stat-label">AI回答响应时间 (秒)</div>
+                        </div>
+                    </div>
+                    <div class="visualization-container">
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">每日注册用户趋势</h3>
+                            <div class="chart-wrapper" id="daily-registration-chart"></div>
+                        </div>
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">AI对话语言分布</h3>
+                            <div class="chart-wrapper" id="conversation-language-chart"></div>
+                        </div>
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">知识搜索成功率</h3>
+                            <div class="chart-wrapper" id="knowledge-search-chart"></div>
+                        </div>
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">用户上传文件类型分布</h3>
+                            <div class="chart-wrapper" id="upload-file-type-chart"></div>
+                        </div>
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">用户活跃时间分布</h3>
+                            <div class="chart-wrapper" id="active-time-chart"></div>
+                        </div>
+                        <div class="visualization-card">
+                            <h3 class="visualization-title">功能使用频率</h3>
+                            <div class="chart-wrapper" id="function-usage-chart"></div>
+                        </div>
+                    </div>
+                    <div class="admin-section" style="margin-top: 20px;">
+                        <h3>热门搜索词</h3>
+                        <div class="chart-wrapper" id="search-keywords-chart"></div>
+                    </div>
+                </div>
+            `;
+
+            // 插入 HTML
+            $('#content-container').html(html);
+            console.log('Admin page HTML loaded');
+
+            // 延迟初始化，确保 DOM 渲染完成
+            setTimeout(() => {
+                const chartIds = [
+                    'data-chart',
+                    'daily-registration-chart',
+                    'conversation-language-chart',
+                    'knowledge-search-chart',
+                    'upload-file-type-chart',
+                    'active-time-chart',
+                    'function-usage-chart',
+                    'search-keywords-chart'
+                ];
+                let allReady = true;
+                chartIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el || el.offsetHeight === 0 || el.offsetWidth === 0) {
+                        console.warn(`Chart container #${id} not ready (exists: ${!!el}, height: ${el ? el.offsetHeight : 'N/A'}, width: ${el ? el.offsetWidth : 'N/A'})`);
+                        allReady = false;
+                    }
+                });
+
+                if (allReady) {
+                    console.log('All chart containers ready, initializing charts');
+                    initAdminCharts();
+                } else {
+                    console.error('Chart containers not found or not visible');
+                    $('#content-container').html('<p class="error-message">图表容器未找到或不可见，请刷新页面</p>');
+                }
+            }, 100);
+        }
+
+        // 初始化所有图表和统计卡片
+        function initAdminCharts() {
+            console.log('Initializing charts');
+
+            // 检查所有图表容器
+            const chartIds = [
+                'data-chart',
+                'daily-registration-chart',
+                'conversation-language-chart',
+                'knowledge-search-chart',
+                'upload-file-type-chart',
+                'active-time-chart',
+                'function-usage-chart',
+                'search-keywords-chart'
+            ];
+            for (const id of chartIds) {
+                const el = document.getElementById(id);
+                if (!el || el.offsetHeight === 0 || el.offsetWidth === 0) {
+                    console.error(`Chart container #${id} not found or not visible (exists: ${!!el}, height: ${el ? el.offsetHeight : 'N/A'}, width: ${el ? el.offsetWidth : 'N/A'})`);
+                    $('#content-container').html('<p class="error-message">图表容器缺失或不可见，请刷新页面</p>');
+                    return;
+                }
+            }
+
+            // 初始化图表实例
+            const charts = {
+                dashboard: null,
+                dailyRegistration: null,
+                conversationLanguage: null,
+                knowledgeSearch: null,
+                uploadFileType: null,
+                activeTime: null,
+                functionUsage: null,
+                searchKeywords: null
+            };
+
+            try {
+                charts.dashboard = echarts.init(document.getElementById('data-chart'));
+                charts.dailyRegistration = echarts.init(document.getElementById('daily-registration-chart'));
+                charts.conversationLanguage = echarts.init(document.getElementById('conversation-language-chart'));
+                charts.knowledgeSearch = echarts.init(document.getElementById('knowledge-search-chart'));
+                charts.uploadFileType = echarts.init(document.getElementById('upload-file-type-chart'));
+                charts.activeTime = echarts.init(document.getElementById('active-time-chart'));
+                charts.functionUsage = echarts.init(document.getElementById('function-usage-chart'));
+                charts.searchKeywords = echarts.init(document.getElementById('search-keywords-chart'));
+            } catch (error) {
+                console.error('Failed to initialize ECharts:', error);
+                $('#content-container').html('<p class="error-message">图表初始化失败，请检查 ECharts 配置</p>');
+                return;
+            }
+
+            // 模拟数据（精简）
+            const simulatedData = {
+                dashboard: {
+                    months: ['1月', '2月', '3月'],
+                    plants: [120, 132, 101],
+                    visits: [220, 182, 191],
+                    recognitions: [150, 232, 201],
+                    conversations: [98, 177, 155]
+                },
+                dailyRegistration: [
+                    { date: '2025-04-01', count: 50 },
+                    { date: '2025-04-02', count: 60 },
+                    { date: '2025-04-03', count: 45 }
+                ],
+                monthlyActiveUsers: [
+                    { month: '2025-03', mau: 250 },
+                    { month: '2025-04', mau: 270 }
+                ],
+                functionUsage: [
+                    { function_type: '图像识别', count: 150 },
+                    { function_type: '知识搜索', count: 120 }
+                ],
+                conversationLanguage: [
+                    { language: '中文', count: 800 },
+                    { language: '英文', count: 200 }
+                ],
+                knowledgeSearch: [
+                    { search_type: '药材查询', success_rate: 0.95 },
+                    { search_type: '药方查询', success_rate: 0.90 }
+                ],
+                uploadFileType: [
+                    { file_type: '图像', count: 500 },
+                    { file_type: 'PDF', count: 200 }
+                ],
+                activeTime: [
+                    { time_slot: '上午', count: 300 },
+                    { time_slot: '下午', count: 450 },
+                    { time_slot: '晚上', count: 250 }
+                ],
+                functionUsagePie: [
+                    { name: '图像识别', value: 1500 },
+                    { name: '知识搜索', value: 1200 },
+                    { name: 'AI对话', value: 800 }
+                ],
+                searchKeywords: [
+                    { keyword: '雪莲花', count: 10000 },
+                    { keyword: '冬虫夏草', count: 8500 },
+                    { keyword: '红景天', count: 8000 },
+                    { keyword: '蛇草', count: 7500 },
+                    { keyword: '藏红花', count: 7000 },
+                    { keyword: '川芎', count: 6500 },
+                    { keyword: '人参', count: 6000 },
+                    { keyword: '大雪', count: 6000 }
+                ],
+                stats: {
+                    knowledgeNodes: 5000,
+                    herbs: 302,
+                    prescriptions: 200,
+                    plants: 300,
+                    documents: 56,
+                    imageResponseTime: 5, // 平均图像识别响应时间（秒）
+                    aiResponseTime: 15 // 平均AI回答响应时间（秒）
+                }
+            };
+
+            // 更新统计卡片
+            try {
+                const cntUsers = simulatedData.dailyRegistration.reduce((sum, item) => sum + parseInt(item.count, 10), 0);
+                $('#cntUsers').text(cntUsers);
+
+                const latestMonth = simulatedData.monthlyActiveUsers[simulatedData.monthlyActiveUsers.length - 1];
+                $('#cntLiveUser').text(latestMonth ? latestMonth.mau : 0);
+
+                const imageRecognition = simulatedData.functionUsage.find(item => item.function_type === '图像识别');
+                $('#cntImages').text(imageRecognition ? imageRecognition.count : 0);
+
+                const knowledgeSearch = simulatedData.functionUsage.find(item => item.function_type === '知识搜索');
+                $('#cntKnowledge').text(knowledgeSearch ? knowledgeSearch.count : 0);
+
+                $('#cntKnowledgeNodes').text(simulatedData.stats.knowledgeNodes);
+                $('#cntHerbs').text(simulatedData.stats.herbs);
+                $('#cntPrescriptions').text(simulatedData.stats.prescriptions);
+                $('#cntPlants').text(simulatedData.stats.plants);
+                $('#cntDocuments').text(simulatedData.stats.documents);
+                $('#cntImageResponseTime').text(simulatedData.stats.imageResponseTime.toFixed(1));
+                $('#cntAIResponseTime').text(simulatedData.stats.aiResponseTime.toFixed(1));
+            } catch (error) {
+                console.error('Failed to update stats cards:', error);
+                $('#cntUsers, #cntLiveUser, #cntImages, #cntKnowledge, #cntKnowledgeNodes, #cntHerbs, #cntPrescriptions, #cntPlants, #cntDocuments, #cntImageResponseTime, #cntAIResponseTime').text('N/A');
+            }
+
+            // 初始化图表
+            try {
+                // 1. 仪表盘（柱状+折线图）
+                charts.dashboard.setOption({
+                    backgroundColor: 'transparent',
+                    title: { text: '平台数据统计', textStyle: { color: '#222222', fontWeight: 600 } },
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    legend: { data: ['植物数据', '用户访问量', '识别次数', 'AI对话量'], textStyle: { color: '#222222' } },
+                    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: simulatedData.dashboard.months,
+                        axisLine: { lineStyle: { color: '#aaa' } },
+                        axisLabel: { color: '#222222' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { lineStyle: { color: '#aaa' } },
+                        splitLine: { lineStyle: { color: '#eee' } },
+                        axisLabel: { color: '#222222' }
+                    },
+                    series: [
+                        {
+                            name: '植物数据',
+                            type: 'bar',
+                            data: simulatedData.dashboard.plants,
+                            itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#1a4f8a' }, { offset: 1, color: '#0e325a' }]) }
+                        },
+                        {
+                            name: '用户访问量',
+                            type: 'bar',
+                            data: simulatedData.dashboard.visits,
+                            itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#2d6ebd' }, { offset: 1, color: '#1a4f8a' }]) }
+                        },
+                        {
+                            name: '识别次数',
+                            type: 'line',
+                            data: simulatedData.dashboard.recognitions,
+                            itemStyle: { color: '#2d8a3e' },
+                            lineStyle: { color: '#2d8a3e' }
+                        },
+                        {
+                            name: 'AI对话量',
+                            type: 'line',
+                            data: simulatedData.dashboard.conversations,
+                            itemStyle: { color: '#d9534f' },
+                            lineStyle: { color: '#d9534f' }
+                        }
+                    ]
+                });
+
+                // 2. 每日注册用户趋势（折线图）
+                charts.dailyRegistration.setOption({
+                    title: { text: '每日注册用户趋势', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'axis' },
+                    xAxis: { type: 'category', data: simulatedData.dailyRegistration.map(item => item.date) },
+                    yAxis: { type: 'value', name: '注册人数' },
+                    series: [{
+                        name: '注册人数',
+                        type: 'line',
+                        data: simulatedData.dailyRegistration.map(item => item.count),
+                        itemStyle: { color: '#2d8a3e' },
+                        lineStyle: { color: '#2d8a3e' }
+                    }]
+                });
+
+                // 3. AI对话语言分布（饼图）
+                charts.conversationLanguage.setOption({
+                    title: { text: 'AI对话语言分布', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'item' },
+                    legend: { orient: 'vertical', left: 'left' },
+                    series: [{
+                        name: '对话语言',
+                        type: 'pie',
+                        radius: '50%',
+                        data: simulatedData.conversationLanguage.map(item => ({ name: item.language, value: item.count })),
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                });
+
+                // 4. 知识搜索成功率（柱状图）
+                charts.knowledgeSearch.setOption({
+                    title: { text: '知识搜索成功率', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    xAxis: { type: 'category', data: simulatedData.knowledgeSearch.map(item => item.search_type) },
+                    yAxis: { type: 'value', name: '成功率 (%)', max: 100 },
+                    series: [{
+                        name: '成功率',
+                        type: 'bar',
+                        data: simulatedData.knowledgeSearch.map(item => (item.success_rate * 100).toFixed(2)),
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#2d6ebd' },
+                                { offset: 1, color: '#1a4f8a' }
+                            ])
+                        }
+                    }]
+                });
+
+                // 5. 用户上传文件类型分布（饼图）
+                charts.uploadFileType.setOption({
+                    title: { text: '用户上传文件类型分布', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'item' },
+                    legend: { orient: 'vertical', left: 'left' },
+                    series: [{
+                        name: '文件类型',
+                        type: 'pie',
+                        radius: '50%',
+                        data: simulatedData.uploadFileType.map(item => ({ name: item.file_type, value: item.count })),
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                });
+
+                // 6. 用户活跃时间分布（柱状图）
+                charts.activeTime.setOption({
+                    title: { text: '用户活跃时间分布', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    xAxis: { type: 'category', data: simulatedData.activeTime.map(item => item.time_slot) },
+                    yAxis: { type: 'value', name: '活跃人数' },
+                    series: [{
+                        name: '活跃人数',
+                        type: 'bar',
+                        data: simulatedData.activeTime.map(item => item.count),
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#d9534f' },
+                                { offset: 1, color: '#c9302c' }
+                            ])
+                        }
+                    }]
+                });
+
+                // 7. 功能使用频率（饼图）
+                charts.functionUsage.setOption({
+                    title: { text: '功能使用频率', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'item' },
+                    legend: { orient: 'vertical', left: 'left' },
+                    series: [{
+                        name: '功能使用',
+                        type: 'pie',
+                        radius: '50%',
+                        data: simulatedData.functionUsagePie,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                });
+
+                // 8. 热门搜索词（词云）
+                charts.searchKeywords.setOption({
+                    title: { text: '热门搜索词', left: 'center', textStyle: { color: '#222222' } },
+                    tooltip: { trigger: 'item' },
+                    series: [{
+                        type: 'wordCloud',
+                        shape: 'circle',
+                        left: 'center',
+                        top: 'center',
+                        width: '80%',
+                        height: '80%',
+                        sizeRange: [12, 60],
+                        rotationRange: [-90, 90],
+                        rotationStep: 45,
+                        gridSize: 8,
+                        drawOutOfBound: false,
+                        textStyle: {
+                            fontFamily: 'sans-serif',
+                            fontWeight: 'bold',
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            focus: 'self',
+                            textStyle: {
+                                shadowBlur: 10,
+                                shadowColor: '#333'
+                            }
+                        },
+                        data: simulatedData.searchKeywords.map(item => ({ name: item.keyword, value: item.count }))
+                    }]
+                });
+            } catch (error) {
+                console.error('Failed to set chart options:', error);
+                $('#content-container').html('<p class="error-message">图表渲染失败，请检查数据或刷新页面</p>');
+                return;
+            }
+
+            // 响应窗口大小变化
+            function resizeAllCharts() {
+                Object.values(charts).forEach(chart => {
+                    if (chart) {
+                        try {
+                            chart.resize();
+                        } catch (error) {
+                            console.warn(`Failed to resize chart: ${error}`);
+                        }
+                    }
+                });
+            }
+
+            window.removeEventListener('resize', resizeAllCharts);
+            window.addEventListener('resize', resizeAllCharts);
+
+            console.log('Charts initialized successfully');
+        }
+
+        // 页面加载时显示所有图表
+        $(document).ready(function () {
+            loadAdminPage();
+        });
+    </script>
+</body>
+</html>

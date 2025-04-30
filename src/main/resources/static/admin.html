@@ -10,6 +10,7 @@
     <!-- 引入 ECharts -->
     <script src="/css/echarts.min.js"></script>
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/echarts-wordcloud.min.js"></script>
     <link rel="icon" href="images/favicon.gif">
     <link rel="shortcut icon" href="images/favicon.gif">
     <style>
@@ -1195,10 +1196,10 @@
             <h1 class="text-animation text-3xl font-bold">藏药植物药知识平台</h1>
             <nav>
                 <ul>
-                    <li><a href="#" onclick="loadContent('admin_home')">首页</a></li>
+                    <!-- <li><a href="#" onclick="loadContent('admin_home')">首页</a></li> -->
                     <li><a href="#" onclick="loadContent('admin_approvals')">审批管理</a></li>
                     <li><a href="#" onclick="loadContent('admin_database')">数据管理</a></li>
-                    <li><a href="#" onclick="loadContent('admin_users')">用户分析</a></li>
+                    <li><a href="visual.html">可视化分析</a></li>
                     <li><a href="recognize_v.html">退出</a></li>
                 </ul>
             </nav>
@@ -1296,6 +1297,7 @@
                         // 默认加载首页内容
                         loadContent('admin_database');
                         fetchUserInfo();
+                        // loadApprovalsPage();
                     }
                     else {
                         alert("未登录，请登录确保数据库安全!!!");
@@ -1305,7 +1307,7 @@
                 error: function (error) {
                     console.error('Error loading content:', error);
                 }
-            })
+            });
         });
 
         // Add this code after the document.ready function to ensure all images use placeholders
@@ -1437,152 +1439,181 @@
             initDashboard();
         }
 
-        // 加载审批页面
         function loadApprovalsPage() {
+            console.log('Loading approvals page');
+            // 检查 jQuery 是否加载
+            if (typeof $ === 'undefined') {
+                console.error('jQuery is not loaded');
+                return;
+            }
+
+            // 检查 content-container 是否存在
+            const contentContainer = $('#content-container');
+            if (!contentContainer.length) {
+                console.error('Content container element not found');
+                return;
+            }
+
+            // 插入 HTML
             let html = `
-                <div class="admin-section">
-                    <h3>审批管理</h3>
-                    <div class="approval-filters">
-                        <button class="filter-btn active" data-filter="all">全部 (28)</button>
-                        <button class="filter-btn" data-filter="training">训练图片集 (18)</button>
-                        <button class="filter-btn" data-filter="graph">知识图谱内容 (10)</button>
-                        <button class="filter-btn" data-filter="pending">待审批 (28)</button>
-                        <button class="filter-btn" data-filter="approved">已批准 (42)</button>
-                        <button class="filter-btn" data-filter="rejected">已拒绝 (7)</button>
+        <div class="admin-section">
+            <h3>审批管理</h3>
+            <div class="approval-grid" id="approval-grid"></div>
+        </div>
+    `;
+            contentContainer.html(html);
+            console.log('Approvals page loaded');
+
+            // 使用 MutationObserver 确保 approval-grid 渲染完成
+            const targetNode = document.getElementById('content-container');
+            const observer = new MutationObserver((mutations, obs) => {
+                if (document.getElementById('approval-grid')) {
+                    console.log('approval-grid 容器已渲染，开始加载上传记录');
+                    fetchUserUploads();
+                    obs.disconnect(); // 停止观察
+                } else {
+                    console.warn('approval-grid 容器仍未找到，等待下一次 DOM 更新');
+                }
+            });
+
+            observer.observe(targetNode, { childList: true, subtree: true });
+
+            // 后备机制：延迟 100ms 检查
+            setTimeout(() => {
+                if (document.getElementById('approval-grid')) {
+                    console.log('后备机制：approval-grid 容器已存在，加载上传记录');
+                    fetchUserUploads();
+                    observer.disconnect();
+                } else {
+                    console.error('approval-grid 容器未找到，显示错误信息');
+                    contentContainer.html('<p class="error-message">审批容器未找到，请检查页面渲染</p>');
+                }
+            }, 100);
+        }
+
+        function initApprovalPage() {
+            console.log('Initializing approval page');
+            // 移除直接调用 fetchUserUploads，由 loadApprovalsPage 控制
+        }
+
+        function fetchUserUploads() {
+            console.log('Fetching user uploads');
+            $.ajax({
+                type: 'GET',
+                url: '/user/getUserUpload',
+                success: function (response) {
+                    console.log('Received response:', response);
+                    if (response && Array.isArray(response)) {
+                        renderApprovals(response);
+                    } else {
+                        console.log('No valid data in response');
+                        const grid = document.getElementById('approval-grid');
+                        if (grid) {
+                            grid.innerHTML = '<p>无上传记录</p>';
+                        } else {
+                            console.error('Approval grid element not found');
+                            $('#content-container').html('<p class="error-message">审批容器未找到，请刷新页面</p>');
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Fetch user uploads failed:', xhr.status, xhr.statusText);
+                    const grid = document.getElementById('approval-grid');
+                    if (grid) {
+                        grid.innerHTML = `<p>加载失败：${xhr.status} ${xhr.statusText}</p>`;
+                    } else {
+                        console.error('Approval grid element not found');
+                        $('#content-container').html('<p class="error-message">审批容器未找到，请刷新页面</p>');
+                    }
+                }
+            });
+        }
+
+        function renderApprovals(uploads) {
+            console.log('Rendering approvals', uploads);
+            const grid = document.getElementById('approval-grid');
+
+            if (!grid) {
+                console.error('Approval grid element not found');
+                $('#content-container').html('<p class="error-message">审批容器未找到，请刷新页面</p>');
+                return;
+            }
+
+            let html = '';
+            uploads.forEach(upload => {
+                const type = upload.fileType.includes('image') ? 'training' : 'graph';
+                const status = upload.status === '成功' ? 'approved' : upload.status === '失败' ? 'rejected' : 'pending';
+                const uploadTime = new Date(upload.timestamp).toLocaleString('zh-CN', {
+                    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                });
+
+                const imgUrl = "http://175.24.205.213:85" + upload.uploadPath;
+                html += `
+            <div class="approval-item" data-type="${type}" data-status="${status}">
+                <img src="${imgUrl || '/placeholder.svg?height=180&width=300'}" alt="${upload.uploadName}" class="approval-image">
+                <div class="approval-content">
+                    <div class="approval-title">${upload.uploadName}</div>
+                    <div class="approval-info">
+                        <p><strong>上传者:</strong> user${upload.userId}</p>
+                        <p><strong>上传时间:</strong> ${uploadTime}</p>
+                        <p><strong>文件类型:</strong> ${upload.fileType}</p>
+                        <span class="tag tag-${status}">${status === 'pending' ? '待审批' : status === 'approved' ? '已批准' : '已拒绝'}</span>
+                        <span class="tag tag-${type}">${type === 'training' ? '训练集' : '知识图谱'}</span>
                     </div>
-
-                    <div class="search-container">
-                        <input type="text" class="search-input" id="approval-search" placeholder="搜索上传者、内容类型或描述...">
-                    </div>
-
-                    <div class="approval-grid" id="approval-grid">
-                        <!-- 训练图片集项目 -->
-                        <div class="approval-item" data-type="training" data-status="pending">
-                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">藏药植物训练图片集</div>
-                                <div class="approval-info">
-                                    <p><strong>上传者:</strong> user123</p>
-                                    <p><strong>上传时间:</strong> 2025-04-05 14:32</p>
-                                    <p><strong>图片数量:</strong> 15张</p>
-                                    <span class="tag tag-pending">待审批</span>
-                                    <span class="tag tag-training">训练集</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(1, 'training')">查看详情</button>
-                                    <button class="approve-btn" onclick="approveItemDirect(1)">批准</button>
-                                    <button class="reject-btn" onclick="rejectItemDirect(1)">拒绝</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="approval-item" data-type="training" data-status="pending">
-                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">高原药材识别训练集</div>
-                                <div class="approval-info">
-                                    <p><strong>上传者:</strong> user456</p>
-                                    <p><strong>上传时间:</strong> 2025-04-04 10:15</p>
-                                    <p><strong>图片数量:</strong> 23张</p>
-                                    <span class="tag tag-pending">待审批</span>
-                                    <span class="tag tag-training">训练集</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(2, 'training')">查看详情</button>
-                                    <button class="approve-btn" onclick="approveItemDirect(2)">批准</button>
-                                    <button class="reject-btn" onclick="rejectItemDirect(2)">拒绝</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 知识图谱内容项目 -->
-                        <div class="approval-item" data-type="graph" data-status="pending">
-                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">白术知识图谱更新</div>
-                                <div class="approval-info">
-                                    <p><strong>提交者:</strong> researcher789</p>
-                                    <p><strong>提交时间:</strong> 2025-04-03 16:45</p>
-                                    <p><strong>修改内容:</strong> 药效关联</p>
-                                    <span class="tag tag-pending">待审批</span>
-                                    <span class="tag tag-graph">知识图谱</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(3, 'graph')">查看详情</button>
-                                    <button class="approve-btn" onclick="approveItemDirect(3)">批准</button>
-                                    <button class="reject-btn" onclick="rejectItemDirect(3)">拒绝</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="approval-item" data-type="graph" data-status="pending">
-                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">藏红花知识图谱补充</div>
-                                <div class="approval-info">
-                                    <p><strong>提交者:</strong> expert321</p>
-                                    <p><strong>提交时间:</strong> 2025-04-02 09:30</p>
-                                    <p><strong>修改内容:</strong> 新增配伍关系</p>
-                                    <span class="tag tag-pending">待审批</span>
-                                    <span class="tag tag-graph">知识图谱</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(4, 'graph')">查看详情</button>
-                                    <button class="approve-btn" onclick="approveItemDirect(4)">批准</button>
-                                    <button class="reject-btn" onclick="rejectItemDirect(4)">拒绝</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 已批准项目示例 -->
-                        <div class="approval-item" data-type="training" data-status="approved">
-                            <img src="/placeholder.svg?height=180&width=300" alt="训练图片集" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">冬虫夏草训练图片集</div>
-                                <div class="approval-info">
-                                    <p><strong>上传者:</strong> user789</p>
-                                    <p><strong>上传时间:</strong> 2025-04-01 11:20</p>
-                                    <p><strong>图片数量:</strong> 18张</p>
-                                    <span class="tag tag-approved">已批准</span>
-                                    <span class="tag tag-training">训练集</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(5, 'training')">查看详情</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 已拒绝项目示例 -->
-                        <div class="approval-item" data-type="graph" data-status="rejected">
-                            <img src="/placeholder.svg?height=180&width=300" alt="知识图谱" class="approval-image">
-                            <div class="approval-content">
-                                <div class="approval-title">人参知识图谱修改</div>
-                                <div class="approval-info">
-                                    <p><strong>提交者:</strong> user567</p>
-                                    <p><strong>提交时间:</strong> 2025-03-30 14:15</p>
-                                    <p><strong>修改内容:</strong> 药效描述</p>
-                                    <span class="tag tag-rejected">已拒绝</span>
-                                    <span class="tag tag-graph">知识图谱</span>
-                                </div>
-                                <div class="approval-actions">
-                                    <button class="view-btn" onclick="viewApprovalDetail(6, 'graph')">查看详情</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pagination">
-                        <div class="pagination-btn active">1</div>
-                        <div class="pagination-btn">2</div>
-                        <div class="pagination-btn">3</div>
-                        <div class="pagination-btn">下一页 &raquo;</div>
+                    <div class="approval-actions">
+                        ${status === 'pending' ? `
+                            <button class="approve-btn" onclick="approveItemDirect(${upload.uploadId})">批准</button>
+                        ` : ''}
                     </div>
                 </div>
-            `;
+            </div>
+        `;
+            });
 
-            $('#content-container').html(html);
-            initApprovalPage();
+            grid.innerHTML = html || '<p>无记录</p>';
         }
+
+        function approveItemDirect(id) {
+            console.log('Approving upload:', id);
+            $.ajax({
+                type: 'POST',
+                url: '/user/approveUpload',
+                data: { uploadId: id },
+                success: function (response) {
+                    console.log('Approve response:', response);
+                    if (response && response.success) {
+                        alert('批准成功，记录已删除');
+                        fetchUserUploads();
+                    } else {
+                        alert(`批准失败：${response.error || '未知错误'}`);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Approve failed:', xhr.status, xhr.statusText);
+                    alert(`批准失败：${xhr.status} ${xhr.statusText}`);
+                }
+            });
+        }
+
+        // 修正 document.ready 语法
+        $(document).ready(function () {
+            $.ajax({
+                url: '/user/confirmLogin',
+                method: 'GET',
+                success: function (data) {
+                    if (data) {
+                        loadApprovalsPage();
+                    } else {
+                        alert("未登录，请登录确保数据库安全!!!");
+                        location.href = "admin_login_v.html";
+                    }
+                },
+                error: function (error) {
+                    console.error('Error checking login status:', error);
+                    alert("登录检查失败，请重试");
+                }
+            });
+        });
 
         // 加载数据库管理页面
         function loadDatabasePage() {
@@ -1598,7 +1629,7 @@
         <div class="tab" data-tab="herb-tab" onclick=refreshHerbTable()>药材数据</div>
         <div class="tab" data-tab="prescription-tab" onclick=refreshPrescriptionTable()>药方数据</div>
         <div class="tab" data-tab="literature-tab" onclick=refreshLiteratureTable()>文献数据</div>
-        <div class="tab" data-tab="users-tab">用户数据</div>
+        // <div class="tab" data-tab="users-tab">用户数据</div>
     </div>
     
     <!-- 植物数据管理 -->
@@ -3089,61 +3120,49 @@ oxygen
 
         // 加载用户分析页面
         function loadUsersPage() {
-            $.ajax({
-                url: 'getVisualData', // 后端接口地址
-                type: 'GET',
-                success: function (data) {
-                    console.log('Visual data:', data); // 调试输出
-
-                    // 计算活跃用户数
-                    var cntUsers = data.cntUsers;
-                    var cntLiveUser = Math.round(cntUsers * 0.7); // 假设活跃用户为总用户的 70%
-                    var cntImages = data.cntImages;
-                    var cntKnowledge = data.cntKnowledgeSearch;
-
-                    // 动态生成 HTML 内容
-                    let html = `
+            // 动态生成 HTML 内容
+            let html = `
                 <div class="admin-section">
                     <h3>用户数据分析</h3>
                     
                     <div class="stats-container">
                         <div class="stat-card">
-                            <div class="stat-value">${cntUsers}</div>
+                            <div class="stat-value" id="cntUsers">0</div>
                             <div class="stat-label">注册用户</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${cntLiveUser}</div>
+                            <div class="stat-value" id="cntLiveUser">0</div>
                             <div class="stat-label">本月活跃用户</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${cntImages}</div>
+                            <div class="stat-value" id="cntImages">0</div>
                             <div class="stat-label">累计识别次数</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${cntKnowledge}</div>
+                            <div class="stat-value" id="cntKnowledge">0</div>
                             <div class="stat-label">知识图谱查询</div>
                         </div>
                     </div>
                     
                     <div class="visualization-container">
                         <div class="visualization-card">
-                            <h3 class="visualization-title">用户识别数据分析</h3>
-                            <div class="chart-wrapper" id="recognition-chart"></div>
+                            <h3 class="visualization-title">每日注册用户趋势</h3>
+                            <div class="chart-wrapper" id="daily-registration-chart"></div>
                         </div>
                         
                         <div class="visualization-card">
-                            <h3 class="visualization-title">AI对话主题分布</h3>
-                            <div class="chart-wrapper" id="conversation-chart"></div>
+                            <h3 class="visualization-title">AI对话语言分布</h3>
+                            <div class="chart-wrapper" id="conversation-language-chart"></div>
                         </div>
                         
                         <div class="visualization-card">
-                            <h3 class="visualization-title">知识图谱使用情况</h3>
-                            <div class="chart-wrapper" id="graph-usage-chart"></div>
+                            <h3 class="visualization-title">知识搜索成功率</h3>
+                            <div class="chart-wrapper" id="knowledge-search-chart"></div>
                         </div>
                         
                         <div class="visualization-card">
-                            <h3 class="visualization-title">用户地域分布</h3>
-                            <div class="chart-wrapper" id="user-location-chart"></div>
+                            <h3 class="visualization-title">用户上传文件类型分布</h3>
+                            <div class="chart-wrapper" id="upload-file-type-chart"></div>
                         </div>
                     </div>
                     
@@ -3154,155 +3173,381 @@ oxygen
                 </div>
             `;
 
-                    // 将 HTML 插入到页面中
-                    $('#content-container').html(html);
+            // 将 HTML 插入到页面中
+            $('#content-container').html(html);
 
-                    // 初始化图表
-                    initUserAnalytics(data);
-                },
-                error: function (error) {
-                    console.error("请求失败:", error);
+            // 确保 DOM 更新后再初始化图表
+            setTimeout(() => {
+                if (document.getElementById('daily-registration-chart')) {
+                    initUserAnalytics();
+                } else {
+                    console.error('图表容器未找到，请检查 #content-container 是否正确渲染');
                 }
-            });
+            }, 0);
         }
 
-        // 初始化仪表盘
-        function initDashboard() {
-            // 初始化统计图表
-            const chartElement = document.getElementById('data-chart');
-            if (chartElement) {
-                const chart = echarts.init(chartElement);
+        // 初始化用户分析页面
+        function initUserAnalytics() {
+            // 检查所有图表容器是否存在
+            const chartIds = [
+                'daily-registration-chart',
+                'conversation-language-chart',
+                'knowledge-search-chart',
+                'upload-file-type-chart',
+                'search-keywords-chart'
+            ];
+            for (const id of chartIds) {
+                if (!document.getElementById(id)) {
+                    console.error(`图表容器 #${id} 未找到`);
+                    return;
+                }
+            }
 
-                const option = {
-                    backgroundColor: 'transparent',
-                    title: {
-                        text: '平台数据统计',
-                        textStyle: {
-                            color: '#222222',
-                            fontWeight: 600
-                        }
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'shadow'
-                        }
-                    },
-                    legend: {
-                        data: ['植物数据', '用户访问量', '识别次数', 'AI对话量'],
-                        textStyle: {
-                            color: '#222222'
-                        }
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: ['1月', '2月', '3月', '4月', '5月', '6月'],
-                        axisLine: {
-                            lineStyle: {
-                                color: '#aaa'
+            // 获取当前时间和6个月前的时间作为默认时间范围
+            const endTime = new Date();
+            const startTime = new Date();
+            startTime.setMonth(startTime.getMonth() - 6);
+            const startTimeStr = startTime.toISOString();
+            const endTimeStr = endTime.toISOString();
+
+            // 获取统计数据
+            $.ajax({
+                url: '/visualize/daily-registration-trend',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const cntUsers = data.reduce((sum, item) => sum + parseInt(item.count), 0);
+                    $('#cntUsers').text(cntUsers);
+                },
+                error: function (error) {
+                    console.error("获取注册用户数据失败:", error);
+                }
+            });
+
+            $.ajax({
+                url: '/visualize/monthly-active-users',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const latestMonth = data[data.length - 1];
+                    $('#cntLiveUser').text(latestMonth ? latestMonth.mau : 0);
+                },
+                error: function (error) {
+                    console.error("获取活跃用户数据失败:", error);
+                }
+            });
+
+            $.ajax({
+                url: '/visualize/function-usage-frequency',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const imageRecognition = data.find(item => item.function_type === '图像识别');
+                    $('#cntImages').text(imageRecognition ? imageRecognition.count : 0);
+                    const knowledgeSearch = data.find(item => item.function_type === '知识搜索');
+                    $('#cntKnowledge').text(knowledgeSearch ? knowledgeSearch.count : 0);
+                },
+                error: function (error) {
+                    console.error("获取功能使用频率数据失败:", error);
+                }
+            });
+
+            // 每日注册用户趋势（折线图）
+            const dailyRegistrationChart = echarts.init(document.getElementById('daily-registration-chart'));
+            $.ajax({
+                url: '/visualize/daily-registration-trend',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const dates = data.map(item => item.date);
+                    const counts = data.map(item => item.count);
+                    dailyRegistrationChart.setOption({
+                        title: { text: '每日注册用户趋势', left: 'center', textStyle: { color: '#222222' } },
+                        tooltip: { trigger: 'axis' },
+                        xAxis: { type: 'category', data: dates },
+                        yAxis: { type: 'value', name: '注册人数' },
+                        series: [{
+                            name: '注册人数',
+                            type: 'line',
+                            data: counts,
+                            itemStyle: { color: '#2d8a3e' },
+                            lineStyle: { color: '#2d8a3e' }
+                        }]
+                    });
+                },
+                error: function (error) {
+                    console.error("获取每日注册趋势数据失败:", error);
+                }
+            });
+
+            // AI对话语言分布（饼图）
+            const conversationLanguageChart = echarts.init(document.getElementById('conversation-language-chart'));
+            $.ajax({
+                url: '/visualize/conversation-language-distribution',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const chartData = data.map(item => ({ name: item.language, value: item.count }));
+                    conversationLanguageChart.setOption({
+                        title: { text: 'AI对话语言分布', left: 'center', textStyle: { color: '#222222' } },
+                        tooltip: { trigger: 'item' },
+                        legend: { orient: 'vertical', left: 'left' },
+                        series: [{
+                            name: '对话语言',
+                            type: 'pie',
+                            radius: '50%',
+                            data: chartData,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
                             }
-                        },
-                        axisLabel: {
-                            color: '#222222'
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLine: {
-                            lineStyle: {
-                                color: '#aaa'
-                            }
-                        },
-                        splitLine: {
-                            lineStyle: {
-                                color: '#eee'
-                            }
-                        },
-                        axisLabel: {
-                            color: '#222222'
-                        }
-                    },
-                    series: [
-                        {
-                            name: '植物数据',
+                        }]
+                    });
+                },
+                error: function (error) {
+                    console.error("获取对话语言分布数据失败:", error);
+                }
+            });
+
+            // 知识搜索成功率（柱状图）
+            const knowledgeSearchChart = echarts.init(document.getElementById('knowledge-search-chart'));
+            $.ajax({
+                url: '/visualize/knowledge-search-success-rate',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const searchTypes = data.map(item => item.search_type);
+                    const successRates = data.map(item => (item.success_rate * 100).toFixed(2));
+                    knowledgeSearchChart.setOption({
+                        title: { text: '知识搜索成功率', left: 'center', textStyle: { color: '#222222' } },
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                        xAxis: { type: 'category', data: searchTypes },
+                        yAxis: { type: 'value', name: '成功率 (%)', max: 100 },
+                        series: [{
+                            name: '成功率',
                             type: 'bar',
-                            data: [120, 132, 101, 134, 90, 230],
-                            itemStyle: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                    { offset: 0, color: '#1a4f8a' },
-                                    { offset: 1, color: '#0e325a' }
-                                ])
-                            }
-                        },
-                        {
-                            name: '用户访问量',
-                            type: 'bar',
-                            data: [220, 182, 191, 234, 290, 330],
+                            data: successRates,
                             itemStyle: {
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                                     { offset: 0, color: '#2d6ebd' },
                                     { offset: 1, color: '#1a4f8a' }
                                 ])
                             }
+                        }]
+                    });
+                },
+                error: function (error) {
+                    console.error("获取知识搜索成功率数据失败:", error);
+                }
+            });
+
+            // 用户上传文件类型分布（饼图）
+            const uploadFileTypeChart = echarts.init(document.getElementById('upload-file-type-chart'));
+            $.ajax({
+                url: '/visualize/upload-file-type-distribution',
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    const chartData = data.map(item => ({ name: item.file_type, value: item.count }));
+                    uploadFileTypeChart.setOption({
+                        title: { text: '用户上传文件类型分布', left: 'center', textStyle: { color: '#222222' } },
+                        tooltip: { trigger: 'item' },
+                        legend: { orient: 'vertical', left: 'left' },
+                        series: [{
+                            name: '文件类型',
+                            type: 'pie',
+                            radius: '50%',
+                            data: chartData,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }]
+                    });
+                },
+                error: function (error) {
+                    console.error("获取上传文件类型分布数据失败:", error);
+                }
+            });
+
+            // 热门搜索词（词云）
+            const searchKeywordsChart = echarts.init(document.getElementById('search-keywords-chart'));
+            $.ajax({
+                url: '/visualize/knowledge-search-success-rate', // 模拟，需后端提供关键词统计接口
+                type: 'GET',
+                data: { startTime: startTimeStr, endTime: endTimeStr },
+                success: function (data) {
+                    // 模拟关键词数据（需替换为后端接口）
+                    const keywords = [
+                        { name: '雪莲花', value: 10000 },
+                        { name: '冬 WORM夏草', value: 8500 },
+                        { name: '红景天', value: 8000 },
+                        { name: '藏红花', value: 7800 },
+                        { name: '当归', value: 6500 }
+                    ];
+                    searchKeywordsChart.setOption({
+                        title: { text: '热门搜索词', left: 'center', textStyle: { color: '#222222' } },
+                        tooltip: { trigger: 'item' },
+                        series: [{
+                            type: 'wordCloud',
+                            shape: 'circle',
+                            left: 'center',
+                            top: 'center',
+                            width: '80%',
+                            height: '80%',
+                            sizeRange: [12, 60],
+                            rotationRange: [-90, 90],
+                            rotationStep: 45,
+                            gridSize: 8,
+                            drawOutOfBound: false,
+                            textStyle: {
+                                fontFamily: 'sans-serif',
+                                fontWeight: 'bold',
+                                color: function () {
+                                    return 'rgb(' + [
+                                        Math.round(Math.random() * 160),
+                                        Math.round(Math.random() * 160),
+                                        Math.round(Math.random() * 160)
+                                    ].join(',') + ')';
+                                }
+                            },
+                            emphasis: {
+                                focus: 'self',
+                                textStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: '#333'
+                                }
+                            },
+                            data: keywords
+                        }]
+                    });
+                },
+                error: function (error) {
+                    console.error("获取热门搜索词数据失败:", error);
+                }
+            });
+
+            // 响应窗口大小变化
+            function resizeAllCharts() {
+                if (dailyRegistrationChart) dailyRegistrationChart.resize();
+                if (conversationLanguageChart) conversationLanguageChart.resize();
+                if (knowledgeSearchChart) knowledgeSearchChart.resize();
+                if (uploadFileTypeChart) uploadFileTypeChart.resize();
+                if (searchKeywordsChart) searchKeywordsChart.resize();
+            }
+
+            window.addEventListener('resize', resizeAllCharts);
+        }
+
+        // 初始化仪表盘（占位，基于原代码）
+        function initDashboard() {
+            let html = `
+                <div class="admin-section">
+                    <h3>平台数据统计</h3>
+                    <div class="chart-wrapper" id="data-chart"></div>
+                </div>
+            `;
+            $('#content-container').html(html);
+
+            const chartElement = document.getElementById('data-chart');
+            if (chartElement) {
+                const chart = echarts.init(chartElement);
+                chart.setOption({
+                    backgroundColor: 'transparent',
+                    title: { text: '平台数据统计', textStyle: { color: '#222222', fontWeight: 600 } },
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    legend: { data: ['植物数据', '用户访问量', '识别次数', 'AI对话量'], textStyle: { color: '#222222' } },
+                    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                        axisLine: { lineStyle: { color: '#aaa' } },
+                        axisLabel: { color: '#222222' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { lineStyle: { color: '#aaa' } },
+                        splitLine: { lineStyle: { color: '#eee' } },
+                        axisLabel: { color: '#222222' }
+                    },
+                    series: [
+                        {
+                            name: '植物数据',
+                            type: 'bar',
+                            data: [120, 132, 101, 134, 90, 230],
+                            itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#1a4f8a' }, { offset: 1, color: '#0e325a' }]) }
+                        },
+                        {
+                            name: '用户访问量',
+                            type: 'bar',
+                            data: [220, 182, 191, 234, 290, 330],
+                            itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#2d6ebd' }, { offset: 1, color: '#1a4f8a' }]) }
                         },
                         {
                             name: '识别次数',
                             type: 'line',
                             data: [150, 232, 201, 154, 190, 330],
-                            itemStyle: {
-                                color: '#2d8a3e'
-                            },
-                            lineStyle: {
-                                color: '#2d8a3e'
-                            }
+                            itemStyle: { color: '#2d8a3e' },
+                            lineStyle: { color: '#2d8a3e' }
                         },
                         {
                             name: 'AI对话量',
                             type: 'line',
                             data: [98, 177, 155, 167, 210, 287],
-                            itemStyle: {
-                                color: '#d9534f'
-                            },
-                            lineStyle: {
-                                color: '#d9534f'
-                            }
+                            itemStyle: { color: '#d9534f' },
+                            lineStyle: { color: '#d9534f' }
                         }
                     ]
-                };
-
-                chart.setOption(option);
-
-                // 响应窗口大小变化
-                window.addEventListener('resize', function () {
-                    chart.resize();
                 });
+                window.addEventListener('resize', () => chart.resize());
             }
         }
 
-        // 初始化审批页面
+        // 初始化审批页面（占位，基于原代码）
         function initApprovalPage() {
-            // 初始化筛选按钮
+            let html = `
+                <div class="admin-section">
+                    <h3>审批管理</h3>
+                    <input type="text" id="approval-search" placeholder="搜索审批项目...">
+                    <div class="filter-buttons">
+                        <button class="filter-btn" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="pending">待审批</button>
+                        <button class="filter-btn" data-filter="approved">已通过</button>
+                        <button class="filter-btn" data-filter="rejected">已拒绝</button>
+                    </div>
+                    <div class="approval-list">
+                        <!-- 示例数据 -->
+                        <div class="approval-item" data-status="pending">待审批项目1</div>
+                        <div class="approval-item" data-status="approved">已通过项目2</div>
+                    </div>
+                    <div class="pagination">
+                        <button class Bakanlığı
+
+                        <button class="pagination-btn">1</button>
+                        <button class="pagination-btn">2</button>
+                    </div>
+                </div>
+            `;
+            $('#content-container').html(html);
+
             $('.filter-btn').click(function () {
                 $('.filter-btn').removeClass('active');
                 $(this).addClass('active');
-
                 const filter = $(this).data('filter');
-
                 if (filter === 'all') {
                     $('.approval-item').show();
                 } else {
                     $('.approval-item').hide();
-                    $(`.approval-item[data-${filter === 'pending' || filter === 'approved' || filter === 'rejected' ? 'status' : 'type'}="${filter}"]`).show();
+                    $(`.approval-item[data-status="${filter}"]`).show();
                 }
             });
 
-            // 初始化搜索功能
             $('#approval-search').on('keyup', function () {
                 const value = $(this).val().toLowerCase();
                 $('.approval-item').filter(function () {
@@ -3310,301 +3555,16 @@ oxygen
                 });
             });
 
-            // 初始化分页功能
             $('.pagination-btn').click(function () {
                 $('.pagination-btn').removeClass('active');
                 $(this).addClass('active');
-                // 这里可以添加分页逻辑
             });
         }
 
-        // 初始化用户分析页面
-        function initUserAnalytics() {
-            // 用户识别数据分析图表
-            const recognitionChart = echarts.init(document.getElementById('recognition-chart'));
-            recognitionChart.setOption({
-                title: {
-                    text: '用户识别数据分析',
-                    left: 'center',
-                    textStyle: {
-                        color: '#222222'
-                    }
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['识别次数', '识别成功率'],
-                    bottom: 10
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月']
-                },
-                yAxis: [
-                    {
-                        type: 'value',
-                        name: '次数',
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    },
-                    {
-                        type: 'value',
-                        name: '成功率',
-                        min: 0,
-                        max: 100,
-                        axisLabel: {
-                            formatter: '{value}%'
-                        }
-                    }
-                ],
-                series: [
-                    {
-                        name: '识别次数',
-                        type: 'bar',
-                        data: [320, 332, 301, 334, 390, 430]
-                    },
-                    {
-                        name: '识别成功率',
-                        type: 'line',
-                        yAxisIndex: 1,
-                        data: [82, 85, 88, 87, 90, 93]
-                    }
-                ]
-            });
-
-            // AI对话主题分布图表
-            const conversationChart = echarts.init(document.getElementById('conversation-chart'));
-            conversationChart.setOption({
-                title: {
-                    text: 'AI对话主题分布',
-                    left: 'center',
-                    textStyle: {
-                        color: '#222222'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                },
-                series: [
-                    {
-                        name: '对话主题',
-                        type: 'pie',
-                        radius: '50%',
-                        data: [
-                            { value: 1048, name: '药效咨询' },
-                            { value: 735, name: '植物识别' },
-                            { value: 580, name: '用药指导' },
-                            { value: 484, name: '药材产地' },
-                            { value: 300, name: '其他问题' }
-                        ],
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            });
-
-            // 知识图谱使用情况图表
-            const graphUsageChart = echarts.init(document.getElementById('graph-usage-chart'));
-            graphUsageChart.setOption({
-                title: {
-                    text: '知识图谱使用情况',
-                    left: 'center',
-                    textStyle: {
-                        color: '#222222'
-                    }
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                legend: {
-                    data: ['查询次数', '平均查询时长'],
-                    bottom: 10
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['白术', '藏红花', '冬虫夏草', '人参', '黄芪', '其他']
-                },
-                yAxis: [
-                    {
-                        type: 'value',
-                        name: '次数',
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    },
-                    {
-                        type: 'value',
-                        name: '时长(分钟)',
-                        axisLabel: {
-                            formatter: '{value}'
-                        }
-                    }
-                ],
-                series: [
-                    {
-                        name: '查询次数',
-                        type: 'bar',
-                        data: [420, 332, 501, 634, 290, 130]
-                    },
-                    {
-                        name: '平均查询时长',
-                        type: 'line',
-                        yAxisIndex: 1,
-                        data: [3.2, 2.8, 4.5, 3.7, 2.5, 1.8]
-                    }
-                ]
-            });
-
-            // 用户地域分布图表
-            const userLocationChart = echarts.init(document.getElementById('user-location-chart'));
-            userLocationChart.setOption({
-                title: {
-                    text: '用户地域分布',
-                    left: 'center',
-                    textStyle: {
-                        color: '#222222'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: '{b}: {c} (用户)'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data: ['用户数量']
-                },
-                series: [
-                    {
-                        name: '用户数量',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        center: ['50%', '50%'],
-                        roseType: 'area',
-                        itemStyle: {
-                            borderRadius: 5
-                        },
-                        label: {
-                            show: true,
-                            formatter: '{b}: {c}'
-                        },
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        },
-                        data: [
-                            { name: '西藏', value: 420 },
-                            { name: '青海', value: 280 },
-                            { name: '四川', value: 350 },
-                            { name: '云南', value: 310 },
-                            { name: '甘肃', value: 230 },
-                            { name: '北京', value: 180 },
-                            { name: '上海', value: 150 }
-                        ]
-                    }
-                ]
-            });
-
-            // 热门搜索词图表
-            const searchKeywordsChart = echarts.init(document.getElementById('search-keywords-chart'));
-            searchKeywordsChart.setOption({
-                title: {
-                    text: '热门搜索词',
-                    left: 'center',
-                    textStyle: {
-                        color: '#222222'
-                    }
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                series: [
-                    {
-                        type: 'wordCloud',
-                        shape: 'circle',
-                        left: 'center',
-                        top: 'center',
-                        width: '80%',
-                        height: '80%',
-                        right: null,
-                        bottom: null,
-                        sizeRange: [12, 60],
-                        rotationRange: [-90, 90],
-                        rotationStep: 45,
-                        gridSize: 8,
-                        drawOutOfBound: false,
-                        textStyle: {
-                            fontFamily: 'sans-serif',
-                            fontWeight: 'bold',
-                            color: function () {
-                                return 'rgb(' + [
-                                    Math.round(Math.random() * 160),
-                                    Math.round(Math.random() * 160),
-                                    Math.round(Math.random() * 160)
-                                ].join(',') + ')';
-                            }
-                        },
-                        emphasis: {
-                            focus: 'self',
-                            textStyle: {
-                                shadowBlur: 10,
-                                shadowColor: '#333'
-                            }
-                        },
-                        data: [
-                            { name: '白术', value: 10000 },
-                            { name: '藏红花', value: 8500 },
-                            { name: '冬虫夏草', value: 8000 },
-                            { name: '人参', value: 7800 },
-                            { name: '黄芪', value: 6500 },
-                            { name: '当归', value: 6000 },
-                            { name: '三七', value: 5800 },
-                            { name: '枸杞', value: 5500 },
-                            { name: '灵芝', value: 5000 },
-                            { name: '党参', value: 4500 },
-                            { name: '川芎', value: 4300 },
-                            { name: '红景天', value: 4000 },
-                            { name: '天麻', value: 3800 },
-                            { name: '黄连', value: 3500 },
-                            { name: '甘草', value: 3300 },
-                            { name: '金银花', value: 3000 },
-                            { name: '板蓝根', value: 2800 },
-                            { name: '西洋参', value: 2500 },
-                            { name: '丹参', value: 2300 },
-                            { name: '桂枝', value: 2000 }
-                        ]
-                    }
-                ]
-            });
-
-            function resizeAllCharts() {
-                if (recognitionChart) recognitionChart.resize();
-                if (conversationChart) conversationChart.resize();
-                if (graphUsageChart) graphUsageChart.resize();
-                if (userLocationChart) userLocationChart.resize();
-                if (searchKeywordsChart) searchKeywordsChart.resize();
-            }
-
-            // 响应窗口大小变化
-            window.addEventListener('resize', resizeAllCharts);
-        }
+        // 页面加载时初始化
+        $(document).ready(function () {
+            loadContent('admin_users'); // 默认加载用户分析页面
+        });
 
         // 初始化数据库管理页面
         function initDatabasePage() {

@@ -1,15 +1,15 @@
-drop database if exists medicine;
-create database medicine;
-use medicine;
-drop table if exists user_image_recognition;
-drop table if exists user_ai_conversation;
-drop table if exists user_knowledge_search;
-drop table if exists user_upload;
-drop table if exists user_info;
-drop table if exists source;
-drop table if exists herb;
-drop table if exists picture;
-drop table if exists plant;
+# drop database if exists medicine;
+# create database medicine;
+# use medicine;
+# drop table if exists user_image_recognition;
+# drop table if exists user_ai_conversation;
+# drop table if exists user_knowledge_search;
+# drop table if exists user_upload;
+# drop table if exists user_info;
+# drop table if exists source;
+# drop table if exists herb;
+# drop table if exists picture;
+# drop table if exists plant;
 
 create table user_info(
     id INT PRIMARY KEY AUTO_INCREMENT,

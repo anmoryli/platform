@@ -1020,7 +1020,7 @@
                 <div class="app-tab active" data-tab="recognition-tab">图片识别</div>
                 <div class="app-tab" data-tab="history-tab">识别历史</div>
                 <div class="app-tab" data-tab="training-tab">训练集上传</div>
-                <div class="app-tab" data-tab="video-tab">视频流获取</div>
+                <!-- <div class="app-tab" data-tab="video-tab">视频流获取</div> -->
             </div>
 
             <!-- 图片识别标签页内容 -->
@@ -1245,49 +1245,59 @@
         // 更新历史记录列表
         function updateHistoryList() {
             const historyList = document.getElementById('historyList');
+            if (!historyList) {
+                console.error('History list element not found');
+                return;
+            }
 
-            // 发送 AJAX 请求获取历史记录数据
-            fetch('/getRecognitionHistory') // 替换为实际的API路径
+            // 清空现有内容
+            historyList.innerHTML = '<div class="history-loading">加载中...</div>';
+
+            // 发送 AJAX 请求获取历史记录
+            fetch('/user/getRecognitionHistory', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // 携带 session 信息
+            })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('网络响应失败');
+                        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
                     }
-                    else {
-                        console.log('获取历史记录成功:', response);
-                        return response.json(); // 假设返回的是JSON格式数据
-                    }
+                    return response.json(); // 解析 JSON 数据
                 })
                 .then(data => {
-                    if (data.length === 0) {
-                        // 如果没有历史记录，显示提示信息
+                    console.log('获取历史记录成功:', data);
+                    historyList.innerHTML = ''; // 清空加载提示
+
+                    if (!Array.isArray(data) || data.length === 0) {
                         historyList.innerHTML = '<div class="history-empty">暂无识别记录</div>';
                         return;
                     }
 
-                    historyList.innerHTML = ''; // 清空现有内容
-
                     // 按时间倒序排列
-                    const sortedHistory = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    const sortedHistory = [...data].sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
 
-                    // 遍历历史记录并生成HTML
+                    // 遍历历史记录并生成 HTML
                     sortedHistory.forEach(record => {
-                        const { recordId, userId, imageName, imagePath, imageResult, timestamp } = record;
-                        console.log('历史记录:', record);
-                        var imgUrl = "http://175.24.205.213:80" + imagePath;
-                        console.log(imgUrl);
+                        const { recordId, userId, imageName, imagePath, imageResult, accuracy, createTime } = record;
+                        const imgUrl = `http://175.24.205.213:80${imagePath}`;
+                        console.log('历史记录:', record, 'Image URL:', imgUrl);
 
                         const historyItem = document.createElement('div');
                         historyItem.className = 'history-item';
                         historyItem.innerHTML = `
-                    <img src="${imgUrl}" class="history-image" alt="${imageResult}">
+                    <img src="${imgUrl}" class="history-image" alt="${imageResult || '图片'}">
                     <div class="history-info">
-                        <div class="history-result">${imageResult}</div>
-                        <div class="history-date">${formatDate(timestamp)}</div>
+                        <div class="history-result">${imageResult || '未知结果'}</div>
+                        <div class="history-accuracy">置信度: ${(accuracy).toFixed(2)}%</div>
+                        <div class="history-date">${formatDate(createTime)}</div>
                     </div>
                 `;
 
-                        // 点击历史记录项查看详情
-                        historyItem.addEventListener('click', function () {
+                        // 点击查看详情
+                        historyItem.addEventListener('click', () => {
                             viewPlantDetailsFromHistory(recordId);
                         });
 
@@ -1298,6 +1308,18 @@
                     console.error('获取历史记录失败:', error);
                     historyList.innerHTML = '<div class="history-error">加载历史记录失败，请稍后重试。</div>';
                 });
+        }
+
+        // 格式化日期函数（保持原逻辑）
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         // 格式化日期
@@ -1360,7 +1382,7 @@
             document.getElementById("header").textContent = "开始识别";
 
             // 重置图像增强
-            resetImageEnhancement();
+            // resetImageEnhancement();
 
             // 隐藏相似植物推荐
             document.getElementById('similarPlants').style.display = 'none';
@@ -1409,18 +1431,7 @@
                     } else {
                         // 获取h1标签并修改其内容
                         headerElement.textContent = '识别成功';
-                        document.getElementById("resultText").value = result;
-                        // Simulate sending recognition data to server
-                        simulateSendRecognitionData(result);
-
-                        // 添加到历史记录
-                        addToHistory({
-                            plantName: result,
-                            imageSrc: window.currentImageDataUrl,
-                            confidence: Math.floor(Math.random() * 10) + 90, // 模拟置信度
-                            date: new Date().toLocaleString()
-                        });
-
+                        document.getElementById("resultText").value = result.recognition_result + "\t置信度:" + result.confidence;
                         // 显示相似植物推荐
                         showSimilarPlants(result);
                     }
@@ -1430,53 +1441,6 @@
                     alert("识别过程中发生错误，请重试！");
                 }
             });
-        }
-
-        // Simulate sending recognition data to server
-        function simulateSendRecognitionData(result) {
-            // Mock user data (in a real app, this would come from authentication)
-            const mockUser = {
-                username: "annmory",
-                userId: "user123"
-            };
-
-            // Create recognition data object
-            const recognitionData = {
-                username: mockUser.username,
-                userId: mockUser.userId,
-                result: result,
-                timestamp: new Date().toISOString(),
-                confidence: Math.floor(Math.random() * 10) + 90 // Random confidence between 90-99%
-            };
-
-            console.log("Sending recognition data:", recognitionData);
-
-            // Simulate API request with a timeout
-            const recognitionInfoElement = document.createElement('div');
-            recognitionInfoElement.className = 'recognition-info';
-            recognitionInfoElement.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px;"></div> 正在记录识别信息...';
-
-            // Insert the element after the result input
-            const resultElement = document.getElementById('resultText');
-            resultElement.parentNode.insertBefore(recognitionInfoElement, resultElement.nextSibling);
-
-            // Simulate API response after 1.5 seconds
-            setTimeout(() => {
-                // Update with success message
-                recognitionInfoElement.innerHTML = `
-                    <div style="margin-top: 15px; padding: 10px; background-color: #e8f4fc; border-radius: 4px; border: 1px solid #b8daff;">
-                        <div style="margin-bottom: 5px;"><strong>识别信息已记录</strong></div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                            <span>用户: ${recognitionData.username}</span>
-                            <span>时间: ${new Date(recognitionData.timestamp).toLocaleString()}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 5px;">
-                            <span>识别结果: ${recognitionData.result}</span>
-                            <span>置信度: ${recognitionData.confidence}%</span>
-                        </div>
-                    </div>
-                `;
-            }, 1500);
         }
 
         // 显示相似植物推荐
@@ -1581,7 +1545,7 @@
                 // 这里应该是实际的API请求
                 $.ajax({
                     type: "GET",
-                    url: "/plantDetail",
+                    url: "/db/plantDetail",
                     data: { name: plantName },
                     success: function (data) {
                         console.log("植物信息:", data);
@@ -1792,41 +1756,49 @@
 
                 // 显示上传中状态
                 uploadTrainingSetBtn.disabled = true;
-                uploadTrainingSetBtn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; margin-right: 8px;"></span>上传中...';
+                uploadTrainingSetBtn.innerHTML = '<span class="loading-spinner"></span> 上传中...';
 
-                // 模拟上传过程
-                setTimeout(function () {
-                    // 这里应该是实际的上传逻辑
-                    const formData = new FormData();
-                    for (let i = 0; i < files.length; i++) {
-                        formData.append('files[]', files[i]);
+                // 创建 FormData 对象
+                const formData = new FormData();
+                for (let i = 0; i < files.length; i++) {
+                    // 验证文件类型
+                    if (!files[i].type.startsWith('image/')) {
+                        showUploadStatus('仅支持图片文件', 'error');
+                        resetUploadForm();
+                        return;
                     }
+                    // 使用 'file' 作为参数名，匹配后端
+                    formData.append('file', files[i]);
+                }
 
-                    // 实际项目中应该使用 AJAX 发送请求
-                    $.ajax({
-                        type: "POST",
-                        url: "/uploadImg",
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function (response) {
-                            showUploadStatus('提交成功，等待管理员审核', 'success');
-                        },
-                        complete: function () {
-                            resetUploadForm();
+                // 发送 AJAX 请求
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/upload', // 假设调用 RecognizeController 的接口
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response) {
+                            showUploadStatus(`上传成功`);
+                        } else {
+                            showUploadStatus(`上传失败：${response.error || '未知错误'}`, 'error');
                         }
-                    });
-
-                    // 模拟成功响应
-                    showUploadStatus('提交成功，等待管理员审核', 'success');
-                    resetUploadForm();
-                }, 2000);
+                    },
+                    error: function (xhr) {
+                        showUploadStatus(`上传失败：${xhr.status} ${xhr.statusText}`, 'error');
+                    },
+                    complete: function () {
+                        resetUploadForm();
+                    }
+                });
             });
 
             // 显示上传状态
             function showUploadStatus(message, type) {
                 uploadStatus.textContent = message;
                 uploadStatus.className = 'upload-status ' + type;
+                console.log('Upload status:', message, type);
 
                 // 5秒后自动隐藏错误消息
                 if (type === 'error') {
