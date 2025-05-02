@@ -1282,7 +1282,7 @@
                     // 遍历历史记录并生成 HTML
                     sortedHistory.forEach(record => {
                         const { recordId, userId, imageName, imagePath, imageResult, accuracy, createTime } = record;
-                        const imgUrl = `http://175.24.205.213:80${imagePath}`;
+                        const imgUrl = `http://175.24.205.213:84${imagePath}`;
                         console.log('历史记录:', record, 'Image URL:', imgUrl);
 
                         const historyItem = document.createElement('div');
@@ -1373,8 +1373,8 @@
                 return;
             }
             // 将识别结果作为查询参数传递
-            console.log("获取的参数为:" + result);
-            location.href = "graph_recognize_v.html?name=" + encodeURIComponent(result);
+            console.log("获取的参数为:" + ret);
+            location.href = "graph_recognize_v.html?name=" + encodeURIComponent(ret);
         }
 
         function refresh() {
@@ -1388,6 +1388,7 @@
             document.getElementById('similarPlants').style.display = 'none';
         }
 
+        let ret = "";
         function recognize() {
             let filesInput = document.getElementById('uploadButton');
             let imgPreview = document.getElementById('preview');
@@ -1433,7 +1434,10 @@
                         headerElement.textContent = '识别成功';
                         document.getElementById("resultText").value = result.recognition_result + "\t置信度:" + result.confidence;
                         // 显示相似植物推荐
+                        ret = result.recognition_result;
+                        console.log(ret);
                         showSimilarPlants(result);
+                        updateHistoryList(); // 更新历史记录列表
                     }
                 },
                 error: function (xhr, status, error) {
@@ -1534,8 +1538,9 @@
             // 显示加载状态
             document.getElementById('plantDetailsContent').innerHTML = '<div class="loading-spinner"></div> 正在加载详情...';
 
+            console.log("识别结果:", ret);
             // 从后端获取植物详情
-            fetchPlantDetails(result);
+            fetchPlantDetails(ret);
         }
 
         // 从后端获取植物详情
@@ -1545,7 +1550,7 @@
                 // 这里应该是实际的API请求
                 $.ajax({
                     type: "GET",
-                    url: "/db/plantDetail",
+                    url: "/db/searchPlant",
                     data: { name: plantName },
                     success: function (data) {
                         console.log("植物信息:", data);
@@ -1557,22 +1562,17 @@
                 });
 
                 // 模拟API响应
-                if (plantName === "白术") {
+                if (plantName === "川贝母") {
                     const data = {
-                        "herbId": 39,
-                        "herbName": "白术",
-                        "herbTibetanName": "བོད་ཡིག5",
-                        "herbAlias": "于术",
-                        "herbDescription": "菊科植物白术的干燥根茎。",
-                        "partUsed": "根茎",
-                        "herbFeatures": "性温，味甘、苦。归脾、胃经。",
-                        "flavorTropism": "温、甘、苦；归脾、胃经",
-                        "functionIndication": "健脾益气，燥湿利水，止汗，安胎。",
-                        "clinicalApplication": "用于脾虚食少等",
-                        "pharmacologicalEffect": "调节肠胃功能等",
-                        "research": "含有苍术酮等成分。",
-                        "notes": "常与茯苓配伍使用。",
-                        "imageUrl": "/images/plant-sample.jpg"
+                        "plantId": 39,
+                        "plantName": "川贝母",
+                        "plantTibetanName": "བོད་ཡིག5",
+                        "plantAlias": "于术",
+                        "plantFamilyName": "菊科",
+                        "plantGenusName": "根",
+                        "plantFeatures": "性温，味甘、苦。归脾、胃经。",
+                        "plantOrigin": "四川",
+                        "plantProtectLevel": "无"
                     };
                     displayPlantDetails(data);
                 } else {
@@ -1584,20 +1584,24 @@
         // 显示植物详情
         function displayPlantDetails(data) {
             let detailsHtml = '';
-
+            const imgUrl = "http://175.24.205.213:82/usr/local/nginx/images/plant/" + data.imgPath;
             // 添加图片（如果有）
             if (data.imageUrl) {
-                detailsHtml += `<img src="${data.imageUrl}" alt="${data.herbName}" class="detail-image">`;
+                detailsHtml += `<img src="${imgUrl}" alt="${data.plantName}" class="detail-image">`;
             }
 
             // 基本信息
             detailsHtml += `
         <div class="detail-section">
             <h3>基本信息</h3>
-            <p><strong>学名：</strong> <em>${data.herbName}</em></p>
-            <p><strong>藏文名：</strong> <em>${data.herbTibetanName}</em></p>
-            <p><strong>别名：</strong> ${data.herbAlias}</p>
-            <p><strong>分类：</strong> ${data.partUsed}</p>
+            <p><strong>学名：</strong> <em>${data.plantName}</em></p>
+            <p><strong>藏文名：</strong> <em>${data.plantTibetanName}</em></p>
+            <p><strong>别名：</strong> ${data.plantAlias}</p>
+            <p><strong>科属：</strong> ${data.plantFamilyName}</p>
+            <p><strong>门属：</strong> ${data.plantGenusName}</p>
+            <p><strong>特征：</strong> ${data.plantFeatures}</p>
+            <p><strong>原产地：</strong> ${data.plantOrigin}</p>
+            <p><strong>保护等级：</strong> ${data.plantProtectLevel}</p>
         </div>
     `;
 
